@@ -9,3 +9,8 @@ Route::get('/', function () {
 Route::get('/inicio', function () {
     return view('inicio');
 });
+
+use App\Http\Controllers\PanelTecnicoController;
+
+// URL: midominio.com/centro-de-mando
+Route::get('/centro-de-mando', [PanelTecnicoController::class, 'mostrarInicio'])->name('panel.inicio');
