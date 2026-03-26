@@ -6,6 +6,7 @@
     <title>TOBILLOS - @yield('titulo-pestana')</title>
     
     <style>
+        /* uta madre*/
         /* 1. Reseteo y fondo general */
         body, html { margin: 0; padding: 0; font-family: system-ui, sans-serif; background-color: #f8fafc; color: #333; }
 
