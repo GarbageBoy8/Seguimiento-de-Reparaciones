@@ -174,6 +174,6 @@ class ReparacionController extends Controller
 
     private function autorizarTaller(Reparacion $reparacion): void
     {
-        abort_if($reparacion->taller_id !== auth()->user()->taller_id, 403);
+        abort_if((int) $reparacion->taller_id !== (int) auth()->user()->taller_id, 403);
     }
 }

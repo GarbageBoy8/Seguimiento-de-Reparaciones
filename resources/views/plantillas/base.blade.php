@@ -22,6 +22,9 @@
                     <li><a href="{{ route('reparaciones.index') }}">Órdenes</a></li>
                     <li><a href="{{ route('reparaciones.create') }}">+ Nueva Orden</a></li>
                     <li><a href="{{ route('clientes.index') }}">Clientes</a></li>
+                    @if(auth()->user()->esAdmin())
+                        <li><a href="{{ route('tecnicos.index') }}">Técnicos</a></li>
+                    @endif
                 </ul>
             </nav>
             <footer>

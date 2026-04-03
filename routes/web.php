@@ -6,6 +6,7 @@ use App\Http\Controllers\NotificacionController;
 use App\Http\Controllers\PanelTecnicoController;
 use App\Http\Controllers\ReparacionController;
 use App\Http\Controllers\SeguimientoController;
+use App\Http\Controllers\TecnicoController;
 use Illuminate\Support\Facades\Route;
 
 // ─── Públicas ─────────────────────────────────────────────────────────────────
@@ -25,7 +26,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/centro-de-mando', [PanelTecnicoController::class, 'index'])->name('panel.inicio');
 
     // Reparaciones (resource + escalar)
-    Route::resource('reparaciones', ReparacionController::class)->only(['index', 'create', 'store', 'show', 'update']);
+    Route::resource('reparaciones', ReparacionController::class)
+        ->only(['index', 'create', 'store', 'show', 'update'])
+        ->parameters(['reparaciones' => 'reparacion']);
     Route::post('/reparaciones/{reparacion}/escalar', [ReparacionController::class, 'escalar'])->name('reparaciones.escalar');
 
     // Chat del técnico (JSON)
@@ -33,7 +36,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/reparaciones/{reparacion}/mensajes', [MensajeController::class, 'store'])->name('reparaciones.mensajes.store');
 
     // Clientes
-    Route::resource('clientes', ClienteController::class)->only(['index', 'create', 'store', 'show']);
+    Route::resource('clientes', ClienteController::class)
+        ->only(['index', 'create', 'store', 'show'])
+        ->parameters(['clientes' => 'cliente']);
+
+    // Técnicos (solo admin)
+    Route::resource('tecnicos', TecnicoController::class)
+        ->only(['index', 'create', 'store', 'destroy'])
+        ->parameters(['tecnicos' => 'tecnico']);
+
 
     // Notificaciones (solo admin)
     Route::post('/notificaciones/{id}/leida', [NotificacionController::class, 'marcarLeida'])->name('notificaciones.leida');

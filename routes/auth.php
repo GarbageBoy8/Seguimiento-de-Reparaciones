@@ -11,9 +11,13 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
+// Alias requerido por el middleware guest de Breeze al redirigir usuarios ya autenticados
+Route::get('/dashboard', fn() => redirect()->route('panel.inicio'))->name('dashboard');
+
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])
         ->name('register');
+
 
     Route::post('register', [RegisteredUserController::class, 'store']);
 

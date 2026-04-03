@@ -45,7 +45,7 @@ class ClienteController extends Controller
 
     public function show(Cliente $cliente)
     {
-        abort_if($cliente->taller_id !== auth()->user()->taller_id, 403);
+        abort_if((int) $cliente->taller_id !== (int) auth()->user()->taller_id, 403);
 
         $reparaciones = Reparacion::where('cliente_id', $cliente->id)
             ->with(['nivel', 'tecnico'])

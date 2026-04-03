@@ -13,7 +13,7 @@ class MensajeController extends Controller
      */
     public function index(Reparacion $reparacion)
     {
-        abort_if($reparacion->taller_id !== auth()->user()->taller_id, 403);
+        abort_if((int) $reparacion->taller_id !== (int) auth()->user()->taller_id, 403);
 
         $mensajes = $reparacion->mensajes()
             ->with('user:id,name,rol')
@@ -34,7 +34,7 @@ class MensajeController extends Controller
      */
     public function store(Request $request, Reparacion $reparacion)
     {
-        abort_if($reparacion->taller_id !== auth()->user()->taller_id, 403);
+        abort_if((int) $reparacion->taller_id !== (int) auth()->user()->taller_id, 403);
 
         $data = $request->validate([
             'contenido' => ['required', 'string', 'max:1000'],
