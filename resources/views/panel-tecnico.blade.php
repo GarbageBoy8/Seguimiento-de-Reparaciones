@@ -4,70 +4,103 @@
 
 @section('contenido-principal')
 
-    <section class="estadisticas">
+    {{-- Alertas de sesión --}}
+    @if(session('success'))
+        <p role="alert">{{ session('success') }}</p>
+    @endif
+
+    {{-- Notificaciones de retardo (solo admin) --}}
+    @if(auth()->user()->esAdmin() && $notificaciones->isNotEmpty())
+        <section aria-label="Alertas de retardo">
+            <h2>Alertas de retardo ({{ $notificaciones->count() }})</h2>
+            <form method="POST" action="{{ route('notificaciones.leer-todas') }}">
+                @csrf
+                <button type="submit">Marcar todas como leídas</button>
+            </form>
+            <ul>
+                @foreach($notificaciones as $notif)
+                    <li>
+                        <strong>{{ $notif->data['folio'] }}</strong> —
+                        {{ $notif->data['mensaje'] }}
+                        (Técnico: {{ $notif->data['tecnico'] }})
+                        <a href="{{ route('reparaciones.show', $notif->data['reparacion_id']) }}">Ver orden</a>
+                        <form method="POST" action="{{ route('notificaciones.leida', $notif->id) }}" style="display:inline">
+                            @csrf
+                            <button type="submit">✓ Leída</button>
+                        </form>
+                    </li>
+                @endforeach
+            </ul>
+        </section>
+    @endif
+
+    {{-- Estadísticas --}}
+    <section aria-label="Estadísticas del taller">
         <article>
-            <h3>6</h3>
+            <h3>{{ $stats['total'] }}</h3>
             <p>Total órdenes</p>
         </article>
         <article>
-            <h3>4</h3>
+            <h3>{{ $stats['en_proceso'] }}</h3>
             <p>En proceso</p>
         </article>
         <article>
-            <h3>2</h3>
-            <p>Completadas</p>
+            <h3>{{ $stats['retardos'] }}</h3>
+            <p>Retardos activos</p>
+        </article>
+        <article>
+            <h3>{{ $stats['completadas'] }}</h3>
+            <p>Entregadas</p>
         </article>
     </section>
 
-    <section class="ordenes-en-proceso">
-        <h2>Órdenes en proceso</h2>
-        
-        <div class="grid-ordenes">
-            <article>
-                <header>
-                    <strong>ORD-001</strong> <span>En reparación</span>
-                </header>
-                <div>
-                    <h4>María González</h4>
-                    <p>Celular · Samsung Galaxy S23</p>
-                    <p>Pantalla rota, no responde al tacto en la parte inferior</p>
-                </div>
-                <footer>
-                    <small>Ingreso: 2026-03-20</small>
-                    <a href="#">Ver detalles</a>
-                </footer>
-            </article>
+    {{-- Órdenes recientes --}}
+    <section aria-label="Órdenes en proceso">
+        <header>
+            <h2>Órdenes activas recientes</h2>
+            <a href="{{ route('reparaciones.index') }}">Ver todas</a>
+            <a href="{{ route('reparaciones.create') }}">+ Nueva orden</a>
+        </header>
 
-            <article>
-                <header>
-                    <strong>ORD-002</strong> <span style="background-color: #fef2f2; color: #dc2626;">Esperando piezas</span>
-                </header>
-                <div>
-                    <h4>Carlos Ramírez</h4>
-                    <p>Laptop · HP Pavilion 15</p>
-                    <p>No enciende, posible falla en fuente de poder</p>
-                </div>
-                <footer>
-                    <small>Ingreso: 2026-03-19</small>
-                    <a href="#">Ver detalles</a>
-                </footer>
-            </article>
-            
-            <article>
-                <header>
-                    <strong>ORD-003</strong> <span style="background-color: #fefce8; color: #ca8a04;">En revisión</span>
-                </header>
-                <div>
-                    <h4>Ana López</h4>
-                    <p>Celular · iPhone 14 Pro Max</p>
-                    <p>Batería se descarga muy rápido, posible reemplazo</p>
-                </div>
-                <footer>
-                    <small>Ingreso: 2026-03-22</small>
-                    <a href="#">Ver detalles</a>
-                </footer>
-            </article>
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Folio</th>
+                    <th>Cliente</th>
+                    <th>Equipo</th>
+                    <th>Nivel</th>
+                    <th>Estado</th>
+                    <th>Técnico</th>
+                    <th>Hora límite</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($ordenesActivas as $orden)
+                    <tr>
+                        <td>{{ $orden->folio }}</td>
+                        <td>{{ $orden->cliente->nombre }}</td>
+                        <td>{{ $orden->marca }} {{ $orden->modelo }}</td>
+                        <td>Nivel {{ $orden->nivel->nivel }} — {{ $orden->nivel->nombre }}</td>
+                        <td>{{ $orden->estado }}</td>
+                        <td>{{ $orden->tecnico->name ?? 'Sin asignar' }}</td>
+                        <td>
+                            {{ $orden->hora_limite->format('d/m/Y H:i') }}
+                            @if($orden->estaRetrasada())
+                                <span aria-label="Retrasada">⚠ Retrasada</span>
+                            @endif
+                        </td>
+                        <td>
+                            <a href="{{ route('reparaciones.show', $orden) }}">Ver</a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="8">No hay órdenes activas.</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </section>
 
 @endsection

@@ -1,8 +1,7 @@
 <?php
 
-use Illuminate\Foundation\Inspiring;
-use Illuminate\Support\Facades\Artisan;
+use App\Jobs\VerificarRetardosJob;
+use Illuminate\Support\Facades\Schedule;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote');
+// Verifica retardos de órdenes cada 15 minutos y notifica al admin del taller
+Schedule::job(new VerificarRetardosJob)->everyFifteenMinutes();
