@@ -117,13 +117,20 @@ class Reparacion extends Model
      */
     public static function generarFolio(int $tallerId): string
     {
-        $anio     = now()->year;
-        $ultimo   = self::where('taller_id', $tallerId)
-                        ->whereYear('created_at', $anio)
-                        ->count();
-        $numero   = str_pad($ultimo + 1, 4, '0', STR_PAD_LEFT);
+        $anio = now()->year;
+        $prefijo = "FF-{$anio}-";
 
-        return "FF-{$anio}-{$numero}";
+        // Obtener el número más alto ya usado por este taller en el año actual
+        // Usar max() sobre el sufijo numérico es más seguro que count()
+        // porque count() fallaría si alguna orden fue eliminada (generaría duplicados)
+        $ultimo = self::where('taller_id', $tallerId)
+                      ->whereYear('created_at', $anio)
+                      ->selectRaw("MAX(CAST(SUBSTRING(folio, ?) AS UNSIGNED)) as max_num", [strlen($prefijo) + 1])
+                      ->value('max_num') ?? 0;
+
+        $numero = str_pad($ultimo + 1, 4, '0', STR_PAD_LEFT);
+
+        return "{$prefijo}{$numero}";
     }
 
     /**
