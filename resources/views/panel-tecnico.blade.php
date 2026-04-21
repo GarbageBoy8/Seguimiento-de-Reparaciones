@@ -6,12 +6,12 @@
 
     {{-- Alertas de sesión --}}
     @if(session('success'))
-        <p role="alert">{{ session('success') }}</p>
+        <p class="text-emerald-800 font-medium" role="alert">{{ session('success') }}</p>
     @endif
 
     {{-- Notificaciones de retardo (solo admin) --}}
     @if(auth()->user()->esAdmin() && $notificaciones->isNotEmpty())
-        <section aria-label="Alertas de retardo">
+        <section aria-label="Alertas de retardo" class="mb-8 bg-white rounded-2xl shadow-md border border-amber-200 overflow-hidden">
             <h2>Alertas de retardo ({{ $notificaciones->count() }})</h2>
             <form method="POST" action="{{ route('notificaciones.leer-todas') }}">
                 @csrf

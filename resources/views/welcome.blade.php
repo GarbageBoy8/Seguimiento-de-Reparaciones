@@ -17,7 +17,7 @@
 
 <body class="bg-[#f1eded] dark:bg-[rgb(234,231,231)] text-[#d7d7d2] flex flex-col h-screen overflow-hidden">
 
-    <header class="w-full px-6 lg:px-8 py-4 text-sm">
+    <header class="bg-white w-full px-6 lg:px-8 py-4 text-sm">
         @if (Route::has('login'))
         <nav class="flex items-center justify-end gap-4">
             @auth
@@ -27,13 +27,13 @@
             </a>
             @else
             <a href="{{ route('login') }}"
-                class="inline-block px-5 py-1.5 bg-sky-700 text-white rounded-sm text-sm leading-normal hover:bg-gray-700">
+                class="inline-block px-5 py-1.5 bg-[#5A00C6] text-white rounded-lg text-sm leading-normal hover:bg-[#3F008E]">
                 Iniciar Sesión
             </a>
 
             @if (Route::has('register'))
             <a href="{{ route('register') }}"
-                class="inline-block px-5 py-1.5 bg-sky-700 text-white rounded-sm text-sm leading-normal hover:bg-gray-700">
+                class="inline-block px-5 py-1.5 bg-[#5A00C6] text-white rounded-lg text-sm leading-normal hover:bg-[#3F008E]">
                 Registrarse
             </a>
             @endif

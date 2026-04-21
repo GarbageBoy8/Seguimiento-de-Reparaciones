@@ -1,7 +1,7 @@
 <x-guest-layout>
     <x-auth-session-status class="mb-4" :status="session('status')" />
     <div class="flex flex-col items-center mb-6">
-        <h2 class="font-bold text-xl text-[#002A5B] p-1"> Bienvenido de vuelta </h2> 
+        <h2 class="font-bold text-xl text-[##1E1B2E] p-1"> Bienvenido de vuelta </h2> 
         <span class="text-sm p-1"> Inicia sesión para continuar </span>
     </div>
 
@@ -16,7 +16,7 @@
                 id="email"
                 class="block mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600
                        dark:bg-gray-200 dark:text-gray-800
-                       focus:border-sky-500 focus:ring-sky-500"
+                       focus:border-[#732EE4] focus:ring-[#732EE4]"
                 type="email"
                 name="email"
                 :value="old('email')"
@@ -33,7 +33,7 @@
                 id="password"
                 class="block mt-1 w-full rounded-lg border-gray-300 dark:border-gray-600
                        dark:bg-gray-200 dark:text-gray-800 shadow-sm
-                       focus:border-sky-500 focus:ring-sky-500"
+                       focus:border-[#732EE4] focus:ring-[#732EE4]"
                 type="password"
                 name="password"
                 placeholder="Ingresa tu contraseña"
@@ -45,21 +45,21 @@
         <div class="flex items-center justify-between">
             <label for="remember_me" class="flex items-center gap-2 cursor-pointer">
                 <input id="remember_me" type="checkbox" name="remember"
-                    class="rounded border-sky-300 text-sky-600 shadow-sm focus:ring-sky-500" />
-                <span class="text-sm text-gray-600 dark:text-gray-400">{{ __('Recordarme') }}</span>
+                    class="rounded border-[#7C3AED] text-[#7C3AED] shadow-sm focus:ring-[#7C3AED]" />
+                <span class="text-sm text-[#938EA6] dark:text-[#938EA6]">{{ __('Recordarme') }}</span>
             </label>
 
             @if (Route::has('password.request'))
             <a href="{{ route('password.request') }}"
-                class="text-sm text-[#002A5B] hover:text-[#0056D6] dark:text-[#002A5B] font-medium transition-colors">
+                class="text-sm text-[#1E1B2E] hover:text-[#7C3AED] dark:text-[#1E1B2E] font-medium transition-colors">
                 {{ __('¿Olvidaste tu contraseña?') }}
             </a>
             @endif
         </div>
 
         <!-- Botón -->
-        <x-primary-button class="w-full justify-center py-2.5 rounded-lg bg-[#0056D6]
-                                  hover:bg-[#002A5B] focus:ring-indigo-500 text-sm font-semibold
+        <x-primary-button class="w-full justify-center py-2.5 rounded-lg bg-[#5A00C6]
+                                  hover:bg-[#3F008E] focus:ring-indigo-500 text-sm font-semibold
                                   transition-colors duration-150">
             {{ __('Iniciar sesión') }}
         </x-primary-button>
