@@ -26,40 +26,26 @@
     {{-- HEADER --}}
     <header class="bg-white w-full px-6 lg:px-8 py-4 text-sm sticky top-0 z-50 shadow-sm border-b border-neutral-200">
         @if (Route::has('login'))
-        <nav class="flex items-center justify-between w-full max-w-7xl mx-auto">
-            
-            <div class="flex-1 hidden md:block">
-                <span class="font-bold text-[#4B0082] text-xl tracking-tight">FixFlow</span>
-            </div>
+        <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm px-6 py-4 flex justify-between items-center w-full shadow-sm border-b border-gray-100">
+    <div class="flex items-center">
+        <a href="/" class="text-2xl font-extrabold text-[#4B0082] tracking-tight">FixFlow</a>
+    </div>
 
-            <div class="flex-1 flex justify-center items-center gap-8 font-medium text-neutral-600">
-                <a href="#conocenos" class="hover:text-[#4B0082] transition-colors duration-300">Conócenos</a>
-                <a href="#reparalo" class="hover:text-[#4B0082] transition-colors duration-300">Repáralo</a>
-                <a href="#no-puedo" class="hover:text-[#4B0082] transition-colors duration-300">No puedo</a>
-            </div>
+    <div class="hidden md:flex space-x-8 font-medium text-neutral-600">
+        <a href="#optimiza" class="hover:text-[#4B0082] transition-colors duration-300">Optimiza tu taller</a>
+        <a href="#gestiona" class="hover:text-[#4B0082] transition-colors duration-300">Gestiona</a>
+        <a href="#agilidad" class="hover:text-[#4B0082] transition-colors duration-300">Agilidad</a>
+    </div>
 
-            <div class="flex-1 flex items-center justify-end gap-4">
-                @auth
-                <a href="{{ url('/dashboard') }}"
-                    class="inline-block px-5 py-2 dark:text-[#070707] border-[#19140035] hover:border-[#1915014a] border text-[#000000] rounded-md text-sm font-medium">
-                    Dashboard
-                </a>
-                @else
-                <a href="{{ route('login') }}"
-                    class="inline-block px-5 py-2 bg-[#4B0082] text-white rounded-md text-sm font-medium hover:bg-[#3A006F] transition-colors shadow-sm">
-                    Iniciar Sesión
-                </a>
-
-                @if (Route::has('register'))
-                <a href="{{ route('register') }}"
-                    class="inline-block px-5 py-2 bg-[#4B0082] text-white rounded-md text-sm font-medium hover:bg-[#3A006F] transition-colors shadow-sm">
-                    Registrarse
-                </a>
-                @endif
-                @endauth
-            </div>
-            
-        </nav>
+    <div class="hidden md:flex space-x-4">
+        <a href="/login" class="px-5 py-2.5 rounded-lg text-white bg-[#4B0082] font-semibold hover:bg-purple-900 transition-colors">
+            Iniciar Sesión
+        </a>
+        <a href="/register" class="px-5 py-2.5 rounded-lg text-[#4B0082] bg-purple-50 font-semibold hover:bg-purple-100 transition-colors border border-purple-200">
+            Registrarse
+        </a>
+    </div>
+</nav>
         @endif
     </header>
 
@@ -74,7 +60,7 @@
         <div class="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-[#7B2CBF]/20 rounded-full blur-[120px] pointer-events-none"></div>
 
         {{-- SECCIÓN PRINCIPAL (HERO) --}}
-        <section class="relative w-full px-6 lg:px-8 py-20 lg:py-28 flex items-center z-10">
+       <section class="relative w-full px-6 lg:px-8 pt-12 pb-20 lg:pt-16 lg:pb-28 flex items-center z-10">
             <div class="relative max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-8">
                 
                 {{-- Columna Izquierda: Información --}}
@@ -90,7 +76,8 @@
                     </h1>
                     
                     <p class="text-lg lg:text-xl text-white/80 leading-relaxed text-justify lg:text-left max-w-2xl">
-FixFlow es el sistema integral diseñado para agilizar tus procesos técnicos. Registra equipos, da seguimiento en tiempo real a las reparaciones y gestiona tu inventario con profesionalismo.                    </p>
+                    FixFlow es el sistema integral diseñado para agilizar tus procesos técnicos. Registra equipos, da seguimiento en tiempo real a los estados de cada reparación y mantén el control total de tu flujo de trabajo con profesionalismo.
+                    </p>
 
                     <div class="mt-10 flex items-center gap-4">
                         <div class="flex -space-x-3">
@@ -163,60 +150,46 @@ FixFlow es el sistema integral diseñado para agilizar tus procesos técnicos. R
         </section>
 
         {{-- CONTENEDOR DE SECCIONES INFERIORES --}}
-        <main class="relative z-10 w-full max-w-7xl mx-auto pb-24 pt-8 space-y-16 px-6 lg:px-8">
+       <main class="w-full flex flex-col gap-40 max-w-5xl mx-auto px-4 mt-32 mb-32">
+         {{-- SECCION OPTIMIZA --}}
+    <section id="optimiza" class="scroll-mt-32">
+        <div class="bg-purple-900 p-12 rounded-3xl border border-purple-700/50 shadow-2xl">
+            <div class="flex justify-center mb-6">
+                <span class="bg-purple-800 text-purple-200 text-sm font-bold px-5 py-2 rounded-full">OPTIMIZA TU TALLER</span>
+            </div>
+            <h3 class="text-4xl font-extrabold text-white text-center mb-6">Centraliza tu Taller</h3>
+            <p class="text-purple-200 text-center text-lg leading-relaxed max-w-3xl mx-auto">
+                Somos tu aliado digital para la gestión de reparaciones electrónicas. Nuestro objetivo es optimizar el flujo de trabajo de tu negocio para que nunca pierdas el rastro de un equipo, desde su ingreso hasta la entrega final.
+            </p>
+        </div>
+    </section>
 
-            {{-- SECCIÓN: CONÓCENOS --}}
-            <section id="conocenos" class="scroll-mt-24 w-full">
-                <div class="relative max-w-4xl mx-auto text-center bg-white/5 backdrop-blur-xl p-10 md:p-12 rounded-2xl border border-white/10 border-t-4 border-t-[#4B0082] shadow-2xl shadow-black/20 transition-all hover:-translate-y-1 hover:border-white/20 overflow-hidden group">
-                    <div class="absolute inset-0 bg-circuit opacity-40 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-70 pointer-events-none"></div>
-                    
-                    <div class="relative z-10">
-                        <span class="inline-block px-4 py-1.5 rounded-full bg-[#E0AAFF]/10 text-white border border-[#E0AAFF]/20 text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-sm">
-                            Nuestra Identidad
-                        </span>
-                        <h2 class="text-3xl font-bold text-white mb-6 drop-shadow-sm">Conócenos</h2>
-                        <p class="text-lg text-white/90 leading-relaxed">
-                            Somos FixFlow, tu sistema gestor de reparaciones electrónicas. Aquí puedes colocar la información sobre la misión y visión de tu taller o sistema. Nuestro objetivo es optimizar el flujo de trabajo para que nunca pierdas el rastro de un equipo.
-                        </p>
-                    </div>
-                </div>
-            </section>
+     {{-- SECCION GESTIONA --}}
+    <section id="gestiona" class="scroll-mt-32">
+        <div class="bg-purple-900 p-12 rounded-3xl border border-purple-700/50 shadow-2xl">
+            <div class="flex justify-center mb-6">
+                <span class="bg-purple-800 text-purple-200 text-sm font-bold px-5 py-2 rounded-full">GESTIÓN</span>
+            </div>
+            <h3 class="text-4xl font-extrabold text-white text-center mb-6">Control de Estados y Folios</h3>
+            <p class="text-purple-200 text-center text-lg leading-relaxed max-w-3xl mx-auto">
+                Genera tickets únicos de servicio y actualiza el progreso de cada equipo en segundos. Pasa de 'En diagnóstico' a 'Listo para entrega' con un solo clic, manteniendo un orden impecable en tu área de trabajo.
+            </p>
+        </div>
+    </section>
 
-            {{-- SECCIÓN: REPÁRALO --}}
-            <section id="reparalo" class="scroll-mt-24 w-full">
-                <div class="relative max-w-4xl mx-auto text-center bg-white/5 backdrop-blur-xl p-10 md:p-12 rounded-2xl border border-white/10 border-t-4 border-t-[#4B0082] shadow-2xl shadow-black/20 transition-all hover:-translate-y-1 hover:border-white/20 overflow-hidden group">
-                    <div class="absolute inset-0 bg-circuit opacity-40 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-70 pointer-events-none"></div>
-
-                    <div class="relative z-10">
-                        <span class="inline-block px-4 py-1.5 rounded-full bg-[#E0AAFF]/10 text-white border border-[#E0AAFF]/20 text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-sm">
-                            Autogestión
-                        </span>
-                        <h2 class="text-3xl font-bold text-white mb-6 drop-shadow-sm">Repáralo</h2>
-                        <p class="text-lg text-white/90 leading-relaxed">
-                            ¿Eres técnico o quieres intentar arreglarlo tú mismo? En esta sección puedes incluir tutoriales, venta de refacciones, guías de diagramas esquemáticos o los pasos a seguir para diagnosticar un equipo electrónico.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            {{-- SECCIÓN: NO PUEDO --}}
-            <section id="no-puedo" class="scroll-mt-24 w-full">
-                <div class="relative max-w-4xl mx-auto text-center bg-white/5 backdrop-blur-xl p-10 md:p-12 rounded-2xl border border-white/10 border-t-4 border-t-[#4B0082] shadow-2xl shadow-black/20 transition-all hover:-translate-y-1 hover:border-white/20 overflow-hidden group">
-                    <div class="absolute inset-0 bg-circuit opacity-40 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-70 pointer-events-none"></div>
-
-                    <div class="relative z-10">
-                        <span class="inline-block px-4 py-1.5 rounded-full bg-[#E0AAFF]/10 text-white border border-[#E0AAFF]/20 text-xs font-bold uppercase tracking-wider mb-4 backdrop-blur-sm">
-                            Asistencia Experta
-                        </span>
-                        <h2 class="text-3xl font-bold text-white mb-6 drop-shadow-sm">No puedo</h2>
-                        <p class="text-lg text-white/90 leading-relaxed mb-8">
-                            ¿La reparación se complicó? No te preocupes, nosotros nos encargamos. Trae tu equipo y déjalo en manos de nuestros expertos.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-        </main>
+     {{-- SECCION AGILIDAD --}}
+    <section id="agilidad" class="scroll-mt-32">
+        <div class="bg-purple-900 p-12 rounded-3xl border border-purple-700/50 shadow-2xl">
+            <div class="flex justify-center mb-6">
+                <span class="bg-purple-800 text-purple-200 text-sm font-bold px-5 py-2 rounded-full">AGILIDAD</span>
+            </div>
+            <h3 class="text-4xl font-extrabold text-white text-center mb-6">Historial a tu Alcance</h3>
+            <p class="text-purple-200 text-center text-lg leading-relaxed max-w-3xl mx-auto">
+                ¿Un equipo regresó por garantía o para un nuevo servicio? Accede al instante al historial de cada cliente y dispositivo. Deja atrás las notas de papel y digitaliza la memoria de tu negocio.
+            </p>
+        </div>
+    </section>
+</main>
 
         {{-- FOOTER --}}
         <footer class="relative z-10 w-full px-6 py-8 text-center border-t border-white/10 mt-auto backdrop-blur-sm bg-black/10">
