@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FixFlow — @yield('titulo-pestana')</title>
+    <title>FixFlow â€” @yield('titulo-pestana')</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
@@ -18,7 +18,7 @@
                 <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">FixFlow</h1>
                 <p class="text-indigo-300 text-sm mt-1 font-medium">{{ auth()->user()->taller->nombre }}</p>
             </div>
-            <nav aria-label="Navegación principal" class="flex-1 p-4">
+            <nav aria-label="NavegaciÃ³n principal" class="flex-1 p-4">
                 <ul class="space-y-2">
                     <li>
                         <a href="{{ route('panel.inicio') }}"
@@ -58,7 +58,7 @@
                                         <circle cx="9" cy="12" r="1" fill="#ffffff"></circle>
                                         <circle cx="9" cy="16" r="1" fill="#ffffff"></circle>
                                     </g>
-                                </svg></span> Órdenes
+                                </svg></span> Ã“rdenes
                         </a>
                     </li>
                     <li>
@@ -107,7 +107,7 @@
                                             <path class="st0" d="M459.957,203.4c42.547-38.609,49.656-82.484,40.141-119.469c-0.281-2.938-0.984-5.406-3.547-7.266 l-8.563-7.016c-1.484-1.375-3.484-2.063-5.484-1.859c-2.016,0.188-3.844,1.234-5.031,2.859l-49.25,64.031 c-1.375,1.891-3.594,2.969-5.922,2.891l-17.875,1.313c-1.531-0.047-3.016-0.594-4.219-1.563l-34.531-29.266 c-1.406-1.141-2.328-2.766-2.563-4.563l-2.141-16.188c-0.25-1.781,0.203-3.594,1.266-5.047l46.109-62.641 c2.094-2.891,1.688-6.875-0.906-9.297l-11.188-8.734c-2.188-2.047-4.672-1.75-8.063-1.109 c-31.844,6.297-86.219,37.125-100.016,79.75c-12.156,37.516-7.922,63.969-7.922,63.969c0,21.141-6.953,41.516-15.5,50.078 L24.504,424.916c-0.469,0.438-0.922,0.859-1.375,1.313c-19.844,19.844-19.813,52.063-0.641,71.219 c19.172,19.172,51.859,19.688,71.703-0.172c0.922-0.922,1.813-1.875,2.641-2.859l231.672-250.438 C357.004,218.619,413.426,245.65,459.957,203.4z"></path>
                                         </g>
                                     </g>
-                                </svg></span> Técnicos
+                                </svg></span> TÃ©cnicos
                         </a>
                     </li>
                     @endif
@@ -129,7 +129,7 @@
                                         <path id="Vector" d="M12 15L15 12M15 12L12 9M15 12H4M9 7.24859V7.2002C9 6.08009 9 5.51962 9.21799 5.0918C9.40973 4.71547 9.71547 4.40973 10.0918 4.21799C10.5196 4 11.0801 4 12.2002 4H16.8002C17.9203 4 18.4796 4 18.9074 4.21799C19.2837 4.40973 19.5905 4.71547 19.7822 5.0918C20 5.5192 20 6.07899 20 7.19691V16.8036C20 17.9215 20 18.4805 19.7822 18.9079C19.5905 19.2842 19.2837 19.5905 18.9074 19.7822C18.48 20 17.921 20 16.8031 20H12.1969C11.079 20 10.5192 20 10.0918 19.7822C9.71547 19.5905 9.40973 19.2839 9.21799 18.9076C9 18.4798 9 17.9201 9 16.8V16.75" stroke="#FF82B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                                     </g>
                                 </g>
-                            </svg></span> Cerrar sesión
+                            </svg></span> Cerrar sesiÃ³n
                     </button>
                 </form>
             </footer>
@@ -145,8 +145,8 @@
                 @if(auth()->user()->esAdmin())
                 @php $countNotif = auth()->user()->unreadNotifications->count(); @endphp
                 @if($countNotif > 0)
-                <a href="#" aria-label="{{ $countNotif }} notificaciones no leídas" class="flex items-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-700 px-4 py-2 rounded-full transition-all duration-200 font-medium text-sm shadow-sm">
-                    <span>🔔</span> {{ $countNotif }} alerta(s)
+                <a href="#" aria-label="{{ $countNotif }} notificaciones no leÃ­das" class="flex items-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-700 px-4 py-2 rounded-full transition-all duration-200 font-medium text-sm shadow-sm">
+                    <span>ðŸ””</span> {{ $countNotif }} alerta(s)
                 </a>
                 @endif
                 @endif
@@ -159,6 +159,7 @@
         </div>
     </div>
 
+    @stack('scripts')
 </body>
 
 </html>
