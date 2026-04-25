@@ -44,7 +44,7 @@ class ReparacionController extends Controller
         $data = $request->validate([
             // Cliente
             'cliente_id'        => ['nullable', 'exists:clientes,id'],
-            'cliente_nombre'    => ['required_without:cliente_id', 'string', 'max:255'],
+            'cliente_nombre'    => ['nullable', 'required_without:cliente_id', 'string', 'max:255'],
             'cliente_email'     => ['nullable', 'email', 'max:255'],
             'cliente_telefono'  => ['nullable', 'string', 'max:20'],
             // Dispositivo
