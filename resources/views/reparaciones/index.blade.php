@@ -69,26 +69,25 @@
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <span class="bg-[#7C3AED]/10 text-[#7C3AED] px-2.5 py-1 rounded-full text-xs font-medium">
+                        <span class="whitespace-nowrap bg-[#7C3AED]/10 text-[#7C3AED] px-2.5 py-1 rounded-full text-xs font-medium">
                             Nivel {{ $orden->nivel->nivel }} — {{ $orden->nivel->nombre }}
                         </span>
                     </td>
                     <td class="px-6 py-4">
                         @php
                         $estadoConfig = [
-                            'Recibido'        => ['bg' => 'bg-slate-100',   'text' => 'text-slate-700',   'icon' => '📥'],
-                            'En Revisión'     => ['bg' => 'bg-blue-100',    'text' => 'text-blue-700',    'icon' => '🔧'],
-                            'Esperando Pieza' => ['bg' => 'bg-amber-100',   'text' => 'text-amber-700',   'icon' => '⏳'],
-                            'Reparado'        => ['bg' => 'bg-emerald-100', 'text' => 'text-emerald-700', 'icon' => '✅'],
-                            'Retardo'         => ['bg' => 'bg-red-100',     'text' => 'text-red-700',     'icon' => '⚠️'],
-                            'Entregado'       => ['bg' => 'bg-gray-100',    'text' => 'text-gray-500',    'icon' => '📦'],
-                            'Cancelado'       => ['bg' => 'bg-rose-100',    'text' => 'text-rose-700',    'icon' => '❌'],
+                        'pendiente' => ['bg' => 'bg-amber-100', 'text' => 'text-amber-700', 'icon' => '⏳'],
+                        'en_proceso' => ['bg' => 'bg-blue-100', 'text' => 'text-blue-700', 'icon' => '🔧'],
+                        'reparado' => ['bg' => 'bg-purple-100', 'text' => 'text-purple-700', 'icon' => '✅'],
+                        'completada' => ['bg' => 'bg-emerald-100', 'text' => 'text-emerald-700', 'icon' => '✔️'],
+                        'entregada' => ['bg' => 'bg-gray-100', 'text' => 'text-gray-700', 'icon' => '📦'],
+                        'cancelada' => ['bg' => 'bg-red-100', 'text' => 'text-red-700', 'icon' => '❌'],
                         ];
-                        $config = $estadoConfig[$orden->estado] ?? ['bg' => 'bg-gray-100', 'text' => 'text-gray-600', 'icon' => ''];
+                        $config = $estadoConfig[$orden->estado] ?? ['bg' => 'bg-gray-100', 'text' => 'text-gray-600'];
                         @endphp
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium {{ $config['bg'] }} {{ $config['text'] }}">
-                            <span class="text-xs">{{ $config['icon'] }}</span>
-                            {{ $orden->estado }}
+                        <span class=" whitespace-nowrap inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium {{ $config['bg'] }} {{ $config['text'] }}">
+                            <span class="text-xs"></span>
+                            {{ ucfirst(str_replace('_', ' ', $orden->estado)) }}
                         </span>
                     </td>
                     <td class="px-6 py-4">
