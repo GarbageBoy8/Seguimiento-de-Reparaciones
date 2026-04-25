@@ -117,15 +117,18 @@
                             <td class="px-6 py-4">
                                 @php
                                     $estadoColors = [
-                                        'pendiente' => 'bg-amber-100 text-amber-700',
-                                        'en_proceso' => 'bg-blue-100 text-blue-700',
-                                        'completada' => 'bg-emerald-100 text-emerald-700',
-                                        'entregada' => 'bg-gray-100 text-gray-700',
+                                        'Recibido'        => 'bg-slate-100 text-slate-700',
+                                        'En Revisión'     => 'bg-blue-100 text-blue-700',
+                                        'Esperando Pieza' => 'bg-amber-100 text-amber-700',
+                                        'Reparado'        => 'bg-emerald-100 text-emerald-700',
+                                        'Retardo'         => 'bg-red-100 text-red-700',
+                                        'Entregado'       => 'bg-gray-100 text-gray-500',
+                                        'Cancelado'       => 'bg-rose-100 text-rose-700',
                                     ];
                                     $colorClass = $estadoColors[$orden->estado] ?? 'bg-gray-100 text-gray-600';
                                 @endphp
                                 <span class="px-2 py-1 rounded-full text-xs font-medium {{ $colorClass }}">
-                                    {{ ucfirst(str_replace('_', ' ', $orden->estado)) }}
+                                    {{ $orden->estado }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-gray-600">{{ $orden->tecnico->name ?? 'Sin asignar' }}</td>
