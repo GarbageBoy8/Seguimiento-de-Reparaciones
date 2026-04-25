@@ -9,7 +9,7 @@
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- Estilo personalizado para el patrón tecnológico (Circuito) --}}
@@ -24,45 +24,45 @@
 <body class="bg-[#f1eded] text-neutral-800 flex flex-col min-h-screen">
 
     {{-- HEADER --}}
-    <header class="bg-white w-full px-6 lg:px-8 py-4 text-sm sticky top-0 z-50 shadow-sm border-b border-neutral-200">
+    <header class="bg-white w-full  lg:px-8  text-sm sticky top-0 z-50 ">
         @if (Route::has('login'))
         <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm px-6 py-4 flex justify-between items-center w-full shadow-sm border-b border-gray-100">
-    <div class="flex items-center">
-        <a href="/" class="text-2xl font-extrabold text-[#4B0082] tracking-tight">FixFlow</a>
-    </div>
+            <div class="flex items-center">
+                <a href="/" class="text-2xl font-extrabold text-[#4B0082] tracking-tight">FixFlow</a>
+            </div>
 
-    <div class="hidden md:flex space-x-8 font-medium text-neutral-600">
-        <a href="#optimiza" class="hover:text-[#4B0082] transition-colors duration-300">Optimiza tu taller</a>
-        <a href="#gestiona" class="hover:text-[#4B0082] transition-colors duration-300">Gestiona</a>
-        <a href="#agilidad" class="hover:text-[#4B0082] transition-colors duration-300">Agilidad</a>
-    </div>
+            <div class="hidden md:flex space-x-8 font-medium text-neutral-600">
+                <a href="#optimiza" class="hover:text-[#4B0082] transition-colors duration-300">Optimiza tu taller</a>
+                <a href="#gestiona" class="hover:text-[#4B0082] transition-colors duration-300">Gestiona</a>
+                <a href="#agilidad" class="hover:text-[#4B0082] transition-colors duration-300">Agilidad</a>
+            </div>
 
-    <div class="hidden md:flex space-x-4">
-        <a href="/login" class="px-5 py-2.5 rounded-lg text-white bg-[#4B0082] font-semibold hover:bg-purple-900 transition-colors">
-            Iniciar Sesión
-        </a>
-        <a href="/register" class="px-5 py-2.5 rounded-lg text-[#4B0082] bg-purple-50 font-semibold hover:bg-purple-100 transition-colors border border-purple-200">
-            Registrarse
-        </a>
-    </div>
-</nav>
+            <div class="hidden md:flex space-x-4">
+                <a href="/login" class="px-5 py-2.5 rounded-lg text-white bg-[#4B0082] font-semibold hover:bg-[#5A00C6]  transition-colors">
+                    Iniciar Sesión
+                </a>
+                <a href="/register" class="px-5 py-2.5 rounded-lg text-[#4B0082] bg-purple-50 font-semibold hover:bg-[#4B0082] hover:text-white transition-colors border border-purple-200">
+                    Registrarse
+                </a>
+            </div>
+        </nav>
         @endif
     </header>
 
     {{-- WRAPPER GLOBAL PARA EL TEMA OSCURO --}}
     <div class="relative flex-1 bg-gradient-to-br from-[#2D004E] via-[#4B0082] to-[#1A0033] w-full flex flex-col overflow-hidden">
-        
+
         {{-- Fondo de circuito global --}}
         <div class="absolute inset-0 bg-circuit opacity-50 pointer-events-none"></div>
-        
+
         {{-- Resplandores --}}
         <div class="absolute top-[-5%] left-[-10%] w-[500px] h-[500px] bg-[#9D4EDD]/20 rounded-full blur-[120px] pointer-events-none"></div>
         <div class="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-[#7B2CBF]/20 rounded-full blur-[120px] pointer-events-none"></div>
 
         {{-- SECCIÓN PRINCIPAL (HERO) --}}
-       <section class="relative w-full px-6 lg:px-8 pt-12 pb-20 lg:pt-16 lg:pb-28 flex items-center z-10">
+        <section class="relative w-full px-6 lg:px-8 pt-12 pb-20 lg:pt-16 lg:pb-28 flex items-center z-10">
             <div class="relative max-w-7xl mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-8">
-                
+
                 {{-- Columna Izquierda: Información --}}
                 <div class="flex-1 flex flex-col items-center lg:items-start text-center lg:text-left z-10">
                     <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[#E0AAFF] text-xs font-semibold uppercase tracking-widest mb-8 shadow-sm backdrop-blur-sm">
@@ -74,9 +74,9 @@
                         ​Control Inteligente <br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#E0AAFF] to-[#C77DFF]">​Para tu Taller</span>
                     </h1>
-                    
+
                     <p class="text-lg lg:text-xl text-white/80 leading-relaxed text-justify lg:text-left max-w-2xl">
-                    FixFlow es el sistema integral diseñado para agilizar tus procesos técnicos. Registra equipos, da seguimiento en tiempo real a los estados de cada reparación y mantén el control total de tu flujo de trabajo con profesionalismo.
+                        FixFlow es el sistema integral diseñado para agilizar tus procesos técnicos. Registra equipos, da seguimiento en tiempo real a los estados de cada reparación y mantén el control total de tu flujo de trabajo con profesionalismo.
                     </p>
 
                     <div class="mt-10 flex items-center gap-4">
@@ -88,7 +88,7 @@
                 {{-- Columna Derecha: Centro de Mando --}}
                 <div class="relative flex-1 w-full max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto z-10">
                     <div class="absolute inset-0 bg-[#000000] translate-y-6 blur-2xl opacity-40 rounded-[2rem] -z-10"></div>
-                    
+
                     <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 lg:p-8 shadow-2xl relative overflow-hidden group">
                         {{-- Patrón interior de la tarjeta --}}
                         <div class="absolute inset-0 bg-circuit opacity-40 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-70 pointer-events-none"></div>
@@ -98,7 +98,9 @@
                             <div class="flex justify-between items-center mb-8">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center shadow-inner border border-white/5 backdrop-blur-md">
-                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                                        </svg>
                                     </div>
                                     <div>
                                         <h3 class="text-white font-bold text-lg tracking-wide">Centro de Mando</h3>
@@ -130,13 +132,13 @@
                                     </div>
                                     <span class="px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-wider border border-amber-500/30">En Taller</span>
                                 </div>
-                                
+
                                 <div class="relative z-10 w-full bg-white/10 rounded-full h-2 mb-3 overflow-hidden">
                                     <div class="bg-gradient-to-r from-[#9D4EDD] to-[#E0AAFF] h-full rounded-full w-[75%] relative">
                                         <div class="absolute inset-0 bg-white/20 animate-[pulse_2s_ease-in-out_infinite]"></div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="relative z-10 flex justify-end items-center gap-1.5">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                                     <p class="text-[11px] text-[#E0AAFF]/80 font-medium">Diagnóstico completado</p>
@@ -150,46 +152,46 @@
         </section>
 
         {{-- CONTENEDOR DE SECCIONES INFERIORES --}}
-       <main class="w-full flex flex-col gap-40 max-w-5xl mx-auto px-4 mt-32 mb-32">
-         {{-- SECCION OPTIMIZA --}}
-    <section id="optimiza" class="scroll-mt-32">
-        <div class="bg-purple-900 p-12 rounded-3xl border border-purple-700/50 shadow-2xl">
-            <div class="flex justify-center mb-6">
-                <span class="bg-purple-800 text-purple-200 text-sm font-bold px-5 py-2 rounded-full">OPTIMIZA TU TALLER</span>
-            </div>
-            <h3 class="text-4xl font-extrabold text-white text-center mb-6">Centraliza tu Taller</h3>
-            <p class="text-purple-200 text-center text-lg leading-relaxed max-w-3xl mx-auto">
-                Somos tu aliado digital para la gestión de reparaciones electrónicas. Nuestro objetivo es optimizar el flujo de trabajo de tu negocio para que nunca pierdas el rastro de un equipo, desde su ingreso hasta la entrega final.
-            </p>
-        </div>
-    </section>
+        <main class="w-full flex flex-col gap-40 max-w-5xl mx-auto px-4 mt-32 mb-32">
+            {{-- SECCION OPTIMIZA --}}
+            <section id="optimiza" class="scroll-mt-32">
+                <div class="bg-purple-900 p-12 rounded-3xl border border-purple-700/50 shadow-2xl">
+                    <div class="flex justify-center mb-6">
+                        <span class="bg-purple-800 text-purple-200 text-sm font-bold px-5 py-2 rounded-full">OPTIMIZA TU TALLER</span>
+                    </div>
+                    <h3 class="text-4xl font-extrabold text-white text-center mb-6">Centraliza tu Taller</h3>
+                    <p class="text-purple-200 text-center text-lg leading-relaxed max-w-3xl mx-auto">
+                        Somos tu aliado digital para la gestión de reparaciones electrónicas. Nuestro objetivo es optimizar el flujo de trabajo de tu negocio para que nunca pierdas el rastro de un equipo, desde su ingreso hasta la entrega final.
+                    </p>
+                </div>
+            </section>
 
-     {{-- SECCION GESTIONA --}}
-    <section id="gestiona" class="scroll-mt-32">
-        <div class="bg-purple-900 p-12 rounded-3xl border border-purple-700/50 shadow-2xl">
-            <div class="flex justify-center mb-6">
-                <span class="bg-purple-800 text-purple-200 text-sm font-bold px-5 py-2 rounded-full">GESTIÓN</span>
-            </div>
-            <h3 class="text-4xl font-extrabold text-white text-center mb-6">Control de Estados y Folios</h3>
-            <p class="text-purple-200 text-center text-lg leading-relaxed max-w-3xl mx-auto">
-                Genera tickets únicos de servicio y actualiza el progreso de cada equipo en segundos. Pasa de 'En diagnóstico' a 'Listo para entrega' con un solo clic, manteniendo un orden impecable en tu área de trabajo.
-            </p>
-        </div>
-    </section>
+            {{-- SECCION GESTIONA --}}
+            <section id="gestiona" class="scroll-mt-32">
+                <div class="bg-purple-900 p-12 rounded-3xl border border-purple-700/50 shadow-2xl">
+                    <div class="flex justify-center mb-6">
+                        <span class="bg-purple-800 text-purple-200 text-sm font-bold px-5 py-2 rounded-full">GESTIÓN</span>
+                    </div>
+                    <h3 class="text-4xl font-extrabold text-white text-center mb-6">Control de Estados y Folios</h3>
+                    <p class="text-purple-200 text-center text-lg leading-relaxed max-w-3xl mx-auto">
+                        Genera tickets únicos de servicio y actualiza el progreso de cada equipo en segundos. Pasa de 'En diagnóstico' a 'Listo para entrega' con un solo clic, manteniendo un orden impecable en tu área de trabajo.
+                    </p>
+                </div>
+            </section>
 
-     {{-- SECCION AGILIDAD --}}
-    <section id="agilidad" class="scroll-mt-32">
-        <div class="bg-purple-900 p-12 rounded-3xl border border-purple-700/50 shadow-2xl">
-            <div class="flex justify-center mb-6">
-                <span class="bg-purple-800 text-purple-200 text-sm font-bold px-5 py-2 rounded-full">AGILIDAD</span>
-            </div>
-            <h3 class="text-4xl font-extrabold text-white text-center mb-6">Historial a tu Alcance</h3>
-            <p class="text-purple-200 text-center text-lg leading-relaxed max-w-3xl mx-auto">
-                ¿Un equipo regresó por garantía o para un nuevo servicio? Accede al instante al historial de cada cliente y dispositivo. Deja atrás las notas de papel y digitaliza la memoria de tu negocio.
-            </p>
-        </div>
-    </section>
-</main>
+            {{-- SECCION AGILIDAD --}}
+            <section id="agilidad" class="scroll-mt-32">
+                <div class="bg-purple-900 p-12 rounded-3xl border border-purple-700/50 shadow-2xl">
+                    <div class="flex justify-center mb-6">
+                        <span class="bg-purple-800 text-purple-200 text-sm font-bold px-5 py-2 rounded-full">AGILIDAD</span>
+                    </div>
+                    <h3 class="text-4xl font-extrabold text-white text-center mb-6">Historial a tu Alcance</h3>
+                    <p class="text-purple-200 text-center text-lg leading-relaxed max-w-3xl mx-auto">
+                        ¿Un equipo regresó por garantía o para un nuevo servicio? Accede al instante al historial de cada cliente y dispositivo. Deja atrás las notas de papel y digitaliza la memoria de tu negocio.
+                    </p>
+                </div>
+            </section>
+        </main>
 
         {{-- FOOTER --}}
         <footer class="relative z-10 w-full px-6 py-8 text-center border-t border-white/10 mt-auto backdrop-blur-sm bg-black/10">
