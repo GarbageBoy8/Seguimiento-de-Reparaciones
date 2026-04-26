@@ -57,6 +57,7 @@ class SeguimientoController extends Controller
 
         $mensajes = $reparacion->mensajes()
             ->with('user:id,name')
+            ->orderBy('created_at')
             ->get()
             ->map(fn($m) => [
                 'id'             => $m->id,

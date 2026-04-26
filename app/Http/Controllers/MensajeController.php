@@ -17,6 +17,7 @@ class MensajeController extends Controller
 
         $mensajes = $reparacion->mensajes()
             ->with('user:id,name,rol')
+            ->orderBy('created_at')
             ->get()
             ->map(fn($m) => [
                 'id'             => $m->id,
