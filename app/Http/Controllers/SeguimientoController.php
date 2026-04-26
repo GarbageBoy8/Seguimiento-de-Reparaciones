@@ -38,6 +38,12 @@ class SeguimientoController extends Controller
             'es_del_cliente' => true,
         ]);
 
+        // Si la petición viene de AJAX (JS), retornar JSON en vez de redirigir
+        if ($request->expectsJson()) {
+            return response()->json(['ok' => true]);
+        }
+
+        // Fallback para navegadores sin JS
         return redirect()->route('seguimiento.show', $token)
                          ->with('success', 'Mensaje enviado correctamente.');
     }

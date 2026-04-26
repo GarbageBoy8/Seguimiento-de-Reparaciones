@@ -71,11 +71,11 @@
                 <p role="alert">{{ session('success') }}</p>
             @endif
 
-            <form method="POST" action="{{ route('seguimiento.mensaje', $reparacion->token_seguimiento) }}">
+            <form id="portal-form" method="POST" action="{{ route('seguimiento.mensaje', $reparacion->token_seguimiento) }}">
                 @csrf
                 <label for="contenido">Escribe tu mensaje</label>
                 <textarea id="contenido" name="contenido" rows="3" required placeholder="Ej: ¿Tienen alguna actualización de mi equipo?"></textarea>
-                <button type="submit">Enviar mensaje</button>
+                <button type="submit" id="portal-btn">Enviar mensaje</button>
             </form>
         </section>
 
@@ -119,6 +119,49 @@
 
         cargarMensajes();
         setInterval(cargarMensajes, 5000);
+
+        // ─── Submit AJAX del cliente ───────────────────────────────────
+        const portalForm    = document.getElementById('portal-form');
+        const portalStoreUrl = portalForm.action;
+        const portalCsrf    = document.querySelector('#portal-form input[name="_token"]').value;
+
+        portalForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const textarea = document.getElementById('contenido');
+            const btn      = document.getElementById('portal-btn');
+            const contenido = textarea.value.trim();
+            if (!contenido) return;
+
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
+
+            try {
+                const res = await fetch(portalStoreUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': portalCsrf
+                    },
+                    body: JSON.stringify({ contenido })
+                });
+
+                if (res.ok) {
+                    textarea.value = '';
+                    cargarMensajes();
+                } else if (res.status === 419) {
+                    alert('Tu sesión ha expirado. La página se recargará.');
+                    location.reload();
+                } else {
+                    alert('No se pudo enviar el mensaje. Intenta de nuevo.');
+                }
+            } catch (err) {
+                alert('Sin conexión. Verifica tu red e intenta de nuevo.');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Enviar mensaje';
+            }
+        });
     </script>
 
 </body>
