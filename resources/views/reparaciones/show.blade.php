@@ -231,17 +231,41 @@
 
         document.getElementById('chat-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const contenido = document.getElementById('chat-input').value.trim();
+            const input  = document.getElementById('chat-input');
+            const btn    = this.querySelector('button[type="submit"]');
+            const contenido = input.value.trim();
             if (!contenido) return;
 
-            await fetch(chatStoreUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-                body: JSON.stringify({ contenido })
-            });
+            // Deshabilitar botón durante el envío (evita doble submit)
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
 
-            document.getElementById('chat-input').value = '';
-            cargarMensajes();
+            try {
+                const res = await fetch(chatStoreUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                    body: JSON.stringify({ contenido })
+                });
+
+                if (res.ok) {
+                    input.value = '';
+                    cargarMensajes();
+                } else if (res.status === 419) {
+                    // CSRF expirado — la sesión caducó, hay que recargar
+                    alert('Tu sesión ha expirado. La página se recargará para continuar.');
+                    location.reload();
+                } else {
+                    // Otro error del servidor — restaurar texto para que el usuario no lo pierda
+                    alert('No se pudo enviar el mensaje (error ' + res.status + '). Intenta de nuevo.');
+                }
+            } catch (err) {
+                // Error de red (sin conexión)
+                alert('Sin conexión. Verifica tu red e intenta de nuevo.');
+            } finally {
+                // Restaurar botón siempre, haya fallado o no
+                btn.disabled = false;
+                btn.textContent = 'Enviar';
+            }
         });
 
         // Carga inicial + polling cada 5 segundos
