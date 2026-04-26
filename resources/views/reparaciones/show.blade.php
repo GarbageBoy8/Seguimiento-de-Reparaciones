@@ -115,6 +115,18 @@
     <section aria-label="Escalar nivel de reparación">
         <h2>Escalar nivel</h2>
         <p>Nivel actual: <strong>{{ $reparacion->nivel->nombre }}</strong></p>
+
+        {{-- Errores de validación del formulario de escalamiento --}}
+        @if($errors->any())
+            <div role="alert">
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('reparaciones.escalar', $reparacion) }}">
             @csrf
             <div>
@@ -122,17 +134,24 @@
                 <select id="nivel_nuevo_id" name="nivel_nuevo_id" required>
                     <option value="">— Seleccionar nuevo nivel —</option>
                     @foreach($niveles as $nivel)
-                        @if($nivel->id !== $reparacion->nivel_id)
+                        {{-- != en lugar de !== para comparar int vs string sin fallo de tipo --}}
+                        @if($nivel->id != $reparacion->nivel_id)
                             <option value="{{ $nivel->id }}">
                                 Nivel {{ $nivel->nivel }} — {{ $nivel->nombre }} (SLA: {{ $nivel->horas_sla }}h)
                             </option>
                         @endif
                     @endforeach
                 </select>
+                @error('nivel_nuevo_id')
+                    <span>{{ $message }}</span>
+                @enderror
             </div>
             <div>
                 <label for="motivo">Motivo del escalamiento</label>
-                <textarea id="motivo" name="motivo" rows="3" required placeholder="Ej: Se detectó falla en la placa madre, requiere microsoldadura."></textarea>
+                <textarea id="motivo" name="motivo" rows="3" required placeholder="Ej: Se detectó falla en la placa madre, requiere microsoldadura.">{{ old('motivo') }}</textarea>
+                @error('motivo')
+                    <span>{{ $message }}</span>
+                @enderror
             </div>
             <button type="submit">Escalar nivel</button>
         </form>

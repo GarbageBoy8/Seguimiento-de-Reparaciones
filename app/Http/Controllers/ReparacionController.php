@@ -9,6 +9,7 @@ use App\Models\NivelReparacion;
 use App\Models\Reparacion;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Mail;
 
 class ReparacionController extends Controller
@@ -144,7 +145,9 @@ class ReparacionController extends Controller
         $this->autorizarTaller($reparacion);
 
         $data = $request->validate([
-            'nivel_nuevo_id' => ['required', 'exists:niveles_reparacion,id', 'different:' . $reparacion->nivel_id],
+            // Rule::notIn compara el valor enviado contra el nivel_id actual (con cast a int)
+            // 'different:N' en Laravel compara contra un *campo de request* llamado N, no contra el valor N
+            'nivel_nuevo_id' => ['required', 'exists:niveles_reparacion,id', Rule::notIn([(int) $reparacion->nivel_id])],
             'motivo'         => ['required', 'string', 'min:10'],
         ]);
 
@@ -161,9 +164,10 @@ class ReparacionController extends Controller
         ]);
 
         // Actualizar nivel y recalcular hora_limite
+        // ->copy() evita mutar el atributo hora_ingreso del modelo en memoria
         $reparacion->update([
             'nivel_id'    => $nivelNuevo->id,
-            'hora_limite' => $reparacion->hora_ingreso->addHours($nivelNuevo->horas_sla),
+            'hora_limite' => $reparacion->hora_ingreso->copy()->addHours($nivelNuevo->horas_sla),
         ]);
 
         return redirect()->route('reparaciones.show', $reparacion)
