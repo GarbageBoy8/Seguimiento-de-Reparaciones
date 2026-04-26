@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seguimiento de orden {{ $reparacion->folio }} — FixFlow</title>
     <meta name="description" content="Consulta el estado de tu reparación con folio {{ $reparacion->folio }}.">
+    {{-- Fallback para navegadores sin JS: recarga cada 30s para mostrar mensajes nuevos --}}
+    <noscript>
+        <meta http-equiv="refresh" content="30">
+    </noscript>
 </head>
 <body>
 
@@ -85,6 +89,7 @@
         const mensajesUrl = "{{ route('seguimiento.mensajes.json', $reparacion->token_seguimiento) }}";
 
         let lastMessageId = 0;
+        const tituloOriginal = document.title; // Guardar título original para restaurarlo
 
         function renderMensajes(mensajes) {
             const contenedor = document.getElementById('portal-mensajes');
@@ -98,7 +103,17 @@
                     <p>${m.contenido}</p>
                 </div>`
             ).join('');
+
+            // Badge en el título si la pestaña no está enfocada
+            if (!document.hasFocus()) {
+                document.title = '🔔 Nuevo mensaje — FixFlow';
+            }
         }
+
+        // Restaurar título cuando el usuario vuelve a la pestaña
+        window.addEventListener('focus', () => {
+            document.title = tituloOriginal;
+        });
 
         async function cargarMensajes() {
             try {
