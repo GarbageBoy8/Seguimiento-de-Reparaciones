@@ -75,12 +75,26 @@
                 <p role="alert">{{ session('success') }}</p>
             @endif
 
-            <form id="portal-form" method="POST" action="{{ route('seguimiento.mensaje', $reparacion->token_seguimiento) }}">
-                @csrf
-                <label for="contenido">Escribe tu mensaje</label>
-                <textarea id="contenido" name="contenido" rows="3" required placeholder="Ej: ¿Tienen alguna actualización de mi equipo?"></textarea>
-                <button type="submit" id="portal-btn">Enviar mensaje</button>
-            </form>
+            @php $ordenCerrada = in_array($reparacion->estado, ['Entregado', 'Cancelado']); @endphp
+
+            @if(!$ordenCerrada)
+                {{-- Orden activa: el cliente puede enviar mensajes --}}
+                <form id="portal-form" method="POST" action="{{ route('seguimiento.mensaje', $reparacion->token_seguimiento) }}">
+                    @csrf
+                    <label for="contenido">Escribe tu mensaje</label>
+                    <textarea id="contenido" name="contenido" rows="3" required placeholder="Ej: ¿Tienen alguna actualización de mi equipo?"></textarea>
+                    <button type="submit" id="portal-btn">Enviar mensaje</button>
+                </form>
+            @else
+                {{-- Orden cerrada: solo lectura del historial --}}
+                <p role="status">
+                    @if($reparacion->estado === 'Entregado')
+                        ✅ Esta orden fue entregada. El chat ya no está disponible.
+                    @else
+                        ❌ Esta orden fue cancelada. El chat ya no está disponible.
+                    @endif
+                </p>
+            @endif
         </section>
 
     </main>
@@ -132,51 +146,59 @@
             }
         }
 
+        // Orden cerrada = solo carga inicial del historial, sin polling ni badge
+        const ordenCerrada = {{ $ordenCerrada ? 'true' : 'false' }};
+
         cargarMensajes();
-        setInterval(cargarMensajes, 5000);
+        if (!ordenCerrada) {
+            setInterval(cargarMensajes, 5000);
+        }
 
-        // ─── Submit AJAX del cliente ───────────────────────────────────
-        const portalForm    = document.getElementById('portal-form');
-        const portalStoreUrl = portalForm.action;
-        const portalCsrf    = document.querySelector('#portal-form input[name="_token"]').value;
+        // Submit AJAX — solo se enlaza si el formulario existe (orden activa)
+        if (!ordenCerrada) {
+            // ─── Submit AJAX del cliente ───────────────────────────────────
+            const portalForm    = document.getElementById('portal-form');
+            const portalStoreUrl = portalForm.action;
+            const portalCsrf    = document.querySelector('#portal-form input[name="_token"]').value;
 
-        portalForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const textarea = document.getElementById('contenido');
-            const btn      = document.getElementById('portal-btn');
-            const contenido = textarea.value.trim();
-            if (!contenido) return;
+            portalForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const textarea = document.getElementById('contenido');
+                const btn      = document.getElementById('portal-btn');
+                const contenido = textarea.value.trim();
+                if (!contenido) return;
 
-            btn.disabled = true;
-            btn.textContent = 'Enviando...';
+                btn.disabled = true;
+                btn.textContent = 'Enviando...';
 
-            try {
-                const res = await fetch(portalStoreUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json',
-                        'X-CSRF-TOKEN': portalCsrf
-                    },
-                    body: JSON.stringify({ contenido })
-                });
+                try {
+                    const res = await fetch(portalStoreUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                            'X-CSRF-TOKEN': portalCsrf
+                        },
+                        body: JSON.stringify({ contenido })
+                    });
 
-                if (res.ok) {
-                    textarea.value = '';
-                    cargarMensajes();
-                } else if (res.status === 419) {
-                    alert('Tu sesión ha expirado. La página se recargará.');
-                    location.reload();
-                } else {
-                    alert('No se pudo enviar el mensaje. Intenta de nuevo.');
+                    if (res.ok) {
+                        textarea.value = '';
+                        cargarMensajes();
+                    } else if (res.status === 419) {
+                        alert('Tu sesión ha expirado. La página se recargará.');
+                        location.reload();
+                    } else {
+                        alert('No se pudo enviar el mensaje. Intenta de nuevo.');
+                    }
+                } catch (err) {
+                    alert('Sin conexión. Verifica tu red e intenta de nuevo.');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = 'Enviar mensaje';
                 }
-            } catch (err) {
-                alert('Sin conexión. Verifica tu red e intenta de nuevo.');
-            } finally {
-                btn.disabled = false;
-                btn.textContent = 'Enviar mensaje';
-            }
-        });
+            });
+        }
     </script>
 
 </body>
