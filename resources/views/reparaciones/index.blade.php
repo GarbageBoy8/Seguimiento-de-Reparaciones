@@ -69,7 +69,7 @@
                         </div>
                     </td>
                     <td class="px-6 py-4">
-                        <span class="bg-[#7C3AED]/10 text-[#7C3AED] px-2.5 py-1 rounded-full text-xs font-medium">
+                        <span class="whitespace-nowrap bg-[#7C3AED]/10 text-[#7C3AED] px-2.5 py-1 rounded-full text-xs font-medium">
                             Nivel {{ $orden->nivel->nivel }} — {{ $orden->nivel->nombre }}
                         </span>
                     </td>
@@ -85,7 +85,7 @@
                         ];
                         $config = $estadoConfig[$orden->estado] ?? ['bg' => 'bg-gray-100', 'text' => 'text-gray-600'];
                         @endphp
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium {{ $config['bg'] }} {{ $config['text'] }}">
+                        <span class=" whitespace-nowrap inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium {{ $config['bg'] }} {{ $config['text'] }}">
                             <span class="text-xs"></span>
                             {{ ucfirst(str_replace('_', ' ', $orden->estado)) }}
                         </span>

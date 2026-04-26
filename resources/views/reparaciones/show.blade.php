@@ -115,6 +115,18 @@
     <section aria-label="Escalar nivel de reparación">
         <h2>Escalar nivel</h2>
         <p>Nivel actual: <strong>{{ $reparacion->nivel->nombre }}</strong></p>
+
+        {{-- Errores de validación del formulario de escalamiento --}}
+        @if($errors->any())
+            <div role="alert">
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <form method="POST" action="{{ route('reparaciones.escalar', $reparacion) }}">
             @csrf
             <div>
@@ -122,17 +134,24 @@
                 <select id="nivel_nuevo_id" name="nivel_nuevo_id" required>
                     <option value="">— Seleccionar nuevo nivel —</option>
                     @foreach($niveles as $nivel)
-                        @if($nivel->id !== $reparacion->nivel_id)
+                        {{-- != en lugar de !== para comparar int vs string sin fallo de tipo --}}
+                        @if($nivel->id != $reparacion->nivel_id)
                             <option value="{{ $nivel->id }}">
                                 Nivel {{ $nivel->nivel }} — {{ $nivel->nombre }} (SLA: {{ $nivel->horas_sla }}h)
                             </option>
                         @endif
                     @endforeach
                 </select>
+                @error('nivel_nuevo_id')
+                    <span>{{ $message }}</span>
+                @enderror
             </div>
             <div>
                 <label for="motivo">Motivo del escalamiento</label>
-                <textarea id="motivo" name="motivo" rows="3" required placeholder="Ej: Se detectó falla en la placa madre, requiere microsoldadura."></textarea>
+                <textarea id="motivo" name="motivo" rows="3" required placeholder="Ej: Se detectó falla en la placa madre, requiere microsoldadura.">{{ old('motivo') }}</textarea>
+                @error('motivo')
+                    <span>{{ $message }}</span>
+                @enderror
             </div>
             <button type="submit">Escalar nivel</button>
         </form>
@@ -171,39 +190,85 @@
     </section>
 
     <script>
-        const chatUrl     = "{{ route('reparaciones.mensajes.index', $reparacion) }}";
+        const chatUrl      = "{{ route('reparaciones.mensajes.index', $reparacion) }}";
         const chatStoreUrl = "{{ route('reparaciones.mensajes.store', $reparacion) }}";
-        const csrfToken   = "{{ csrf_token() }}";
+        const csrfToken    = "{{ csrf_token() }}";
 
-        async function cargarMensajes() {
-            const res = await fetch(chatUrl);
-            const mensajes = await res.json();
+        let lastMessageId = 0; // Rastrea el ID del último mensaje renderizado
+
+        function renderMensajes(mensajes) {
             const contenedor = document.getElementById('chat-mensajes');
+            if (mensajes.length === 0) {
+                contenedor.innerHTML = '<p class="text-gray-400 text-sm">Aún no hay mensajes.</p>';
+                return;
+            }
             contenedor.innerHTML = mensajes.map(m =>
-                `<div data-cliente="${m.es_del_cliente}">
-                    <strong>${m.autor}</strong> <time>${m.fecha}</time>
+                `<div data-cliente="${m.es_del_cliente}" class="mb-2">
+                    <strong>${m.autor}</strong> <time class="text-xs text-gray-500">${m.fecha}</time>
                     <p>${m.contenido}</p>
                 </div>`
             ).join('');
             contenedor.scrollTop = contenedor.scrollHeight;
         }
 
+        async function cargarMensajes() {
+            try {
+                const res = await fetch(chatUrl);
+                if (!res.ok) return;
+                const mensajes = await res.json();
+
+                // Solo re-renderizar si llegó un mensaje nuevo
+                if (mensajes.length === 0) return;
+                const maxId = Math.max(...mensajes.map(m => m.id));
+                if (maxId <= lastMessageId) return; // Sin cambios — no tocar el DOM
+
+                lastMessageId = maxId;
+                renderMensajes(mensajes);
+            } catch (e) {
+                // Error de red silencioso — el polling lo reintentará en 5s
+            }
+        }
+
         document.getElementById('chat-form').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const contenido = document.getElementById('chat-input').value.trim();
+            const input  = document.getElementById('chat-input');
+            const btn    = this.querySelector('button[type="submit"]');
+            const contenido = input.value.trim();
             if (!contenido) return;
 
-            await fetch(chatStoreUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
-                body: JSON.stringify({ contenido })
-            });
+            // Deshabilitar botón durante el envío (evita doble submit)
+            btn.disabled = true;
+            btn.textContent = 'Enviando...';
 
-            document.getElementById('chat-input').value = '';
-            cargarMensajes();
+            try {
+                const res = await fetch(chatStoreUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                    body: JSON.stringify({ contenido })
+                });
+
+                if (res.ok) {
+                    input.value = '';
+                    cargarMensajes();
+                } else if (res.status === 419) {
+                    // CSRF expirado — la sesión caducó, hay que recargar
+                    alert('Tu sesión ha expirado. La página se recargará para continuar.');
+                    location.reload();
+                } else {
+                    // Otro error del servidor — restaurar texto para que el usuario no lo pierda
+                    alert('No se pudo enviar el mensaje (error ' + res.status + '). Intenta de nuevo.');
+                }
+            } catch (err) {
+                // Error de red (sin conexión)
+                alert('Sin conexión. Verifica tu red e intenta de nuevo.');
+            } finally {
+                // Restaurar botón siempre, haya fallado o no
+                btn.disabled = false;
+                btn.textContent = 'Enviar';
+            }
         });
 
-        // Polling cada 5 segundos
+        // Carga inicial + polling cada 5 segundos
         cargarMensajes();
         setInterval(cargarMensajes, 5000);
     </script>

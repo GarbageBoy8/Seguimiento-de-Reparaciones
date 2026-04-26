@@ -14,7 +14,11 @@ class PanelTecnicoController extends Controller
         $stats = [
             'total'       => Reparacion::delTaller($tallerId)->count(),
             'en_proceso'  => Reparacion::delTaller($tallerId)->activas()->count(),
-            'retardos'    => Reparacion::delTaller($tallerId)->where('estado', 'Retardo')->count(),
+            // Retardos: misma lógica que estaRetrasada() — hora_limite ya pasó y no está terminada
+            'retardos'    => Reparacion::delTaller($tallerId)
+                                ->whereNotIn('estado', ['Reparado', 'Entregado', 'Cancelado'])
+                                ->where('hora_limite', '<', now())
+                                ->count(),
             'completadas' => Reparacion::delTaller($tallerId)->where('estado', 'Entregado')->count(),
         ];
 
