@@ -190,21 +190,43 @@
     </section>
 
     <script>
-        const chatUrl     = "{{ route('reparaciones.mensajes.index', $reparacion) }}";
+        const chatUrl      = "{{ route('reparaciones.mensajes.index', $reparacion) }}";
         const chatStoreUrl = "{{ route('reparaciones.mensajes.store', $reparacion) }}";
-        const csrfToken   = "{{ csrf_token() }}";
+        const csrfToken    = "{{ csrf_token() }}";
 
-        async function cargarMensajes() {
-            const res = await fetch(chatUrl);
-            const mensajes = await res.json();
+        let lastMessageId = 0; // Rastrea el ID del último mensaje renderizado
+
+        function renderMensajes(mensajes) {
             const contenedor = document.getElementById('chat-mensajes');
+            if (mensajes.length === 0) {
+                contenedor.innerHTML = '<p class="text-gray-400 text-sm">Aún no hay mensajes.</p>';
+                return;
+            }
             contenedor.innerHTML = mensajes.map(m =>
-                `<div data-cliente="${m.es_del_cliente}">
-                    <strong>${m.autor}</strong> <time>${m.fecha}</time>
+                `<div data-cliente="${m.es_del_cliente}" class="mb-2">
+                    <strong>${m.autor}</strong> <time class="text-xs text-gray-500">${m.fecha}</time>
                     <p>${m.contenido}</p>
                 </div>`
             ).join('');
             contenedor.scrollTop = contenedor.scrollHeight;
+        }
+
+        async function cargarMensajes() {
+            try {
+                const res = await fetch(chatUrl);
+                if (!res.ok) return;
+                const mensajes = await res.json();
+
+                // Solo re-renderizar si llegó un mensaje nuevo
+                if (mensajes.length === 0) return;
+                const maxId = Math.max(...mensajes.map(m => m.id));
+                if (maxId <= lastMessageId) return; // Sin cambios — no tocar el DOM
+
+                lastMessageId = maxId;
+                renderMensajes(mensajes);
+            } catch (e) {
+                // Error de red silencioso — el polling lo reintentará en 5s
+            }
         }
 
         document.getElementById('chat-form').addEventListener('submit', async function(e) {
@@ -222,7 +244,7 @@
             cargarMensajes();
         });
 
-        // Polling cada 5 segundos
+        // Carga inicial + polling cada 5 segundos
         cargarMensajes();
         setInterval(cargarMensajes, 5000);
     </script>

@@ -84,9 +84,9 @@
     <script>
         const mensajesUrl = "{{ route('seguimiento.mensajes.json', $reparacion->token_seguimiento) }}";
 
-        async function cargarMensajes() {
-            const res = await fetch(mensajesUrl);
-            const mensajes = await res.json();
+        let lastMessageId = 0;
+
+        function renderMensajes(mensajes) {
             const contenedor = document.getElementById('portal-mensajes');
             if (mensajes.length === 0) {
                 contenedor.innerHTML = '<p>Aún no hay mensajes.</p>';
@@ -98,6 +98,23 @@
                     <p>${m.contenido}</p>
                 </div>`
             ).join('');
+        }
+
+        async function cargarMensajes() {
+            try {
+                const res = await fetch(mensajesUrl);
+                if (!res.ok) return;
+                const mensajes = await res.json();
+
+                if (mensajes.length === 0) return;
+                const maxId = Math.max(...mensajes.map(m => m.id));
+                if (maxId <= lastMessageId) return;
+
+                lastMessageId = maxId;
+                renderMensajes(mensajes);
+            } catch (e) {
+                // Error de red silencioso — reintento en 5s
+            }
         }
 
         cargarMensajes();
