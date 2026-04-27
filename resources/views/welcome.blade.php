@@ -38,12 +38,14 @@
             </div>
 
             <div class="hidden md:flex space-x-4">
-                <a href="/login" class="px-5 py-2.5 rounded-lg text-white bg-[#4B0082] font-semibold hover:bg-[#5A00C6]  transition-colors">
-                    Iniciar Sesión
-                </a>
-                <a href="/register" class="px-5 py-2.5 rounded-lg text-[#4B0082] bg-purple-50 font-semibold hover:bg-[#4B0082] hover:text-white transition-colors border border-purple-200">
-                    Registrarse
-                </a>
+                <div class="hidden md:flex space-x-4">
+                    <a href="/login" class="px-5 py-2.5 rounded-lg text-white bg-[#4B0082] font-semibold hover:bg-[#5A00C6] transition-colors">
+                        Iniciar Sesión
+                    </a>
+                    <a href="/register" class="px-5 py-2.5 rounded-lg text-white bg-[#4B0082] font-semibold hover:bg-[#5A00C6] transition-colors">
+                        Registrarse
+                    </a>
+                </div>
             </div>
         </nav>
         @endif
@@ -71,8 +73,8 @@
                     </div>
 
                     <h1 class="text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white mb-6 leading-[1.1] uppercase tracking-tight">
-                        ​Control Inteligente <br>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#E0AAFF] to-[#C77DFF]">​Para tu Taller</span>
+                        Control Inteligente <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#E0AAFF] to-[#C77DFF]">Para tu Taller</span>
                     </h1>
 
                     <p class="text-lg lg:text-xl text-white/80 leading-relaxed text-justify lg:text-left max-w-2xl">
@@ -104,44 +106,34 @@
                                     </div>
                                     <div>
                                         <h3 class="text-white font-bold text-lg tracking-wide">Centro de Mando</h3>
-                                        <p class="text-[#E0AAFF]/70 text-sm">Resumen de hoy</p>
                                     </div>
-                                </div>
-                                <div class="px-3 py-1.5 rounded-full bg-white/10 text-white text-xs font-medium flex items-center gap-2 border border-white/10 backdrop-blur-md">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                                    En vivo
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4 mb-6">
+                            {{-- Tarjetas del Centro de Mando --}}
+                            <div class="grid grid-cols-2 gap-4">
+                                {{-- Total órdenes --}}
+                                <div class="bg-gradient-to-br from-[#7B2CBF] to-[#4B0082] rounded-2xl p-5 border border-white/10 transition-transform hover:-translate-y-1 duration-300 relative overflow-hidden shadow-lg shadow-purple-900/50">
+                                    <p class="text-white/90 text-sm font-medium mb-1 relative z-10">Total órdenes</p>
+                                    <p class="text-4xl font-extrabold text-white relative z-10">10</p>
+                                </div>
+
+                                {{-- En proceso --}}
                                 <div class="bg-black/30 backdrop-blur-md rounded-2xl p-5 border border-white/5 transition-transform hover:-translate-y-1 duration-300 relative overflow-hidden">
-                                    <p class="text-[#E0AAFF]/80 text-sm font-medium mb-2 relative z-10">Órdenes Activas</p>
-                                    <p class="text-4xl font-extrabold text-white relative z-10">24</p>
+                                    <p class="text-white/80 text-sm font-medium mb-1 relative z-10">En proceso</p>
+                                    <p class="text-4xl font-extrabold text-white drop-shadow-[0_0_10px_rgba(199,125,255,0.3)] relative z-10">3</p>
                                 </div>
+
+                                {{-- Retardos activos --}}
                                 <div class="bg-black/30 backdrop-blur-md rounded-2xl p-5 border border-white/5 transition-transform hover:-translate-y-1 duration-300 relative overflow-hidden">
-                                    <p class="text-[#E0AAFF]/80 text-sm font-medium mb-2 relative z-10">Listos para Entrega</p>
-                                    <p class="text-4xl font-extrabold text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.3)] relative z-10">8</p>
-                                </div>
-                            </div>
-
-                            <div class="bg-black/30 backdrop-blur-md rounded-2xl p-5 border border-white/5 relative overflow-hidden">
-                                <div class="relative z-10 flex justify-between items-start mb-4">
-                                    <div>
-                                        <h4 class="text-white font-semibold text-sm">MacBook Pro 16" - M1 Max</h4>
-                                        <p class="text-[#E0AAFF]/60 text-xs mt-1">Ticket #8920 • Juan Pérez</p>
-                                    </div>
-                                    <span class="px-2.5 py-1 rounded-md bg-amber-500/20 text-amber-400 text-[10px] font-bold uppercase tracking-wider border border-amber-500/30">En Taller</span>
+                                    <p class="text-white/80 text-sm font-medium mb-1 relative z-10">Retardos activos</p>
+                                    <p class="text-4xl font-extrabold text-[#FF4D6D] drop-shadow-[0_0_10px_rgba(255,77,109,0.3)] relative z-10">0</p>
                                 </div>
 
-                                <div class="relative z-10 w-full bg-white/10 rounded-full h-2 mb-3 overflow-hidden">
-                                    <div class="bg-gradient-to-r from-[#9D4EDD] to-[#E0AAFF] h-full rounded-full w-[75%] relative">
-                                        <div class="absolute inset-0 bg-white/20 animate-[pulse_2s_ease-in-out_infinite]"></div>
-                                    </div>
-                                </div>
-
-                                <div class="relative z-10 flex justify-end items-center gap-1.5">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                                    <p class="text-[11px] text-[#E0AAFF]/80 font-medium">Diagnóstico completado</p>
+                                {{-- Entregadas --}}
+                                <div class="bg-black/30 backdrop-blur-md rounded-2xl p-5 border border-white/5 transition-transform hover:-translate-y-1 duration-300 relative overflow-hidden">
+                                    <p class="text-white/80 text-sm font-medium mb-1 relative z-10">Entregadas</p>
+                                    <p class="text-4xl font-extrabold text-[#34D399] drop-shadow-[0_0_10px_rgba(52,211,153,0.3)] relative z-10">7</p>
                                 </div>
                             </div>
                         </div>
