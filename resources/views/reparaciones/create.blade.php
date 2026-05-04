@@ -50,14 +50,13 @@
                 {{-- Selector de cliente existente --}}
                 <div>
                     <label for="cliente_id" class="block text-sm font-medium text-gray-700 mb-1">Buscar cliente existente <span class="text-gray-400 text-xs font-normal">(opcional)</span></label>
-                    <select id="cliente_id" name="cliente_id" class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] transition-all">
-                        <option value="">— Nuevo cliente —</option>
-                        @foreach($clientes as $cliente)
-                        <option value="{{ $cliente->id }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
-                            {{ $cliente->nombre }} ({{ $cliente->telefono ?? $cliente->email ?? 'sin contacto' }})
-                        </option>
-                        @endforeach
-                    </select>
+                    <x-custom-select
+                        name="cliente_id"
+                        :options="$clientes->pluck('nombre', 'id')->toArray()"
+                        :selected="old('cliente_id')"
+                        placeholder="Nuevo cliente"
+                        :show-create="true"
+                        create-text=" Crear nuevo cliente" />
                 </div>
 
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-3">
@@ -102,13 +101,12 @@
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label for="tipo_equipo" class="block text-sm font-medium text-gray-700 mb-1">Tipo de equipo <span class="text-red-500">*</span></label>
-                        <select id="tipo_equipo" name="tipo_equipo" required class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] transition-all">
-                            <option value="">— Seleccionar —</option>
-                            @foreach(['Celular', 'Laptop', 'Tablet', 'Consola', 'PC', 'Otro'] as $tipo)
-                            <option value="{{ $tipo }}" {{ old('tipo_equipo') === $tipo ? 'selected' : '' }}>{{ $tipo }}</option>
-                            @endforeach
-                        </select>
+                        
+                        <!-- Con valores personalizados -->
+                        <x-tipo-equipo-select
+                            name="tipo_equipo"
+                            :selected="old('tipo_equipo', 'Laptop')"
+                            :required="true" />
                     </div>
                     <div>
                         <label for="marca" class="block text-sm font-medium text-gray-700 mb-1">Marca <span class="text-red-500">*</span></label>
@@ -216,9 +214,9 @@
 <!--     -->
 {{-- Datos de niveles para JS (descripción dinámica) --}}
 @push('scripts')
-<script> 
+<script>
     document.addEventListener('DOMContentLoaded', function() {
-        const niveles = @json($niveles->keyBy('id'));
+
         const selectNivel = document.getElementById('nivel_id');
         const descNivel = document.getElementById('descripcion-nivel');
 
