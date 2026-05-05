@@ -324,9 +324,8 @@
                 const res = await fetch(mensajesUrl);
                 if (!res.ok) return;
                 const mensajes = await res.json();
-                if (mensajes.length === 0) return;
-                const maxId = Math.max(...mensajes.map(m => m.id));
-                if (maxId <= lastMessageId) return;
+                const maxId = mensajes.length > 0 ? Math.max(...mensajes.map(m => m.id)) : 0;
+                if (maxId <= lastMessageId && lastMessageId !== 0) return;
                 lastMessageId = maxId;
                 renderMensajes(mensajes);
             } catch (e) {
@@ -334,12 +333,7 @@
             }
         }
 
-        // Orden cerrada = solo carga inicial del historial, sin polling ni badge
-        const ordenCerrada = {
-            {
-                $ordenCerrada ? 'true' : 'false'
-            }
-        };
+        const ordenCerrada = @json($ordenCerrada);
 
         cargarMensajes();
         if (!ordenCerrada) {
