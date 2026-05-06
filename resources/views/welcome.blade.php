@@ -77,7 +77,7 @@
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#E0AAFF] to-[#C77DFF]">Para tu Taller</span>
                     </h1>
 
-                    <p class="text-lg lg:text-xl text-white/80 leading-relaxed text-justify lg:text-left max-w-2xl">
+                    <p class="text-xl lg:text-2xl text-white/95 leading-relaxed text-justify lg:text-left max-w-2xl font-light">
                         FixFlow es el sistema integral diseñado para agilizar tus procesos técnicos. Registra equipos, da seguimiento en tiempo real a los estados de cada reparación y mantén el control total de tu flujo de trabajo con profesionalismo.
                     </p>
 
@@ -150,7 +150,7 @@
                 <h2 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-6">
                     ¿Por qué elegir <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#E0AAFF] to-[#C77DFF]">FixFlow</span>?
                 </h2>
-                <p class="text-lg md:text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
+                <p class="text-xl md:text-2xl text-white/95 max-w-3xl mx-auto leading-relaxed font-light">
                     Diseñado específicamente para talleres de reparación de electrónica, celulares y cómputo.
                     FixFlow va más allá de un simple registro: es el ecosistema que profesionaliza tu negocio. 
                     Olvídate de las notas perdidas y los reclamos por demoras; automatiza el seguimiento, garantiza el cumplimiento de tus tiempos de entrega mediante niveles de servicio (SLA), y bríndale a tus clientes total transparencia en cada reparación.
@@ -166,7 +166,7 @@
                         </svg>
                     </div>
                     <h3 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Optimiza tu Taller</h3>
-                    <p class="text-white/70 leading-relaxed text-lg">
+                    <p class="text-white/95 leading-relaxed text-xl lg:text-2xl font-light">
                         Olvídate del papel y Excel. Genera tickets únicos de servicio, asigna técnicos a cada orden y actualiza el progreso de cada equipo en segundos. Todo centralizado para mantener un orden impecable en tu negocio.
                     </p>
                 </div>
@@ -192,7 +192,7 @@
                         </svg>
                     </div>
                     <h3 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Gestión y Tiempos SLA</h3>
-                    <p class="text-white/70 leading-relaxed text-lg">
+                    <p class="text-white/95 leading-relaxed text-xl lg:text-2xl font-light">
                         Clasifica las reparaciones según nuestra matriz de niveles de servicio (SLA). El sistema calcula automáticamente los tiempos límite de entrega y notifica los retardos, previniendo clientes molestos.
                     </p>
                 </div>
@@ -218,7 +218,7 @@
                         </svg>
                     </div>
                     <h3 class="text-3xl md:text-4xl font-bold text-white tracking-tight">Agilidad y Portal Cliente</h3>
-                    <p class="text-white/70 leading-relaxed text-lg">
+                    <p class="text-white/95 leading-relaxed text-xl lg:text-2xl font-light">
                         Tus clientes pueden consultar el progreso de su equipo en tiempo real mediante un token único y chatear directamente con los técnicos sin saturar el número de WhatsApp del taller.
                     </p>
                 </div>
@@ -239,7 +239,7 @@
             <div class="bg-gradient-to-r from-[#4B0082]/40 to-[#7B2CBF]/40 backdrop-blur-xl border border-white/10 rounded-3xl p-8 md:p-12 text-center relative overflow-hidden shadow-[0_0_40px_rgba(123,44,191,0.2)]">
                 <div class="absolute inset-0 bg-circuit opacity-30 pointer-events-none"></div>
                 <h3 class="text-3xl md:text-4xl font-extrabold text-white mb-6 relative z-10">Lleva tu negocio al siguiente nivel</h3>
-                <p class="text-lg md:text-xl text-white/80 mb-10 max-w-3xl mx-auto relative z-10 leading-relaxed">
+                <p class="text-xl md:text-2xl text-white/95 mb-10 max-w-3xl mx-auto relative z-10 leading-relaxed font-light">
                     Gestiona técnicos, asigna roles, y garantiza que cada equipo sea reparado a tiempo. 
                     El historial completo a tu alcance.
                 </p>
