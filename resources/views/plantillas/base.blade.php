@@ -136,7 +136,7 @@
         </aside>
 
         {{-- Contenido principal --}}
-        <div id="contenedor-derecho" class="flex-1 flex flex-col">
+        <div id="contenedor-derecho" class="flex-1 flex flex-col min-w-0">
 
             <header id="header-principal" class="bg-white/80 backdrop-blur-sm shadow-sm border-b border-gray-200 px-8 py-4 flex justify-between items-center sticky top-0 z-10">
                 <span class="text-xl font-bold text-[#1E055A] tracking-tight">@yield('titulo-pestana')</span>
