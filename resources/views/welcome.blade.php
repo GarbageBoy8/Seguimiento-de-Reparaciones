@@ -38,14 +38,15 @@
             </div>
 
             <div class="hidden md:flex space-x-4">
-                <div class="hidden md:flex space-x-4">
-                    <a href="/login" class="px-5 py-2.5 rounded-lg text-white bg-[#4B0082] font-semibold hover:bg-[#5A00C6] transition-colors">
-                        Iniciar Sesión
-                    </a>
-                    <a href="/register" class="px-5 py-2.5 rounded-lg text-white bg-[#4B0082] font-semibold hover:bg-[#5A00C6] transition-colors">
-                        Registrarse
-                    </a>
-                </div>
+                @auth
+                <a href="{{ route('panel.inicio') }}" class="px-5 py-2.5 rounded-lg text-white bg-[#4B0082] font-semibold hover:bg-[#5A00C6] transition-colors shadow-md hover:shadow-lg">
+                    Centro de Mando
+                </a>
+                @else
+                <a href="{{ route('login') }}" class="px-5 py-2.5 rounded-lg text-white bg-[#4B0082] font-semibold hover:bg-[#5A00C6] transition-colors shadow-md hover:shadow-lg">
+                    Iniciar Sesión
+                </a>
+                @endauth
             </div>
         </nav>
         @endif
@@ -144,7 +145,7 @@
         </section>
 
         {{-- CONTENEDOR DE SECCIONES INFERIORES --}}
-        <main class="w-full max-w-6xl mx-auto px-6 mt-32 mb-32 z-10 relative space-y-40">
+        <main class="w-full max-w-[85rem] mx-auto px-6 mt-32 mb-32 z-10 relative space-y-40">
             
             <div class="text-center">
                 <h2 class="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-6">
@@ -158,8 +159,8 @@
             </div>
 
             {{-- SECCION OPTIMIZA --}}
-            <section id="optimiza" class="scroll-mt-40 flex flex-col md:flex-row items-center gap-12 lg:gap-20">
-                <div class="flex-1 space-y-6 text-center md:text-left">
+            <section id="optimiza" class="scroll-mt-40 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-0">
+                <div class="w-full lg:w-[30%] space-y-6 text-center lg:text-left">
                     <div class="w-16 h-16 rounded-2xl bg-[#7B2CBF]/30 border border-[#9D4EDD]/30 flex items-center justify-center mx-auto md:mx-0 shadow-[0_0_15px_rgba(123,44,191,0.5)]">
                         <svg class="w-8 h-8 text-[#E0AAFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
@@ -170,22 +171,17 @@
                         Olvídate del papel y Excel. Genera tickets únicos de servicio, asigna técnicos a cada orden y actualiza el progreso de cada equipo en segundos. Todo centralizado para mantener un orden impecable en tu negocio.
                     </p>
                 </div>
-                {{-- Placeholder Imagen --}}
-                <div class="flex-1 w-full aspect-video md:aspect-[4/3] bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-3xl border border-white/10 flex items-center justify-center relative overflow-hidden group shadow-2xl">
-                    <div class="absolute inset-0 bg-circuit opacity-30 mix-blend-overlay"></div>
-                    <div class="text-white/40 text-center relative z-10 group-hover:scale-105 transition-transform duration-500">
-                        <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <p class="font-medium text-lg">Espacio para captura de pantalla</p>
-                        <p class="text-sm">Ej: Dashboard principal o Listado de Órdenes</p>
-                    </div>
-                </div>
+                {{-- Imagen Optimiza --}}
+                <img 
+                    src="{{ asset('assets/optimiza.webp') }}" 
+                    alt="Dashboard y listado de órdenes de FixFlow" 
+                    class="w-full lg:w-[65%] object-cover rounded-[2.5rem] shadow-[0_0_40px_rgba(199,125,255,0.4)] ring-1 ring-[#C77DFF]/40 hover:shadow-[0_0_60px_rgba(224,170,255,0.6)] hover:ring-[#E0AAFF]/80 hover:scale-[1.02] transition-all duration-500"
+                >
             </section>
 
             {{-- SECCION GESTIONA --}}
-            <section id="gestiona" class="scroll-mt-40 flex flex-col md:flex-row-reverse items-center gap-12 lg:gap-20">
-                <div class="flex-1 space-y-6 text-center md:text-left">
+            <section id="gestiona" class="scroll-mt-40 flex flex-col lg:flex-row-reverse items-center justify-between gap-12 lg:gap-0">
+                <div class="w-full lg:w-[30%] space-y-6 text-center lg:text-left">
                     <div class="w-16 h-16 rounded-2xl bg-[#7B2CBF]/30 border border-[#9D4EDD]/30 flex items-center justify-center mx-auto md:mx-0 shadow-[0_0_15px_rgba(123,44,191,0.5)]">
                         <svg class="w-8 h-8 text-[#E0AAFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -196,22 +192,17 @@
                         Clasifica las reparaciones según nuestra matriz de niveles de servicio (SLA). El sistema calcula automáticamente los tiempos límite de entrega y notifica los retardos, previniendo clientes molestos.
                     </p>
                 </div>
-                {{-- Placeholder Imagen --}}
-                <div class="flex-1 w-full aspect-video md:aspect-[4/3] bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-3xl border border-white/10 flex items-center justify-center relative overflow-hidden group shadow-2xl">
-                    <div class="absolute inset-0 bg-circuit opacity-30 mix-blend-overlay"></div>
-                    <div class="text-white/40 text-center relative z-10 group-hover:scale-105 transition-transform duration-500">
-                        <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <p class="font-medium text-lg">Espacio para captura de pantalla</p>
-                        <p class="text-sm">Ej: Detalle de reparación o Badges de Retardo</p>
-                    </div>
-                </div>
+                {{-- Imagen Gestiona --}}
+                <img 
+                    src="{{ asset('assets/gestiona.webp') }}" 
+                    alt="Gestión de tiempos SLA y retardos" 
+                    class="w-full lg:w-[65%] object-cover rounded-[2.5rem] shadow-[0_0_40px_rgba(199,125,255,0.4)] ring-1 ring-[#C77DFF]/40 hover:shadow-[0_0_60px_rgba(224,170,255,0.6)] hover:ring-[#E0AAFF]/80 hover:scale-[1.02] transition-all duration-500"
+                >
             </section>
 
             {{-- SECCION AGILIDAD --}}
-            <section id="agilidad" class="scroll-mt-40 flex flex-col md:flex-row items-center gap-12 lg:gap-20">
-                <div class="flex-1 space-y-6 text-center md:text-left">
+            <section id="agilidad" class="scroll-mt-40 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-0">
+                <div class="w-full lg:w-[30%] space-y-6 text-center lg:text-left">
                     <div class="w-16 h-16 rounded-2xl bg-[#7B2CBF]/30 border border-[#9D4EDD]/30 flex items-center justify-center mx-auto md:mx-0 shadow-[0_0_15px_rgba(123,44,191,0.5)]">
                         <svg class="w-8 h-8 text-[#E0AAFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -222,17 +213,12 @@
                         Tus clientes pueden consultar el progreso de su equipo en tiempo real mediante un token único y chatear directamente con los técnicos sin saturar el número de WhatsApp del taller.
                     </p>
                 </div>
-                {{-- Placeholder Imagen --}}
-                <div class="flex-1 w-full aspect-video md:aspect-[4/3] bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md rounded-3xl border border-white/10 flex items-center justify-center relative overflow-hidden group shadow-2xl">
-                    <div class="absolute inset-0 bg-circuit opacity-30 mix-blend-overlay"></div>
-                    <div class="text-white/40 text-center relative z-10 group-hover:scale-105 transition-transform duration-500">
-                        <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        <p class="font-medium text-lg">Espacio para captura de pantalla</p>
-                        <p class="text-sm">Ej: Vista del Portal de Seguimiento</p>
-                    </div>
-                </div>
+                {{-- Imagen Agilidad --}}
+                <img 
+                    src="{{ asset('assets/agilidad.webp') }}" 
+                    alt="Portal de clientes y chat en tiempo real" 
+                    class="w-full lg:w-[65%] object-cover rounded-[2.5rem] shadow-[0_0_40px_rgba(199,125,255,0.4)] ring-1 ring-[#C77DFF]/40 hover:shadow-[0_0_60px_rgba(224,170,255,0.6)] hover:ring-[#E0AAFF]/80 hover:scale-[1.02] transition-all duration-500"
+                >
             </section>
             
             {{-- CALL TO ACTION FINAL --}}
