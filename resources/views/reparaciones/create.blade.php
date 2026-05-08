@@ -4,6 +4,38 @@
 
 @section('contenido-principal')
 
+
+<style>
+    /* Asegurar que los dropdowns se muestren correctamente */
+    .fixed.z-50 {
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Scroll suave para los dropdowns */
+    .overflow-y-auto {
+        scrollbar-width: thin;
+        scrollbar-color: #CBD5E0 #EDF2F7;
+    }
+
+    .overflow-y-auto::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .overflow-y-auto::-webkit-scrollbar-track {
+        background: #EDF2F7;
+        border-radius: 10px;
+    }
+
+    .overflow-y-auto::-webkit-scrollbar-thumb {
+        background: #CBD5E0;
+        border-radius: 10px;
+    }
+
+    .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+        background: #A0AEC0;
+    }
+</style>
+
 <div class="max-w-4xl mx-auto">
     {{-- Header --}}
     <div class="mb-8">
@@ -37,7 +69,7 @@
         @csrf
 
         {{-- BLOQUE 1: Datos del cliente --}}
-        <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-md border border-gray-100" style="overflow: visible !important;">
             <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
                 <legend class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,7 +121,7 @@
         </div>
 
         {{-- BLOQUE 2: Datos del dispositivo --}}
-        <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-md border border-gray-100" style="overflow: visible !important;">
             <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
                 <legend class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,7 +133,7 @@
             <div class="p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        
+
                         <!-- Con valores personalizados -->
                         <x-tipo-equipo-select
                             name="tipo_equipo"
@@ -128,7 +160,7 @@
         </div>
 
         {{-- BLOQUE 3: Nivel y técnico --}}
-        <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-md border border-gray-100" style="overflow: visible !important;">
             <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
                 <legend class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -139,15 +171,10 @@
             </div>
             <div class="p-6 space-y-4">
                 <div>
-                    <label for="nivel_id" class="block text-sm font-medium text-gray-700 mb-1">Nivel de reparación <span class="text-red-500">*</span></label>
-                    <select id="nivel_id" name="nivel_id" required class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] transition-all">
-                        <option value="">— Seleccionar nivel —</option>
-                        @foreach($niveles as $nivel)
-                        <option value="{{ $nivel->id }}" {{ old('nivel_id') == $nivel->id ? 'selected' : '' }}>
-                            Nivel {{ $nivel->nivel }} — {{ $nivel->nombre }} (SLA: {{ $nivel->horas_sla }}h)
-                        </option>
-                        @endforeach
-                    </select>
+                    <label for="nivel_id" class=" p-5 block text-sm font-medium text-gray-700 mb-1">Nivel de reparación <span class="text-red-500">*</span></label>
+
+                    <x-select-nivel
+                        :niveles="$niveles" />
                     <div id="descripcion-nivel" class="mt-2 text-xs text-gray-500 bg-gray-50 p-2 rounded-lg">
                         Selecciona un nivel para ver su descripción.
                     </div>
@@ -155,20 +182,17 @@
 
                 <div>
                     <label for="user_id" class="block text-sm font-medium text-gray-700 mb-1">Técnico asignado <span class="text-gray-400 text-xs">(opcional)</span></label>
-                    <select id="user_id" name="user_id" class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] transition-all">
-                        <option value="">— Sin asignar —</option>
-                        @foreach($tecnicos as $tecnico)
-                        <option value="{{ $tecnico->id }}" {{ old('user_id') == $tecnico->id ? 'selected' : '' }}>
-                            {{ $tecnico->name }}
-                        </option>
-                        @endforeach
-                    </select>
+                    <x-select-tecnico
+                        :tecnicos="$tecnicos"
+                        :selected="old('user_id')"
+                        :showStats="true"
+                        placeholder="Sin asignar" />
                 </div>
             </div>
         </div>
 
         {{-- BLOQUE 4: Problema y costo --}}
-        <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-md border border-gray-100" style="overflow: visible !important;">
             <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
                 <legend class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -59,7 +59,7 @@ class TecnicoController extends Controller
         ]);
 
         return redirect()->route('tecnicos.index')
-                         ->with('success', "Técnico {$data['name']} creado correctamente.");
+            ->with('success', "Técnico {$data['name']} creado correctamente.");
     }
 
     /**
@@ -74,7 +74,7 @@ class TecnicoController extends Controller
         $tecnico->delete();
 
         return redirect()->route('tecnicos.index')
-                         ->with('success', 'Técnico eliminado del taller.');
+            ->with('success', 'Técnico eliminado del taller.');
     }
 
     // ─── Guard interno ─────────────────────────────────────────
