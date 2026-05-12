@@ -58,16 +58,28 @@ $id = $id ?? $name;
             @foreach($options as $optionValue => $optionLabel)
             <div
                 @click="selected = '{{ is_array($optionLabel) ? $optionLabel['label'] : $optionLabel }}'; selectedId = '{{ $optionValue }}'; open = false"
-                class="px-4 py-2 hover:bg-purple-50 hover:text-[#7C3AED] cursor-pointer transition-colors"
+                class="px-4 py-2 hover:bg-purple-50 hover:text-[#7C3AED] cursor-pointer transition-colors flex items-center gap-3"
                 :class="{ 'bg-purple-50 text-[#7C3AED]': selectedId == '{{ $optionValue }}' }">
-                @if(is_array($optionLabel))
-                <div class="font-medium">{{ $optionLabel['label'] }}</div>
-                @if(isset($optionLabel['subtitle']))
-                <div class="text-xs text-gray-500">{{ $optionLabel['subtitle'] }}</div>
+                
+                <!-- Icono SVG dinámico -->
+                @if(is_array($optionLabel) && isset($optionLabel['icon']))
+                <div class="flex-shrink-0 {{ $optionLabel['color'] ?? 'text-gray-500' }}">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="{{ $optionLabel['icon'] }}"/>
+                    </svg>
+                </div>
                 @endif
-                @else
-                {{ $optionLabel }}
-                @endif
+                
+                <div class="flex-1">
+                    @if(is_array($optionLabel))
+                    <div class="font-medium">{{ $optionLabel['label'] }}</div>
+                    @if(isset($optionLabel['subtitle']))
+                    <div class="text-xs text-gray-500">{{ $optionLabel['subtitle'] }}</div>
+                    @endif
+                    @else
+                    {{ $optionLabel }}
+                    @endif
+                </div>
             </div>
             @endforeach
         </div>

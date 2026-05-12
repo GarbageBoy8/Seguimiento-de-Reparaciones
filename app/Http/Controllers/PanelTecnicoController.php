@@ -26,7 +26,7 @@ class PanelTecnicoController extends Controller
             ->activas()
             ->with(['cliente', 'tecnico', 'nivel'])
             ->latest()
-            ->take(10)
+            ->take(5)
             ->get();
 
         $notificaciones = collect();

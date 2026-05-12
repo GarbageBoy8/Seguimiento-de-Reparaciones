@@ -83,9 +83,6 @@
             <a href="{{ route('reparaciones.index') }}" class="text-purple-200 hover:text-white text-sm font-medium transition-colors justify-self-end px-4 py-2">
                 Ver todas
             </a>
-            <a href="{{ route('reparaciones.create') }}" class="bg-[#EC4899] hover:bg-[#DB2777] text-white px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-md ">
-                + Nueva orden
-            </a>
         </div>
     </div>
 
