@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrdenCreadaMail;
 use App\Mail\ReparacionListaMail;
 use App\Models\Cliente;
 use App\Models\Escalamiento;
@@ -94,6 +95,12 @@ class ReparacionController extends Controller
             'hora_ingreso'       => $horaIngreso,
             'hora_limite'        => $horaLimite,
         ]);
+
+        // Enviar email de confirmación al cliente con la URL de seguimiento
+        if ($reparacion->cliente->email) {
+            Mail::to($reparacion->cliente->email)
+                ->send(new OrdenCreadaMail($reparacion));
+        }
 
         return redirect()->route('reparaciones.show', $reparacion)
                          ->with('success', "Orden {$reparacion->folio} creada correctamente.");
