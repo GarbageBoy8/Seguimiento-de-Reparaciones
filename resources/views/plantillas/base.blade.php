@@ -5,23 +5,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FixFlow — @yield('titulo-pestana')</title>
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="bg-gradient-to-br from-slate-50 to-gray-100 antialiased">
+<body class="overflow-x-hidden bg-gradient-to-br from-slate-50 to-gray-100 antialiased">
 
-    <div id="contenedor-principal" class="flex min-h-screen">
+    <div id="contenedor-principal" x-data="{ mobileMenuOpen: false }" @keydown.escape.window="mobileMenuOpen = false" class="flex min-h-screen overflow-x-hidden">
 
         {{-- Barra lateral --}}
-        <aside id="sidebar" class=" sticky top-0 h-screen  flex-shrink-0 overflow-y-auto w-72 bg-[#1E055A] text-white flex flex-col shadow-2xl">
+        <aside id="sidebar"
+            x-cloak
+            :class="mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
+            class="fixed inset-y-0 left-0 z-40 flex h-screen w-72 flex-shrink-0 transform flex-col overflow-y-auto bg-[#1E055A] text-white shadow-2xl transition-transform duration-300 ease-out md:sticky md:top-0 md:z-auto md:translate-x-0">
             <div class="p-6 border-b border-indigo-800/50">
                 <a href="{{url('/')}}">
                     <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">FixFlow</h1>
                 </a>
-                
+
                 <p class="text-indigo-300 text-sm mt-1 font-medium">{{ auth()->user()->taller->nombre }}</p>
             </div>
-            <nav aria-label="Navegación principal" class="flex-1 p-4">
+            <nav aria-label="Navegación principal" class="flex-1 p-4" @click="if (window.innerWidth < 768) mobileMenuOpen = false">
                 <ul class="space-y-2">
                     <li>
                         <a href="{{ route('panel.inicio') }}"
@@ -138,24 +146,43 @@
             </footer>
         </aside>
 
-        {{-- Contenido principal --}}
-        <div id="contenedor-derecho" class="flex-1 flex flex-col min-w-0">
+        <div
+            x-cloak
+            x-show="mobileMenuOpen"
+            x-transition.opacity
+            @click="mobileMenuOpen = false"
+            class="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm md:hidden"
+            aria-hidden="true"></div>
 
-            <header id="header-principal" class="bg-white/80 backdrop-blur-sm shadow-sm border-b border-gray-200 px-8 py-4 flex justify-between items-center sticky top-0 z-10">
-                <span class="text-xl font-bold text-[#1E055A] tracking-tight">@yield('titulo-pestana')</span>
+        {{-- Contenido principal --}}
+        <div id="contenedor-derecho" class="flex min-w-0 flex-1 flex-col">
+
+            <header id="header-principal" class="sticky top-0 z-20 flex items-center justify-between gap-3 border-b border-gray-200 bg-white/90 px-4 py-3 shadow-sm backdrop-blur-sm md:px-8 md:py-4">
+                <div class="flex min-w-0 items-center gap-3">
+                    <button
+                        type="button"
+                        @click="mobileMenuOpen = true"
+                        class="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-[#1E055A] text-white shadow-sm transition hover:bg-[#2D1B69] md:hidden"
+                        aria-label="Abrir navegación">
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <span class="truncate text-lg font-bold tracking-tight text-[#1E055A] md:text-xl">@yield('titulo-pestana')</span>
+                </div>
 
                 {{-- Badge de notificaciones (solo admin) --}}
                 @if(auth()->user()->esAdmin())
                 @php $countNotif = auth()->user()->unreadNotifications->count(); @endphp
                 @if($countNotif > 0)
-                <a href="#" aria-label="{{ $countNotif }} notificaciones no leídas" class="flex items-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-700 px-4 py-2 rounded-full transition-all duration-200 font-medium text-sm shadow-sm">
-                    <span>🔔</span> {{ $countNotif }} alerta(s)
+                <a href="#notificaciones" aria-label="{{ $countNotif }} notificaciones no leídas" class="flex flex-shrink-0 items-center gap-2 rounded-full bg-amber-50 px-3 py-2 text-sm font-medium text-amber-700 shadow-sm transition-all duration-200 hover:bg-amber-100 md:px-4">
+                    <span>!</span> <span class="hidden sm:inline">{{ $countNotif }} alerta(s)</span><span class="sm:hidden">{{ $countNotif }}</span>
                 </a>
                 @endif
                 @endif
             </header>
 
-            <main id="contenido-principal" class="flex-1 p-8">
+            <main id="contenido-principal" class="min-w-0 flex-1 p-4 md:p-8">
                 @yield('contenido-principal')
             </main>
 

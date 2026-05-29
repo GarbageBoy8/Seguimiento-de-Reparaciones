@@ -4,25 +4,25 @@
 
 @section('contenido-principal')
 
-<div class="max-w-6xl mx-auto space-y-6">
+<div class="mx-auto max-w-6xl space-y-6">
     {{-- Perfil del cliente --}}
     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
         {{-- Header con nombre del cliente --}}
-        <div class="bg-gradient-to-r from-[#2D1B69] to-[#1E1B2E] px-6 py-5">
-            <div class="flex flex-wrap justify-between items-center gap-4">
-                <div class="flex items-center gap-4">
-                    <div class="w-16 h-16 rounded-full bg-[#7C3AED]/20 flex items-center justify-center">
-                        <span class="text-2xl font-bold text-white">
+        <div class="bg-gradient-to-r from-[#2D1B69] to-[#1E1B2E] px-4 py-5 md:px-6">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="flex min-w-0 items-center gap-4">
+                    <div class="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-[#7C3AED]/20 md:h-16 md:w-16">
+                        <span class="text-xl font-bold text-white md:text-2xl">
                             {{ substr($cliente->nombre, 0, 2) }}
                         </span>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $cliente->nombre }}</h1>
                         <p class="text-purple-200 text-sm mt-1">Perfil del cliente</p>
                     </div>
                 </div>
                 <a href="{{ route('reparaciones.create') }}?cliente_id={{ $cliente->id }}"
-                    class="bg-[#EC4899] hover:bg-[#DB2777] text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                    class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#EC4899] px-5 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-[#DB2777] hover:shadow-lg sm:w-auto">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -32,7 +32,7 @@
         </div>
 
         {{-- Información del cliente --}}
-        <div class="p-6">
+        <div class="p-4 md:p-6">
             <h2 class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2 mb-4">
                 <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -79,7 +79,7 @@
 
     {{-- Historial de reparaciones --}}
     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
+        <div class="border-b border-gray-100 bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-4 py-4 md:px-6">
             <h2 class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
                 <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -87,7 +87,20 @@
                 Historial de reparaciones
             </h2>
         </div>
-        <div class="overflow-x-auto">
+        <div class="space-y-4 p-4 md:hidden">
+            @forelse($reparaciones as $orden)
+            <x-order-mobile-card :orden="$orden" :show-cliente="false" date-label="Fecha" :date-value="$orden->created_at->format('d/m/Y')" />
+            @empty
+            <div class="rounded-2xl bg-gray-50 px-6 py-10 text-center">
+                <p class="font-medium text-gray-400">Este cliente no tiene órdenes registradas</p>
+                <a href="{{ route('reparaciones.create') }}?cliente_id={{ $cliente->id }}" class="mt-2 inline-flex text-sm text-[#7C3AED] hover:underline">
+                    Crear primera orden
+                </a>
+            </div>
+            @endforelse
+        </div>
+
+        <div class="hidden overflow-x-auto md:block">
             <table class="w-full">
                 <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
