@@ -4,7 +4,7 @@
 
 @section('contenido-principal')
 
-<div class="max-w-6xl mx-auto space-y-6">
+<div class="mx-auto max-w-6xl space-y-5 md:space-y-6">
     {{-- Alerta de éxito --}}
     @if(session('success'))
     <div class="bg-emerald-50 border-l-4 border-emerald-500 text-emerald-800 p-4 rounded-lg shadow-sm flex items-center gap-3" role="alert">
@@ -18,13 +18,13 @@
     {{-- Ficha principal --}}
     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
         {{-- Header de la orden --}}
-        <div class="bg-gradient-to-r from-[#2D1B69] to-[#1E1B2E] px-6 py-5">
-            <div class="flex flex-wrap justify-between items-center gap-4">
-                <div>
+        <div class="bg-gradient-to-r from-[#2D1B69] to-[#1E1B2E] px-4 py-5 md:px-6">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="min-w-0">
                     <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $reparacion->folio }}</h1>
                     <p class="text-purple-200 text-sm mt-1">Orden de reparación</p>
                 </div>
-                <div class="flex items-center gap-3">
+                <div class="flex flex-wrap items-center gap-2 sm:gap-3">
                     @php
                     $estadoColors = [
                     'Recibido' => 'bg-slate-100 text-slate-700',
@@ -53,9 +53,9 @@
         </div>
 
         {{-- Grid de información --}}
-        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 gap-4 p-4 md:grid-cols-2 md:gap-6 md:p-6">
             {{-- Datos del dispositivo --}}
-            <div class="bg-gray-50 rounded-xl p-5">
+            <div class="rounded-xl bg-gray-50 p-4 md:p-5">
                 <h2 class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2 mb-4">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 3h14a2 2 0 011 2v14a2 2 0 01-1 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"></path>
@@ -91,7 +91,7 @@
             </div>
 
             {{-- Datos del cliente --}}
-            <div class="bg-gray-50 rounded-xl p-5">
+            <div class="rounded-xl bg-gray-50 p-4 md:p-5">
                 <h2 class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2 mb-4">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -115,7 +115,7 @@
             </div>
 
             {{-- Control de tiempos --}}
-            <div class="bg-gray-50 rounded-xl p-5">
+            <div class="rounded-xl bg-gray-50 p-4 md:p-5">
                 <h2 class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2 mb-4">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -145,7 +145,7 @@
             </div>
 
             {{-- Enlace de seguimiento --}}
-            <div class="bg-gray-50 rounded-xl p-5">
+            <div class="rounded-xl bg-gray-50 p-4 md:p-5">
                 <h2 class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2 mb-4">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
@@ -156,7 +156,7 @@
                 <div class="flex flex-col sm:flex-row gap-2">
                     <input type="text" id="enlace-seguimiento" readonly
                         value="{{ url('/seguimiento/' . $reparacion->token_seguimiento) }}"
-                        class="flex-1 px-4 py-2 rounded-xl border border-gray-300 bg-gray-100 text-gray-600 text-sm focus:outline-none" />
+                        class="min-w-0 flex-1 rounded-xl border border-gray-300 bg-gray-100 px-4 py-2 text-sm text-gray-600 focus:outline-none" />
                     <button onclick="navigator.clipboard.writeText(document.getElementById('enlace-seguimiento').value)"
                         class="bg-[#7C3AED] hover:bg-[#6D28D9] text-white px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2 justify-center">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -171,7 +171,7 @@
 
     {{-- Actualizar orden --}}
     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
+        <div class="border-b border-gray-100 bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-4 py-4 md:px-6">
             <h2 class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
                 <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -179,7 +179,7 @@
                 Actualizar orden
             </h2>
         </div>
-        <form method="POST" action="{{ route('reparaciones.update', $reparacion) }}" class="p-6 space-y-4">
+        <form method="POST" action="{{ route('reparaciones.update', $reparacion) }}" class="space-y-4 p-4 md:p-6">
             @csrf
             @method('PATCH')
 
@@ -230,7 +230,7 @@
             </div>
 
             <div class="pt-2">
-                <button type="submit" class="bg-[#7C3AED] hover:bg-[#6D28D9] text-white px-6 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#7C3AED] px-6 py-2.5 font-medium text-white shadow-md transition-all hover:bg-[#6D28D9] hover:shadow-lg sm:w-auto">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                     </svg>
@@ -242,7 +242,7 @@
 
     {{-- Escalar nivel --}}
     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
+        <div class="border-b border-gray-100 bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-4 py-4 md:px-6">
             <h2 class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
                 <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
@@ -250,7 +250,7 @@
                 Escalar nivel
             </h2>
         </div>
-        <div class="p-6">
+        <div class="p-4 md:p-6">
             <p class="text-sm text-gray-600 mb-4">Nivel actual: <strong class="text-[#7C3AED]">{{ $reparacion->nivel->nombre }}</strong></p>
 
             @if($errors->any())
@@ -284,7 +284,7 @@
                         class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] resize-none"
                         placeholder="Ej: Se detectó falla en la placa madre, requiere microsoldadura.">{{ old('motivo') }}</textarea>
                 </div>
-                <button type="submit" class="bg-amber-500 hover:bg-amber-600 text-white px-6 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-amber-500 px-6 py-2.5 font-medium text-white shadow-md transition-all hover:bg-amber-600 hover:shadow-lg sm:w-auto">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
                     </svg>
@@ -297,7 +297,7 @@
     {{-- Historial de escalamientos --}}
     @if($reparacion->escalamientos->isNotEmpty())
     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
+        <div class="border-b border-gray-100 bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-4 py-4 md:px-6">
             <h2 class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
                 <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -305,17 +305,17 @@
                 Historial de escalamientos
             </h2>
         </div>
-        <div class="p-6">
+        <div class="p-4 md:p-6">
             <div class="space-y-3">
                 @foreach($reparacion->escalamientos as $esc)
                 <div class="border-l-4 border-[#7C3AED] pl-4 py-2 bg-gray-50 rounded-r-lg">
-                    <div class="flex flex-wrap items-center gap-2 mb-1">
+                    <div class="mb-1 flex flex-wrap items-center gap-2">
                         <span class="font-semibold text-[#2D1B69]">{{ $esc->nivelAnterior->nombre }}</span>
                         <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                         </svg>
                         <span class="font-semibold text-[#7C3AED]">{{ $esc->nivelNuevo->nombre }}</span>
-                        <span class="text-xs text-gray-400 ml-auto">por {{ $esc->user->name ?? 'Sistema' }} el {{ $esc->created_at->format('d/m/Y H:i') }}</span>
+                        <span class="w-full text-xs text-gray-400 sm:ml-auto sm:w-auto">por {{ $esc->user->name ?? 'Sistema' }} el {{ $esc->created_at->format('d/m/Y H:i') }}</span>
                     </div>
                     <p class="text-sm text-gray-600 italic">"{{ $esc->motivo }}"</p>
                 </div>
@@ -327,7 +327,7 @@
 
     {{-- Chat interno --}}
     <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
+        <div class="border-b border-gray-100 bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-4 py-4 md:px-6">
             <h2 class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
                 <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
@@ -335,8 +335,8 @@
                 Chat con el cliente
             </h2>
         </div>
-        <div class="p-6">
-            <div id="chat-mensajes" class="h-96 overflow-y-auto bg-gray-50 rounded-xl p-4 mb-4 space-y-3">
+        <div class="p-4 md:p-6">
+            <div id="chat-mensajes" class="mb-4 h-80 space-y-3 overflow-y-auto rounded-xl bg-gray-50 p-3 md:h-96 md:p-4">
                 {{-- Mensajes cargados por JS vía polling --}}
                 <div class="text-center text-gray-400 text-sm">Cargando mensajes...</div>
             </div>
@@ -349,7 +349,7 @@
                         class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] resize-none"
                         placeholder="Escribe un mensaje..."></textarea>
                 </div>
-                <button type="submit" class="bg-[#7C3AED] hover:bg-[#6D28D9] text-white px-6 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#7C3AED] px-6 py-2.5 font-medium text-white shadow-md transition-all hover:bg-[#6D28D9] hover:shadow-lg sm:w-auto">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                     </svg>
@@ -375,7 +375,7 @@
         }
         contenedor.innerHTML = mensajes.map(m => `
             <div class="flex flex-col ${m.es_del_cliente ? 'items-start' : 'items-end'}">
-                <div class="max-w-[80%] ${m.es_del_cliente ? 'bg-gray-200 text-gray-800' : 'bg-[#7C3AED] text-white'} rounded-2xl px-4 py-2">
+                <div class="max-w-[92%] md:max-w-[80%] ${m.es_del_cliente ? 'bg-gray-200 text-gray-800' : 'bg-[#7C3AED] text-white'} rounded-2xl px-4 py-2">
                     <div class="flex items-center gap-2 mb-1">
                         <strong class="text-sm">${m.autor}</strong>
                         <time class="text-[10px] opacity-70">${m.fecha}</time>

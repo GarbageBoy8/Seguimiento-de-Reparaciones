@@ -36,9 +36,9 @@
     }
 </style>
 
-<div class="max-w-4xl mx-auto">
+<div class="mx-auto max-w-4xl">
     {{-- Header --}}
-    <div class="mb-8">
+    <div class="mb-6 md:mb-8">
         <h1 class="text-2xl md:text-3xl font-bold bg-[#1E1B2E] bg-clip-text text-transparent">
             Nueva orden de reparación
         </h1>
@@ -65,12 +65,12 @@
     @endif
 
     {{-- Formulario --}}
-    <form method="POST" action="{{ route('reparaciones.store') }}" class="space-y-6">
+    <form method="POST" action="{{ route('reparaciones.store') }}" class="space-y-5 md:space-y-6">
         @csrf
 
         {{-- BLOQUE 1: Datos del cliente --}}
         <div class="bg-white rounded-2xl shadow-md border border-gray-100" style="overflow: visible !important;">
-            <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
+            <div class="border-b border-gray-100 bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-4 py-4 md:px-6">
                 <legend class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -78,7 +78,7 @@
                     Datos del cliente
                 </legend>
             </div>
-            <div class="p-6 space-y-4">
+            <div class="space-y-4 p-4 md:p-6">
                 {{-- Selector de cliente existente --}}
                 <div>
                     <label for="cliente_id" class="block text-sm font-medium text-gray-700 mb-1">Buscar cliente existente <span class="text-gray-400 text-xs font-normal">(opcional)</span></label>
@@ -122,7 +122,7 @@
 
         {{-- BLOQUE 2: Datos del dispositivo --}}
         <div class="bg-white rounded-2xl shadow-md border border-gray-100" style="overflow: visible !important;">
-            <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
+            <div class="border-b border-gray-100 bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-4 py-4 md:px-6">
                 <legend class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 3h14a2 2 0 01-2 2H7a2 2 0 01-2-2zm0 0v16a2 2 0 002 2h10a2 2 0 002-2V5"></path>
@@ -130,7 +130,7 @@
                     Datos del dispositivo
                 </legend>
             </div>
-            <div class="p-6">
+            <div class="p-4 md:p-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
 
@@ -161,7 +161,7 @@
 
         {{-- BLOQUE 3: Nivel y técnico --}}
         <div class="bg-white rounded-2xl shadow-md border border-gray-100" style="overflow: visible !important;">
-            <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
+            <div class="border-b border-gray-100 bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-4 py-4 md:px-6">
                 <legend class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
@@ -169,9 +169,9 @@
                     Clasificación de la reparación
                 </legend>
             </div>
-            <div class="p-6 space-y-4">
+            <div class="space-y-4 p-4 md:p-6">
                 <div>
-                    <label for="nivel_id" class=" p-5 block text-sm font-medium text-gray-700 mb-1">Nivel de reparación <span class="text-red-500">*</span></label>
+                    <label for="nivel_id" class="mb-1 block text-sm font-medium text-gray-700">Nivel de reparación <span class="text-red-500">*</span></label>
 
                     <x-select-nivel
                         :niveles="$niveles" />
@@ -193,7 +193,7 @@
 
         {{-- BLOQUE 4: Problema y costo --}}
         <div class="bg-white rounded-2xl shadow-md border border-gray-100" style="overflow: visible !important;">
-            <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
+            <div class="border-b border-gray-100 bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-4 py-4 md:px-6">
                 <legend class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -201,7 +201,7 @@
                     Descripción del problema
                 </legend>
             </div>
-            <div class="p-6 space-y-4">
+            <div class="space-y-4 p-4 md:p-6">
                 <div>
                     <label for="problema_reportado" class="block text-sm font-medium text-gray-700 mb-1">Problema reportado por el cliente <span class="text-red-500">*</span></label>
                     <textarea id="problema_reportado" name="problema_reportado" rows="4" required
@@ -219,14 +219,14 @@
         </div>
 
         {{-- Botones de acción --}}
-        <div class="flex flex-wrap gap-4 pt-4">
-            <button type="submit" class="bg-[#7C3AED] hover:bg-[#6D28D9] text-white px-6 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+        <div class="flex flex-col gap-3 pt-2 sm:flex-row sm:flex-wrap md:pt-4">
+            <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#7C3AED] px-6 py-2.5 font-medium text-white shadow-md transition-all hover:bg-[#6D28D9] hover:shadow-lg sm:w-auto">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 Crear orden
             </button>
-            <a href="{{ route('panel.inicio') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2.5 rounded-xl font-medium transition-all flex items-center gap-2">
+            <a href="{{ route('panel.inicio') }}" class="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-100 px-6 py-2.5 font-medium text-gray-700 transition-all hover:bg-gray-200 sm:w-auto">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>

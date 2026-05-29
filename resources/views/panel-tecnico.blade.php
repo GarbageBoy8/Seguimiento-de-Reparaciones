@@ -13,15 +13,15 @@
 
 {{-- Notificaciones de retardo (solo admin) --}}
 @if(auth()->user()->esAdmin() && $notificaciones->isNotEmpty())
-<section id="notificaciones" aria-label="Alertas de retardo" class="mb-8 bg-white rounded-2xl shadow-lg border border-amber-200 overflow-hidden">
-    <div class="bg-gradient-to-r from-amber-50 to-white px-6 py-4 border-b border-amber-200">
-        <div class="flex justify-between items-center flex-wrap gap-4">
-            <h2 class="text-lg font-bold text-[#2D1B69] flex items-center gap-2">
-                <span class="text-2xl">⚠️</span> Alertas de retardo ({{ $notificaciones->count() }})
+<section id="notificaciones" aria-label="Alertas de retardo" class="mb-8 overflow-hidden rounded-2xl border border-amber-200 bg-white shadow-lg">
+    <div class="border-b border-amber-200 bg-gradient-to-r from-amber-50 to-white px-4 py-4 md:px-6">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <h2 class="flex items-center gap-2 text-lg font-bold text-[#2D1B69]">
+                <span class="text-xl">!</span> Alertas de retardo ({{ $notificaciones->count() }})
             </h2>
             <form method="POST" action="{{ route('notificaciones.leer-todas') }}">
                 @csrf
-                <button type="submit" class="bg-[#7C3AED] hover:bg-[#6D28D9] text-white px-4 py-2 rounded-xl text-sm font-medium transition-all shadow-sm">
+                <button type="submit" class="w-full rounded-xl bg-[#7C3AED] px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-[#6D28D9] sm:w-auto">
                     Marcar todas como leídas
                 </button>
             </form>
@@ -29,14 +29,14 @@
     </div>
 <ul class="divide-y divide-amber-100">
     @foreach($notificaciones as $notif)
-    <li class="p-4 hover:bg-amber-50/50 transition-colors">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-            <div class="flex-1">
+    <li class="p-4 transition-colors hover:bg-amber-50/50">
+        <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div class="min-w-0 flex-1">
                 {{-- Usamos ?? '' para que si no existe 'folio', no rompa la página --}}
                 <strong class="text-[#2D1B69] font-semibold">{{ $notif->data['folio'] ?? 'Sin Folio' }}</strong>
-                <span class="text-gray-600 mx-2">—</span>
-                <span class="text-gray-700">{{ $notif->data['mensaje'] ?? 'Sin mensaje' }}</span>
-                <span class="text-gray-500 text-sm ml-2">(Técnico: {{ $notif->data['tecnico'] ?? 'No asignado' }})</span>
+                <span class="mx-2 hidden text-gray-600 sm:inline">—</span>
+                <span class="block text-sm text-gray-700 sm:inline">{{ $notif->data['mensaje'] ?? 'Sin mensaje' }}</span>
+                <span class="block text-sm text-gray-500 sm:ml-2 sm:inline">(Técnico: {{ $notif->data['tecnico'] ?? 'No asignado' }})</span>
             </div>
             <div class="flex items-center gap-2">
                 {{-- Validamos también el ID de reparación antes de armar la ruta --}}
@@ -61,28 +61,28 @@
 @endif
 
 {{-- Estadísticas --}}
-<section aria-label="Estadísticas del taller" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-    <article class="bg-gradient-to-br from-[#7C3AED] to-[#2D1B69] rounded-2xl shadow-lg p-6 text-white transform hover:scale-105 transition-transform duration-300">
-        <p class="text-4xl font-bold">{{ $stats['total'] }}</p>
+<section aria-label="Estadísticas del taller" class="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
+    <article class="rounded-2xl bg-gradient-to-br from-[#7C3AED] to-[#2D1B69] p-4 text-white shadow-lg transition-transform duration-300 hover:scale-105 md:p-6">
+        <p class="text-3xl font-bold md:text-4xl">{{ $stats['total'] }}</p>
         <p class="text-purple-200 text-sm mt-1">Total órdenes</p>
     </article>
-    <article class="bg-white border border-[#7C3AED]/20 rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow">
-        <p class="text-4xl font-bold text-[#7C3AED]">{{ $stats['en_proceso'] }}</p>
+    <article class="rounded-2xl border border-[#7C3AED]/20 bg-white p-4 shadow-md transition-shadow hover:shadow-lg md:p-6">
+        <p class="text-3xl font-bold text-[#7C3AED] md:text-4xl">{{ $stats['en_proceso'] }}</p>
         <p class="text-gray-500 text-sm mt-1">En proceso</p>
     </article>
-    <article class="bg-white border border-[#EC4899]/20 rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow">
-        <p class="text-4xl font-bold text-[#EC4899]">{{ $stats['retardos'] }}</p>
+    <article class="rounded-2xl border border-[#EC4899]/20 bg-white p-4 shadow-md transition-shadow hover:shadow-lg md:p-6">
+        <p class="text-3xl font-bold text-[#EC4899] md:text-4xl">{{ $stats['retardos'] }}</p>
         <p class="text-gray-500 text-sm mt-1">Retardos activos</p>
     </article>
-    <article class="bg-white border border-[#10B981]/20 rounded-2xl shadow-md p-6 hover:shadow-lg transition-shadow">
-        <p class="text-4xl font-bold text-[#10B981]">{{ $stats['completadas'] }}</p>
+    <article class="rounded-2xl border border-[#10B981]/20 bg-white p-4 shadow-md transition-shadow hover:shadow-lg md:p-6">
+        <p class="text-3xl font-bold text-[#10B981] md:text-4xl">{{ $stats['completadas'] }}</p>
         <p class="text-gray-500 text-sm mt-1">Entregadas</p>
     </article>
 </section>
 
 {{-- Órdenes recientes --}}
 <section aria-label="Órdenes en proceso" class="bg-white rounded-2xl shadow-lg overflow-hidden">
-    <div class="bg-gradient-to-r from-[#2D1B69] to-[#1E1B2E] px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+    <div class="flex flex-wrap items-center justify-between gap-4 bg-gradient-to-r from-[#2D1B69] to-[#1E1B2E] px-4 py-4 md:px-6">
         <h2 class="text-white text-lg font-bold">Órdenes activas recientes</h2>
         <div class="flex gap-3 justify-center">
             <a href="{{ route('reparaciones.index') }}" class="text-purple-200 hover:text-white text-sm font-medium transition-colors justify-self-end px-4 py-2">
@@ -91,7 +91,17 @@
         </div>
     </div>
 
-    <div class="overflow-x-auto">
+    <div class="space-y-4 p-4 md:hidden">
+        @forelse($ordenesActivas as $orden)
+        <x-order-mobile-card :orden="$orden" />
+        @empty
+        <div class="rounded-2xl bg-gray-50 px-6 py-10 text-center text-gray-400">
+            <p>No hay órdenes activas</p>
+        </div>
+        @endforelse
+    </div>
+
+    <div class="hidden overflow-x-auto md:block">
         <table class="w-full">
             <thead class="bg-gray-50 border-b border-gray-200">
                 <tr>
