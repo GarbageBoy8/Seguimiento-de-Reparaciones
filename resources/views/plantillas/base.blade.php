@@ -21,7 +21,7 @@
         <aside id="sidebar"
             x-cloak
             :class="mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
-            class="fixed inset-y-0 left-0 z-40 flex h-screen w-72 flex-shrink-0 transform flex-col overflow-y-auto bg-[#1E055A] text-white shadow-2xl transition-transform duration-300 ease-out md:sticky md:top-0 md:z-auto md:translate-x-0">
+            class="fixed inset-y-0 left-0 z-40 flex h-screen w-72 flex-shrink-0 transform flex-col overflow-y-auto bg-[#1E055A] text-white shadow-2xl transition-transform duration-300 ease-out md:static md:inset-auto md:z-auto md:h-auto md:min-h-screen md:self-stretch md:translate-x-0">
             <div class="p-6 border-b border-indigo-800/50">
                 <a href="{{url('/')}}">
                     <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">FixFlow</h1>
