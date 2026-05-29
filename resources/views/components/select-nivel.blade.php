@@ -12,15 +12,23 @@
 $id = $id ?? $name;
 @endphp
 
-<div x-data="{ 
-    open: false, 
-    selected: null,
-    selectedId: '{{ old($name, $selected) }}'
-}" 
-class="relative"
-style="overflow: visible !important;">
-
-    <!-- Botón selector -->
+<div 
+    x-data="{ 
+        open: false, 
+        selected: null,
+        selectedId: '{{ old($name, $selected) }}',
+        init() {
+            if (this.selectedId) {
+                @foreach($niveles as $nivel)
+                    if (this.selectedId == '{{ $nivel->id }}') {
+                        this.selected = 'Nivel {{ $nivel->nivel }} — {{ $nivel->nombre }} (SLA: {{ $nivel->horas_sla }}h)';
+                    }
+                @endforeach
+            }
+        }
+    }" 
+    class="relative w-full"
+>
     <button
         type="button"
         @click="open = !open"
@@ -32,7 +40,6 @@ style="overflow: visible !important;">
         </svg>
     </button>
 
-    <!-- Dropdown - se desborda completamente -->
     <div
         x-show="open"
         @click.away="open = false"
@@ -42,12 +49,8 @@ style="overflow: visible !important;">
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 transform scale-100"
         x-transition:leave-end="opacity-0 transform scale-95"
-        class="fixed z-50 bg-white rounded-xl shadow-2xl border border-gray-200 max-h-96 overflow-y-auto"
-        :style="{
-            width: $el.parentElement.offsetWidth + 'px',
-            left: $el.parentElement.getBoundingClientRect().left + 'px',
-            top: ($el.parentElement.getBoundingClientRect().bottom + 8) + 'px'
-        }">
+        class="absolute left-0 mt-2 z-50 w-full bg-white rounded-xl shadow-2xl border border-gray-200 max-h-96 overflow-y-auto"
+    >
         <div class="py-1">
             @forelse($niveles as $nivel)
             <div
@@ -62,9 +65,6 @@ style="overflow: visible !important;">
             </div>
             @empty
             <div class="px-4 py-8 text-center text-gray-500 text-sm">
-                <svg class="w-12 h-12 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
                 No hay niveles disponibles
             </div>
             @endforelse
@@ -79,25 +79,3 @@ style="overflow: visible !important;">
         @enderror
     @endif
 </div>
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Inicializar selectedId si hay un valor por defecto
-        @if(old($name, $selected))
-        setTimeout(() => {
-            const component = document.querySelector('[name="{{ $name }}"]')?.closest('[x-data]');
-            if (component && component.__x) {
-                const nivelId = '{{ old($name, $selected) }}';
-                component.__x.$data.selectedId = nivelId;
-                @foreach($niveles as $nivel)
-                if (nivelId == '{{ $nivel->id }}') {
-                    component.__x.$data.selected = 'Nivel {{ $nivel->nivel }} — {{ $nivel->nombre }} (SLA: {{ $nivel->horas_sla }}h)';
-                }
-                @endforeach
-            }
-        }, 100);
-        @endif
-    });
-</script>
-@endpush
