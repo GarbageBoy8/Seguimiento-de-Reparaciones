@@ -1,0 +1,25 @@
+# Dependencias y builds locales
+node_modules/
+public/hot
+public/build
+
+# Control de versiones
+.git/
+.gitignore
+.gitattributes
+
+# Entorno y secretos
+.env
+.env.*
+
+# Logs (el directorio storage/ se copia, pero no sus logs)
+storage/logs/*.log
+
+# Tests
+tests/
+
+# Herramientas de desarrollo local
+.editorconfig
+.phpunit.result.cache
+phpunit.xml
+docker-compose.yml

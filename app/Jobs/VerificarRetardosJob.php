@@ -14,10 +14,8 @@ class VerificarRetardosJob implements ShouldQueue
 
     public function handle(): void
     {
-        // Buscar órdenes activas cuya hora_limite ya pasó
-        $ordenesRetrasadas = Reparacion::activas()
-            ->whereNotIn('estado', ['Retardo'])
-            ->where('hora_limite', '<', now())
+        // Buscar órdenes vencidas que aún no están cerradas ni marcadas como retardo.
+        $ordenesRetrasadas = Reparacion::pendientesDeRetardo()
             ->with(['taller', 'cliente', 'tecnico', 'nivel'])
             ->get();
 
@@ -27,8 +25,8 @@ class VerificarRetardosJob implements ShouldQueue
 
             // 2. Buscar el admin del mismo taller
             $admin = User::where('taller_id', $reparacion->taller_id)
-                         ->where('rol', 'admin')
-                         ->first();
+                ->where('rol', 'admin')
+                ->first();
 
             // 3. Notificar al admin
             if ($admin) {

@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 class Reparacion extends Model
 {
     protected $table = 'reparaciones';
+
     protected $fillable = [
         'taller_id',
         'cliente_id',
@@ -33,8 +34,8 @@ class Reparacion extends Model
 
     protected $casts = [
         'hora_ingreso' => 'datetime',
-        'hora_limite'  => 'datetime',
-        'hora_fin'     => 'datetime',
+        'hora_limite' => 'datetime',
+        'hora_fin' => 'datetime',
     ];
 
     // ─── Relaciones ──────────────────────────────────────────
@@ -87,6 +88,16 @@ class Reparacion extends Model
         return $query->whereNotIn('estado', ['Entregado', 'Cancelado']);
     }
 
+    /**
+     * Órdenes que todavía pueden pasar a estado Retardo por SLA vencido.
+     */
+    public function scopePendientesDeRetardo($query)
+    {
+        return $query
+            ->whereNotIn('estado', ['Retardo', 'Reparado', 'Entregado', 'Cancelado'])
+            ->where('hora_limite', '<', now());
+    }
+
     // ─── Accesores / Helpers ─────────────────────────────────
 
     /**
@@ -124,9 +135,9 @@ class Reparacion extends Model
         // Usar max() sobre el sufijo numérico es más seguro que count()
         // porque count() fallaría si alguna orden fue eliminada (generaría duplicados)
         $ultimo = self::where('taller_id', $tallerId)
-                      ->whereYear('created_at', $anio)
-                      ->selectRaw("MAX(CAST(SUBSTRING(folio, ?) AS UNSIGNED)) as max_num", [strlen($prefijo) + 1])
-                      ->value('max_num') ?? 0;
+            ->whereYear('created_at', $anio)
+            ->selectRaw('MAX(CAST(SUBSTRING(folio, ?) AS UNSIGNED)) as max_num', [strlen($prefijo) + 1])
+            ->value('max_num') ?? 0;
 
         $numero = str_pad($ultimo + 1, 4, '0', STR_PAD_LEFT);
 

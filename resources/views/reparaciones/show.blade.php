@@ -31,6 +31,7 @@
                     'En Revisión' => 'bg-blue-100 text-blue-700',
                     'Esperando Pieza' => 'bg-amber-100 text-amber-700',
                     'Reparado' => 'bg-emerald-100 text-emerald-700',
+                    'Retardo' => 'bg-red-100 text-red-700',
                     'Entregado' => 'bg-gray-100 text-gray-500',
                     'Cancelado' => 'bg-rose-100 text-rose-700',
                     ];
@@ -186,7 +187,7 @@
                 <div>
                     <label for="estado" class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
                     <select id="estado" name="estado" class="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED]">
-                        @foreach(['Recibido', 'En Revisión', 'Esperando Pieza', 'Reparado', 'Entregado', 'Cancelado'] as $estado)
+                        @foreach(['Recibido', 'En Revisión', 'Esperando Pieza', 'Retardo', 'Reparado', 'Entregado', 'Cancelado'] as $estado)
                         <option value="{{ $estado }}" {{ $reparacion->estado === $estado ? 'selected' : '' }}>
                             {{ $estado }}
                         </option>

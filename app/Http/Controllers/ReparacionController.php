@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrdenCreadaMail;
 use App\Mail\ReparacionListaMail;
 use App\Models\Cliente;
 use App\Models\Escalamiento;
@@ -9,8 +10,8 @@ use App\Models\NivelReparacion;
 use App\Models\Reparacion;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 
 class ReparacionController extends Controller
 {
@@ -31,7 +32,7 @@ class ReparacionController extends Controller
     {
         $tallerId = auth()->user()->taller_id;
 
-        $niveles  = NivelReparacion::orderBy('nivel')->get();
+        $niveles = NivelReparacion::orderBy('nivel')->get();
         $clientes = Cliente::where('taller_id', $tallerId)->orderBy('nombre')->get();
         $tecnicos = User::where('taller_id', $tallerId)->orderBy('name')->get();
 
@@ -44,59 +45,71 @@ class ReparacionController extends Controller
 
         $data = $request->validate([
             // Cliente
-            'cliente_id'        => ['nullable', 'exists:clientes,id'],
-            'cliente_nombre'    => ['nullable', 'required_without:cliente_id', 'string', 'max:255'],
-            'cliente_email'     => ['nullable', 'email', 'max:255'],
-            'cliente_telefono'  => ['nullable', 'string', 'max:20'],
+            'cliente_id' => [
+                'nullable',
+                Rule::exists('clientes', 'id')->where(fn ($query) => $query->where('taller_id', $tallerId)),
+            ],
+            'cliente_nombre' => ['nullable', 'required_without:cliente_id', 'string', 'max:255'],
+            'cliente_email' => ['nullable', 'email', 'max:255'],
+            'cliente_telefono' => ['nullable', 'string', 'max:20'],
             // Dispositivo
-            'tipo_equipo'       => ['required', 'string', 'max:100'],
-            'marca'             => ['required', 'string', 'max:100'],
-            'modelo'            => ['required', 'string', 'max:100'],
-            'numero_serie'      => ['nullable', 'string', 'max:100'],
+            'tipo_equipo' => ['required', 'string', 'max:100'],
+            'marca' => ['required', 'string', 'max:100'],
+            'modelo' => ['required', 'string', 'max:100'],
+            'numero_serie' => ['nullable', 'string', 'max:100'],
             // Reparación
-            'nivel_id'          => ['required', 'exists:niveles_reparacion,id'],
-            'user_id'           => ['nullable', 'exists:users,id'],
+            'nivel_id' => ['required', 'exists:niveles_reparacion,id'],
+            'user_id' => [
+                'nullable',
+                Rule::exists('users', 'id')->where(fn ($query) => $query->where('taller_id', $tallerId)),
+            ],
             'problema_reportado' => ['required', 'string'],
-            'costo_estimado'    => ['nullable', 'numeric', 'min:0'],
+            'costo_estimado' => ['nullable', 'numeric', 'min:0'],
         ]);
 
         // Resolver o crear el cliente
-        if (!empty($data['cliente_id'])) {
-            $cliente = Cliente::findOrFail($data['cliente_id']);
+        if (! empty($data['cliente_id'])) {
+            $cliente = Cliente::where('taller_id', $tallerId)->findOrFail($data['cliente_id']);
         } else {
             $cliente = Cliente::create([
                 'taller_id' => $tallerId,
-                'nombre'    => $data['cliente_nombre'],
-                'email'     => $data['cliente_email'] ?? null,
-                'telefono'  => $data['cliente_telefono'] ?? null,
+                'nombre' => $data['cliente_nombre'],
+                'email' => $data['cliente_email'] ?? null,
+                'telefono' => $data['cliente_telefono'] ?? null,
             ]);
         }
 
         // Calcular hora_limite según el SLA del nivel
-        $nivel      = NivelReparacion::findOrFail($data['nivel_id']);
+        $nivel = NivelReparacion::findOrFail($data['nivel_id']);
         $horaIngreso = now();
-        $horaLimite  = now()->addHours($nivel->horas_sla);
+        $horaLimite = now()->addHours($nivel->horas_sla);
 
         $reparacion = Reparacion::create([
-            'taller_id'          => $tallerId,
-            'cliente_id'         => $cliente->id,
-            'user_id'            => $data['user_id'] ?? null,
-            'nivel_id'           => $nivel->id,
-            'folio'              => Reparacion::generarFolio($tallerId),
-            'token_seguimiento'  => Reparacion::generarToken(),
-            'tipo_equipo'        => $data['tipo_equipo'],
-            'marca'              => $data['marca'],
-            'modelo'             => $data['modelo'],
-            'numero_serie'       => $data['numero_serie'] ?? null,
+            'taller_id' => $tallerId,
+            'cliente_id' => $cliente->id,
+            'user_id' => $data['user_id'] ?? null,
+            'nivel_id' => $nivel->id,
+            'folio' => Reparacion::generarFolio($tallerId),
+            'token_seguimiento' => Reparacion::generarToken(),
+            'tipo_equipo' => $data['tipo_equipo'],
+            'marca' => $data['marca'],
+            'modelo' => $data['modelo'],
+            'numero_serie' => $data['numero_serie'] ?? null,
             'problema_reportado' => $data['problema_reportado'],
-            'costo_estimado'     => $data['costo_estimado'] ?? null,
-            'estado'             => 'Recibido',
-            'hora_ingreso'       => $horaIngreso,
-            'hora_limite'        => $horaLimite,
+            'costo_estimado' => $data['costo_estimado'] ?? null,
+            'estado' => 'Recibido',
+            'hora_ingreso' => $horaIngreso,
+            'hora_limite' => $horaLimite,
         ]);
 
+        // Enviar email de confirmación al cliente con la URL de seguimiento
+        if ($reparacion->cliente->email) {
+            Mail::to($reparacion->cliente->email)
+                ->send(new OrdenCreadaMail($reparacion));
+        }
+
         return redirect()->route('reparaciones.show', $reparacion)
-                         ->with('success', "Orden {$reparacion->folio} creada correctamente.");
+            ->with('success', "Orden {$reparacion->folio} creada correctamente.");
     }
 
     public function show(Reparacion $reparacion)
@@ -105,7 +118,7 @@ class ReparacionController extends Controller
 
         $reparacion->load(['cliente', 'tecnico', 'nivel', 'mensajes.user', 'escalamientos.nivelAnterior', 'escalamientos.nivelNuevo', 'escalamientos.user']);
 
-        $niveles  = NivelReparacion::orderBy('nivel')->get();
+        $niveles = NivelReparacion::orderBy('nivel')->get();
         $tecnicos = User::where('taller_id', auth()->user()->taller_id)->orderBy('name')->get();
 
         return view('reparaciones.show', compact('reparacion', 'niveles', 'tecnicos'));
@@ -116,11 +129,15 @@ class ReparacionController extends Controller
         $this->autorizarTaller($reparacion);
 
         $data = $request->validate([
-            'estado'              => ['sometimes', 'in:Recibido,En Revisión,Esperando Pieza,Reparado,Entregado,Cancelado'],
+            'estado' => ['sometimes', 'in:Recibido,En Revisión,Esperando Pieza,Reparado,Entregado,Cancelado,Retardo'],
             'diagnostico_tecnico' => ['sometimes', 'nullable', 'string'],
-            'comentario_retardo'  => ['sometimes', 'nullable', 'string'],
-            'costo_final'         => ['sometimes', 'nullable', 'numeric', 'min:0'],
-            'user_id'             => ['sometimes', 'nullable', 'exists:users,id'],
+            'comentario_retardo' => ['sometimes', 'nullable', 'string'],
+            'costo_final' => ['sometimes', 'nullable', 'numeric', 'min:0'],
+            'user_id' => [
+                'sometimes',
+                'nullable',
+                Rule::exists('users', 'id')->where(fn ($query) => $query->where('taller_id', auth()->user()->taller_id)),
+            ],
         ]);
 
         $estadoAnterior = $reparacion->estado;
@@ -137,7 +154,7 @@ class ReparacionController extends Controller
         }
 
         return redirect()->route('reparaciones.show', $reparacion)
-                         ->with('success', 'Orden actualizada correctamente.');
+            ->with('success', 'Orden actualizada correctamente.');
     }
 
     public function escalar(Request $request, Reparacion $reparacion)
@@ -148,30 +165,30 @@ class ReparacionController extends Controller
             // Rule::notIn compara el valor enviado contra el nivel_id actual (con cast a int)
             // 'different:N' en Laravel compara contra un *campo de request* llamado N, no contra el valor N
             'nivel_nuevo_id' => ['required', 'exists:niveles_reparacion,id', Rule::notIn([(int) $reparacion->nivel_id])],
-            'motivo'         => ['required', 'string', 'min:10'],
+            'motivo' => ['required', 'string', 'min:10'],
         ]);
 
         $nivelAnteriorId = $reparacion->nivel_id;
-        $nivelNuevo      = NivelReparacion::findOrFail($data['nivel_nuevo_id']);
+        $nivelNuevo = NivelReparacion::findOrFail($data['nivel_nuevo_id']);
 
         // Registrar el escalamiento
         Escalamiento::create([
-            'reparacion_id'    => $reparacion->id,
-            'user_id'          => auth()->id(),
+            'reparacion_id' => $reparacion->id,
+            'user_id' => auth()->id(),
             'nivel_anterior_id' => $nivelAnteriorId,
-            'nivel_nuevo_id'   => $nivelNuevo->id,
-            'motivo'           => $data['motivo'],
+            'nivel_nuevo_id' => $nivelNuevo->id,
+            'motivo' => $data['motivo'],
         ]);
 
         // Actualizar nivel y recalcular hora_limite
         // ->copy() evita mutar el atributo hora_ingreso del modelo en memoria
         $reparacion->update([
-            'nivel_id'    => $nivelNuevo->id,
+            'nivel_id' => $nivelNuevo->id,
             'hora_limite' => $reparacion->hora_ingreso->copy()->addHours($nivelNuevo->horas_sla),
         ]);
 
         return redirect()->route('reparaciones.show', $reparacion)
-                         ->with('success', "Nivel escalado a {$nivelNuevo->nombre}. Tiempo límite recalculado.");
+            ->with('success', "Nivel escalado a {$nivelNuevo->nombre}. Tiempo límite recalculado.");
     }
 
     // ─── Helper privado ───────────────────────────────────────
