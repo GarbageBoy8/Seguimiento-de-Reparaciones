@@ -13,7 +13,7 @@
 
 {{-- Notificaciones de retardo (solo admin) --}}
 @if(auth()->user()->esAdmin() && $notificaciones->isNotEmpty())
-<section aria-label="Alertas de retardo" class="mb-8 bg-white rounded-2xl shadow-lg border border-amber-200 overflow-hidden">
+<section id="notificaciones" aria-label="Alertas de retardo" class="mb-8 bg-white rounded-2xl shadow-lg border border-amber-200 overflow-hidden">
     <div class="bg-gradient-to-r from-amber-50 to-white px-6 py-4 border-b border-amber-200">
         <div class="flex justify-between items-center flex-wrap gap-4">
             <h2 class="text-lg font-bold text-[#2D1B69] flex items-center gap-2">
@@ -27,31 +27,36 @@
             </form>
         </div>
     </div>
-    <ul class="divide-y divide-amber-100">
-        @foreach($notificaciones as $notif)
-        <li class="p-4 hover:bg-amber-50/50 transition-colors">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <div class="flex-1">
-                    <strong class="text-[#2D1B69] font-semibold">{{ $notif->data['folio'] }}</strong>
-                    <span class="text-gray-600 mx-2">—</span>
-                    <span class="text-gray-700">{{ $notif->data['mensaje'] }}</span>
-                    <span class="text-gray-500 text-sm ml-2">(Técnico: {{ $notif->data['tecnico'] }})</span>
-                </div>
-                <div class="flex items-center gap-2">
+<ul class="divide-y divide-amber-100">
+    @foreach($notificaciones as $notif)
+    <li class="p-4 hover:bg-amber-50/50 transition-colors">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex-1">
+                {{-- Usamos ?? '' para que si no existe 'folio', no rompa la página --}}
+                <strong class="text-[#2D1B69] font-semibold">{{ $notif->data['folio'] ?? 'Sin Folio' }}</strong>
+                <span class="text-gray-600 mx-2">—</span>
+                <span class="text-gray-700">{{ $notif->data['mensaje'] ?? 'Sin mensaje' }}</span>
+                <span class="text-gray-500 text-sm ml-2">(Técnico: {{ $notif->data['tecnico'] ?? 'No asignado' }})</span>
+            </div>
+            <div class="flex items-center gap-2">
+                {{-- Validamos también el ID de reparación antes de armar la ruta --}}
+                @if(isset($notif->data['reparacion_id']))
                     <a href="{{ route('reparaciones.show', $notif->data['reparacion_id']) }}" class="text-[#7C3AED] hover:text-[#2D1B69] text-sm font-medium transition-colors">
                         Ver orden →
                     </a>
-                    <form method="POST" action="{{ route('notificaciones.leida', $notif->id) }}" class="inline">
-                        @csrf
-                        <button type="submit" class="bg-gray-100 hover:bg-emerald-100 text-gray-600 hover:text-emerald-700 px-3 py-1 rounded-lg text-sm transition-colors">
-                            ✓ Leída
-                        </button>
-                    </form>
-                </div>
+                @endif
+                
+                <form method="POST" action="{{ route('notificaciones.leida', $notif->id) }}" class="inline">
+                    @csrf
+                    <button type="submit" class="bg-gray-100 hover:bg-emerald-100 text-gray-600 hover:text-emerald-700 px-3 py-1 rounded-lg text-sm transition-colors">
+                        ✓
+                    </button>
+                </form>
             </div>
-        </li>
-        @endforeach
-    </ul>
+        </div>
+    </li>
+    @endforeach
+</ul>
 </section>
 @endif
 

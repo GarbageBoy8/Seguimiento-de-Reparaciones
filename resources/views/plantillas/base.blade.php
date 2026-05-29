@@ -15,7 +15,10 @@
         {{-- Barra lateral --}}
         <aside id="sidebar" class=" sticky top-0 h-screen  flex-shrink-0 overflow-y-auto w-72 bg-[#1E055A] text-white flex flex-col shadow-2xl">
             <div class="p-6 border-b border-indigo-800/50">
-                <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">FixFlow</h1>
+                <a href="{{url('/')}}">
+                    <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">FixFlow</h1>
+                </a>
+                
                 <p class="text-indigo-300 text-sm mt-1 font-medium">{{ auth()->user()->taller->nombre }}</p>
             </div>
             <nav aria-label="Navegación principal" class="flex-1 p-4">

@@ -17,24 +17,20 @@ $id = $id ?? $name;
     x-data="{ 
         open: false, 
         selected: null,
-        selectedId: '{{ old($name, $selected) }}'
-    }" 
-    class="relative"
-    style="overflow: visible !important;"
-    x-init="
-        if (selectedId) {
-            let tecnicoEncontrado = null;
-            @foreach($tecnicos as $tecnico)
-                if (selectedId == '{{ $tecnico->id }}') {
-                    tecnicoEncontrado = '{{ $tecnico->name }}';
-                }
-            @endforeach
-            if (tecnicoEncontrado) selected = tecnicoEncontrado;
+        selectedId: '{{ old($name, $selected) }}',
+        init() {
+            // Esto se ejecuta nativamente en Alpine al iniciar, sin romper ciclos
+            if (this.selectedId) {
+                @foreach($tecnicos as $tecnico)
+                    if (this.selectedId == '{{ $tecnico->id }}') {
+                        this.selected = '{{ $tecnico->name }}';
+                    }
+                @endforeach
+            }
         }
-    "
+    }" 
+    class="relative w-full"
 >
-
-    <!-- Botón selector -->
     <button
         type="button"
         @click="open = !open"
@@ -46,7 +42,6 @@ $id = $id ?? $name;
         </svg>
     </button>
 
-    <!-- Dropdown - se desborda completamente -->
     <div
         x-show="open"
         @click.away="open = false"
@@ -56,15 +51,9 @@ $id = $id ?? $name;
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 transform scale-100"
         x-transition:leave-end="opacity-0 transform scale-95"
-        class="fixed z-50 bg-white rounded-xl shadow-2xl border border-gray-200 max-h-96 overflow-y-auto"
-        :style="{
-            width: $el.parentElement.offsetWidth + 'px',
-            left: $el.parentElement.getBoundingClientRect().left + 'px',
-            top: ($el.parentElement.getBoundingClientRect().bottom + 8) + 'px'
-        }">
-        
+        class="absolute left-0 mt-2 z-50 w-full bg-white rounded-xl shadow-2xl border border-gray-200 max-h-96 overflow-y-auto"
+    >
         <div class="py-1">
-            <!-- Opción "Sin asignar" -->
             <div
                 @click="selected = '— {{ $placeholder }} —'; selectedId = ''; open = false"
                 class="px-4 py-3 hover:bg-purple-50 hover:text-[#7C3AED] cursor-pointer transition-colors border-b border-gray-100"
@@ -101,9 +90,6 @@ $id = $id ?? $name;
             </div>
             @empty
             <div class="px-4 py-8 text-center text-gray-500 text-sm">
-                <svg class="w-12 h-12 mx-auto text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                </svg>
                 No hay técnicos disponibles
             </div>
             @endforelse
