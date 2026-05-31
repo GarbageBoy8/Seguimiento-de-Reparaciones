@@ -15,17 +15,83 @@ use Illuminate\Validation\Rule;
 
 class ReparacionController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $tallerId = auth()->user()->taller_id;
 
-        $reparaciones = Reparacion::delTaller($tallerId)
-            ->activas()
-            ->with(['cliente', 'tecnico', 'nivel'])
-            ->latest()
-            ->paginate(20);
+        $filtrosEstado = [
+            'activas' => 'Activas',
+            'Recibido' => 'Recibido',
+            'En Revisión' => 'En Revisión',
+            'Esperando Pieza' => 'Esperando Pieza',
+            'Retardo' => 'Retardo',
+            'Reparado' => 'Reparado',
+        ];
 
-        return view('reparaciones.index', compact('reparaciones'));
+        $estadoSolicitado = $request->query('estado', 'activas');
+        $estadoActual = array_key_exists($estadoSolicitado, $filtrosEstado)
+            ? $estadoSolicitado
+            : 'activas';
+        $estadoInvalido = $request->filled('estado') && ! array_key_exists($estadoSolicitado, $filtrosEstado);
+
+        $tecnicos = User::where('taller_id', $tallerId)
+            ->where('rol', 'tecnico')
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        $tecnicoActual = null;
+        $tecnicoInvalido = false;
+        if ($request->filled('tecnico_id')) {
+            $tecnicoId = (int) $request->query('tecnico_id');
+            if ($tecnicos->contains('id', $tecnicoId)) {
+                $tecnicoActual = $tecnicoId;
+            } else {
+                $tecnicoInvalido = true;
+            }
+        }
+
+        $soloRetrasadas = $request->boolean('retraso');
+
+        if ($estadoInvalido || $tecnicoInvalido) {
+            return redirect()->route('reparaciones.index', array_filter([
+                'estado' => $estadoActual !== 'activas' ? $estadoActual : null,
+                'tecnico_id' => $tecnicoActual,
+                'retraso' => $soloRetrasadas ? 1 : null,
+            ], fn ($value) => filled($value)));
+        }
+
+        $query = Reparacion::delTaller($tallerId)
+            ->with(['cliente', 'tecnico', 'nivel']);
+
+        if ($estadoActual === 'activas') {
+            $query->activas();
+        } else {
+            $query->where('estado', $estadoActual);
+        }
+
+        if ($tecnicoActual) {
+            $query->where('user_id', $tecnicoActual);
+        }
+
+        if ($soloRetrasadas) {
+            $query
+                ->where('hora_limite', '<', now())
+                ->whereNotIn('estado', ['Reparado', 'Entregado', 'Cancelado']);
+        }
+
+        $reparaciones = $query
+            ->latest()
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('reparaciones.index', compact(
+            'reparaciones',
+            'estadoActual',
+            'tecnicoActual',
+            'soloRetrasadas',
+            'filtrosEstado',
+            'tecnicos'
+        ));
     }
 
     public function create()
