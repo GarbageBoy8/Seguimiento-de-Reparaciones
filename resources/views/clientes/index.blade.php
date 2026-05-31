@@ -38,7 +38,9 @@
             </thead>
             <tbody class="divide-y divide-gray-100">
                 @forelse($clientes as $cliente)
-                <tr class="hover:bg-purple-50/30 transition-colors duration-200 group">
+                {{-- CAMBIO AQUÍ: La fila se pinta de color ámbar si el cliente es mayorista --}}
+                <tr class="{{ $cliente->es_mayorista ? 'bg-amber-50/60 hover:bg-amber-100/70 font-medium' : 'hover:bg-purple-50/30' }} transition-colors duration-200 group">
+                    
                     {{-- Nombre con avatar --}}
                     <td class="px-6 py-4 whitespace-nowrap">
                         <div class="flex items-center gap-3">
@@ -47,7 +49,15 @@
                                     {{ substr($cliente->nombre, 0, 2) }}
                                 </span>
                             </div>
-                            <span class="font-semibold text-[#2D1B69]">{{ $cliente->nombre }}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="font-semibold text-[#2D1B69]">{{ $cliente->nombre }}</span>
+                                {{-- CAMBIO AQUÍ: Insignia de corona al lado del nombre si es mayorista --}}
+                                @if($cliente->es_mayorista)
+                                    <span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider shadow-sm border border-amber-200 whitespace-nowrap">
+                                        Mayorista
+                                    </span>
+                                @endif
+                            </div>
                         </div>
                     </td>
 

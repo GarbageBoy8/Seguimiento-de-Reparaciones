@@ -17,7 +17,15 @@
                         </span>
                     </div>
                     <div>
-                        <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $cliente->nombre }}</h1>
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <h1 class="text-2xl md:text-3xl font-bold text-white">{{ $cliente->nombre }}</h1>
+                            {{-- NUEVO: Insignia de mayorista en el título principal --}}
+                            @if($cliente->es_mayorista)
+                                <span class="bg-amber-400 text-amber-950 text-xs font-bold px-3 py-1 rounded-xl uppercase tracking-wider shadow-md border border-amber-300">
+                                    👑 Mayorista
+                                </span>
+                            @endif
+                        </div>
                         <p class="text-purple-200 text-sm mt-1">Perfil del cliente</p>
                     </div>
                 </div>
@@ -69,7 +77,6 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                         </svg>
-                        Dirección
                     </div>
                     <p class="text-gray-800 font-medium">{{ $cliente->direccion ?? '—' }}</p>
                 </div>
@@ -102,7 +109,8 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @forelse($reparaciones as $orden)
-                    <tr class="hover:bg-purple-50/30 transition-colors duration-200">
+                    {{-- CAMBIO AQUÍ: Si el perfil es de un mayorista, las filas toman un color ámbar/amarillo claro --}}
+                    <tr class="{{ $cliente->es_mayorista ? 'bg-amber-50/60 hover:bg-amber-100/70 font-medium' : 'hover:bg-purple-50/30' }} transition-colors duration-200">
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="font-semibold text-[#2D1B69]">{{ $orden->folio }}</span>
                         </td>
