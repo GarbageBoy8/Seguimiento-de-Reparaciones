@@ -106,6 +106,17 @@
                         placeholder="Calle, número, colonia, ciudad, código postal">{{ old('direccion') }}</textarea>
                 </div>
             </div>
+            {{-- Es mayorista --}}
+            <div class="relative flex items-start pt-2">
+                <div class="flex items-center h-5">
+                    <input id="es_mayorista" name="es_mayorista" type="checkbox" value="1" {{ old('es_mayorista') ? 'checked' : '' }}
+                        class="focus:ring-[#7C3AED] h-4 w-4 text-[#7C3AED] border-gray-300 rounded-md transition-all">
+                </div>
+                <div class="ml-3 text-sm">
+                    <label for="es_mayorista" class="font-medium text-gray-700">¿Es cliente mayorista?</label>
+                    <p class="text-gray-400 text-xs">Marcar esta casilla destacará visualmente sus órdenes en el Centro de Mando.</p>
+                </div>
+            </div>
         </div>
 
         {{-- Botones de acción --}}

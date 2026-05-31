@@ -32,8 +32,11 @@ class ClienteController extends Controller
             'email'     => ['nullable', 'email', 'max:255'],
             'telefono'  => ['nullable', 'string', 'max:20'],
             'direccion' => ['nullable', 'string', 'max:500'],
+            'es_mayorista' => ['nullable', 'boolean'],
         ]);
 
+        $data['es_mayorista'] = $request->has('es_mayorista');
+        
         $cliente = Cliente::create([
             'taller_id' => auth()->user()->taller_id,
             ...$data,
