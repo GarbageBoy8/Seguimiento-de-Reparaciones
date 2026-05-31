@@ -16,7 +16,7 @@
         @endif
     </label>
     
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+    <div class="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         @foreach($tipos() as $valor => $config)
             <button
                 type="button"
@@ -24,7 +24,7 @@
                 class="relative group transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:ring-offset-2 rounded-xl"
             >
                 <div 
-                    class="p-4 rounded-xl border-2 transition-all duration-200 w-full"
+                    class="w-full rounded-xl border-2 p-3 transition-all duration-200 md:p-4"
                     :class="{
                         'border-[#7C3AED] bg-purple-50 shadow-md': selected === '{{ $valor }}',
                         'border-gray-200 hover:border-[#7C3AED] hover:bg-purple-50': selected !== '{{ $valor }}'
@@ -33,7 +33,7 @@
                     <div class="flex flex-col items-center text-center space-y-2">
                         <!-- Icono - Negro por defecto, morado en hover y seleccionado -->
                         <svg 
-                            class="w-8 h-8 transition-colors duration-200"
+                            class="h-7 w-7 transition-colors duration-200 md:h-8 md:w-8"
                             :class="{ 
                                 'text-[#7C3AED]': selected === '{{ $valor }}',
                                 'text-gray-900 group-hover:text-[#7C3AED]': selected !== '{{ $valor }}'

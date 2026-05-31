@@ -4,10 +4,10 @@
 
 @section('contenido-principal')
 
-<div class="max-w-2xl mx-auto">
+<div class="mx-auto max-w-2xl">
     {{-- Header --}}
-    <div class="mb-8">
-        <h1 class=" py-2 text-2xl md:text-3xl font-bold bg-[#1E1B2E] bg-clip-text text-transparent">
+    <div class="mb-6 md:mb-8">
+        <h1 class="py-2 text-2xl md:text-3xl font-bold bg-[#1E1B2E] bg-clip-text text-transparent">
             Registrar nuevo cliente
         </h1>
         <p class="text-gray-500 text-sm mt-1">Ingresa los datos del cliente para registrarlo en el sistema</p>
@@ -33,10 +33,10 @@
     @endif
 
     {{-- Formulario --}}
-    <form method="POST" action="{{ route('clientes.store') }}" class="-mt-4 bg-white rounded-2xl shadow-lg overflow-hidden">
+    <form method="POST" action="{{ route('clientes.store') }}" class="overflow-hidden rounded-2xl bg-white shadow-lg">
         @csrf
 
-        <div class=" p-6 space-y-10">
+        <div class="space-y-5 p-4 md:p-6">
             {{-- Nombre completo --}}
             <div>
                 <label for="nombre" class="block text-sm font-medium text-gray-700 mb-1">
@@ -120,14 +120,14 @@
         </div>
 
         {{-- Botones de acción --}}
-        <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex flex-wrap gap-3">
-            <button type="submit" class="bg-[#7C3AED] hover:bg-[#6D28D9] text-white px-6 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+        <div class="flex flex-col gap-3 border-t border-gray-100 bg-gray-50 px-4 py-4 sm:flex-row sm:flex-wrap md:px-6">
+            <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#7C3AED] px-6 py-2.5 font-medium text-white shadow-md transition-all hover:bg-[#6D28D9] hover:shadow-lg sm:w-auto">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                 </svg>
                 Guardar cliente
             </button>
-            <a href="{{ route('clientes.index') }}" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-6 py-2.5 rounded-xl font-medium transition-all flex items-center gap-2">
+            <a href="{{ route('clientes.index') }}" class="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-100 px-6 py-2.5 font-medium text-gray-700 transition-all hover:bg-gray-200 sm:w-auto">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>

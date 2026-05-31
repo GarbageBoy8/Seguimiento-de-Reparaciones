@@ -5,8 +5,8 @@
 @section('contenido-principal')
 
 {{-- Header con título y botón --}}
-<div class="mb-8">
-    <div class="flex flex-wrap justify-between items-center gap-4">
+<div class="mb-6 md:mb-8">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h1 class="text-2xl md:text-3xl font-bold bg-[#1E1B2E] bg-clip-text text-transparent">
                 Clientes del taller
@@ -14,7 +14,7 @@
             <p class="text-gray-500 text-sm mt-1">Gestiona y consulta el historial de tus clientes</p>
         </div>
         <a href="{{ route('clientes.create') }}"
-            class="bg-[#EC4899] hover:bg-[#DB2777] text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+            class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#EC4899] px-5 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-[#DB2777] hover:shadow-lg sm:w-auto">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -23,8 +23,39 @@
     </div>
 </div>
 
+{{-- Cards móviles --}}
+<div class="space-y-4 md:hidden">
+    @forelse($clientes as $cliente)
+    <article class="rounded-2xl border border-gray-100 bg-white p-4 shadow-md">
+        <div class="flex items-start gap-3">
+            <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#7C3AED]/10">
+                <span class="text-sm font-medium uppercase text-[#7C3AED]">{{ substr($cliente->nombre, 0, 2) }}</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <h2 class="truncate font-semibold text-[#2D1B69]">{{ $cliente->nombre }}</h2>
+                <p class="truncate text-sm text-gray-500">{{ $cliente->email ?? 'Sin email' }}</p>
+                <p class="text-sm text-gray-500">{{ $cliente->telefono ?? 'Sin teléfono' }}</p>
+            </div>
+            <span class="rounded-full bg-[#7C3AED]/10 px-2.5 py-1 text-xs font-semibold text-[#7C3AED]">
+                {{ $cliente->reparaciones_count }} orden{{ $cliente->reparaciones_count === 1 ? '' : 'es' }}
+            </span>
+        </div>
+        <a href="{{ route('clientes.show', $cliente) }}" class="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-[#7C3AED] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#6D28D9]">
+            Ver historial
+        </a>
+    </article>
+    @empty
+    <div class="rounded-2xl bg-white px-6 py-12 text-center shadow-md">
+        <p class="font-medium text-gray-400">No hay clientes registrados</p>
+        <a href="{{ route('clientes.create') }}" class="mt-2 inline-flex text-sm text-[#7C3AED] hover:underline">
+            Crear primer cliente
+        </a>
+    </div>
+    @endforelse
+</div>
+
 {{-- Tabla de clientes --}}
-<div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+<div class="hidden overflow-hidden rounded-2xl bg-white shadow-lg md:block">
     <div class="overflow-x-auto">
         <table class="w-full">
             <thead class="bg-gradient-to-r from-[#2D1B69] to-[#1E1B2E]">
