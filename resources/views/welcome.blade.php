@@ -25,22 +25,17 @@
     </style>
 </head>
 
-<body class="flex min-h-screen flex-col overflow-x-hidden bg-[#f1eded] text-neutral-800">
+<body class="bg-[#1A0033] text-neutral-800 flex flex-col min-h-screen">
 
     {{-- HEADER --}}
-    <header class="sticky top-0 z-50 w-full bg-white text-sm shadow-sm">
+    <header class="bg-white w-full lg:px-8 text-sm sticky top-0 z-50">
         @if (Route::has('login'))
-        <nav x-data="{ open: false }" @keydown.escape.window="open = false" class="relative w-full border-b border-gray-100 bg-white/95 px-4 py-3 backdrop-blur-sm md:px-6 lg:px-8">
-            <div class="flex items-center justify-between gap-4">
+        <nav class="bg-white/95 backdrop-blur-sm px-6 py-4 flex justify-between items-center w-full shadow-sm border-b border-gray-100">
             <div class="flex items-center">
                 <a href="/" class="text-3xl font-extrabold tracking-tight text-[#4B0082] md:text-4xl">FixFlow</a>
             </div>
 
-            <div class="hidden items-center space-x-10 text-base font-medium text-neutral-600 lg:flex lg:text-lg">
-                <a href="#optimiza" class="hover:text-[#4B0082] hover:scale-105 transition-all duration-300">Optimiza tu taller</a>
-                <a href="#gestiona" class="hover:text-[#4B0082] hover:scale-105 transition-all duration-300">Gestiona</a>
-                <a href="#agilidad" class="hover:text-[#4B0082] hover:scale-105 transition-all duration-300">Agilidad</a>
-            </div>
+
 
             <div class="hidden items-center space-x-4 md:flex">
                 @auth
@@ -80,21 +75,18 @@
         @endif
     </header>
 
-    {{-- WRAPPER GLOBAL PARA EL TEMA OSCURO --}}
-    <div class="relative flex-1 bg-gradient-to-br from-[#2D004E] via-[#4B0082] to-[#1A0033] w-full flex flex-col overflow-hidden">
 
-        {{-- Fondo de circuito global --}}
-        <div class="absolute inset-0 bg-circuit opacity-50 pointer-events-none"></div>
+    {{-- 1. SECCIÓN DE LAS IMÁGENES (HERO VIBRANTE) --}}
+    <div class="relative w-full bg-gradient-to-br from-[#2D004E] via-[#4B0082] to-[#1A0033] flex flex-col overflow-hidden rounded-b-[45px] sm:rounded-b-[75px] lg:rounded-b-[115px] shadow-[0_20px_50px_rgba(0,0,0,0.3)] z-20 pb-28 lg:pb-36">
+        
+        <div class="absolute inset-0 bg-circuit opacity-40 pointer-events-none"></div>
 
-        {{-- Resplandores --}}
-        <div class="pointer-events-none absolute left-[-10%] top-[-5%] hidden h-[420px] w-[420px] rounded-full bg-[#9D4EDD]/20 blur-[120px] md:block"></div>
-        <div class="pointer-events-none absolute right-[-10%] top-[20%] hidden h-[500px] w-[500px] rounded-full bg-[#7B2CBF]/20 blur-[120px] md:block"></div>
+        <div class="absolute top-[-5%] left-[-10%] w-[500px] h-[500px] bg-[#9D4EDD]/20 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-[#7B2CBF]/20 rounded-full blur-[120px] pointer-events-none"></div>
 
-        {{-- SECCIÓN PRINCIPAL (HERO) --}}
-        <section class="relative z-10 flex w-full items-center px-4 pb-16 pt-10 sm:px-6 lg:px-12 lg:pb-28 lg:pt-16">
-            <div class="relative mx-auto flex w-full max-w-[90rem] flex-col items-center justify-between gap-10 lg:flex-row lg:gap-12 xl:gap-20">
+        <section class="relative w-full px-4 lg:px-12 pt-16 pb-6 flex items-center z-10">
+            <div class="relative max-w-[90rem] mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-12 xl:gap-20">
 
-                {{-- Columna Izquierda: Información --}}
                 <div class="w-full lg:w-[45%] flex flex-col items-center lg:items-start text-center lg:text-left z-10">
                     <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#E0AAFF] shadow-sm backdrop-blur-sm md:mb-8">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
@@ -111,163 +103,237 @@
                     </p>
                 </div>
 
-                {{-- Columna Derecha: Centro de Mando --}}
-                <div class="relative z-10 mx-auto w-full max-w-lg lg:w-[55%] lg:max-w-none lg:pl-10">
-                    <div class="absolute inset-0 bg-[#000000] translate-y-6 blur-2xl opacity-40 rounded-[2rem] -z-10"></div>
+                <div class="relative w-full lg:w-[55%] h-[400px] sm:h-[480px] lg:h-[500px] flex items-center justify-center z-10 lg:pl-10 mt-12 lg:mt-0">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-[#7B2CBF]/10 via-[#9D4EDD]/5 to-transparent blur-3xl -z-10 rounded-full scale-75"></div>
 
-                    <div class="group relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur-xl transition-transform duration-500 hover:scale-[1.02] sm:p-6 lg:rounded-[2.5rem] lg:p-12">
-                        {{-- Patrón interior de la tarjeta --}}
-                        <div class="absolute inset-0 bg-circuit opacity-40 mix-blend-overlay transition-opacity duration-500 group-hover:opacity-70 pointer-events-none"></div>
-                        <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                    <div class="relative w-full h-full max-w-2xl mx-auto flex items-center justify-center">
+                        <div class="absolute left-0 top-6 w-[58%] z-10 opacity-75 shadow-2xl rounded-2xl border border-white/10 overflow-hidden transform -rotate-3 -translate-x-6 translate-y-4 transition-all duration-500 ease-out hover:opacity-100 hover:-translate-y-12 hover:scale-105 hover:z-30 group">
+                            <img src="{{ asset('assets/ordenes.jpg') }}" alt="Órdenes de Reparación" class="w-full h-auto object-cover">
+                        </div>
 
-                        <div class="relative z-10">
-                            <div class="mb-6 flex items-center justify-between sm:mb-8 lg:mb-10">
-                                <div class="flex items-center gap-5">
-                                    <div class="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/5 bg-white/10 shadow-inner backdrop-blur-md sm:h-14 sm:w-14">
-                                        <svg class="h-6 w-6 text-white sm:h-7 sm:w-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <h3 class="text-xl font-bold tracking-wide text-white sm:text-2xl">Centro de Mando</h3>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="absolute right-0 top-2 w-[58%] z-10 opacity-75 shadow-2xl rounded-2xl border border-white/10 overflow-hidden transform rotate-3 translate-x-6 translate-y-4 transition-all duration-500 ease-out hover:opacity-100 hover:-translate-y-12 hover:scale-105 hover:z-30 group">
+                            <img src="{{ asset('assets/clientes.jpg') }}" alt="Clientes del Taller" class="w-full h-auto object-cover">
+                        </div>
 
-                            {{-- Tarjetas del Centro de Mando --}}
-                            <div class="grid grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
-                                {{-- Total órdenes --}}
-                                <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#7B2CBF] to-[#4B0082] p-4 shadow-lg shadow-purple-900/50 transition-transform duration-300 hover:-translate-y-2 sm:p-5 lg:rounded-3xl lg:p-8">
-                                    <p class="relative z-10 mb-2 text-sm font-medium text-white/90 lg:text-lg">Total órdenes</p>
-                                    <p class="relative z-10 text-4xl font-extrabold text-white sm:text-5xl lg:text-6xl">10</p>
-                                </div>
-
-                                {{-- En proceso --}}
-                                <div class="relative overflow-hidden rounded-2xl border border-white/5 bg-black/30 p-4 backdrop-blur-md transition-transform duration-300 hover:-translate-y-2 sm:p-5 lg:rounded-3xl lg:p-8">
-                                    <p class="relative z-10 mb-2 text-sm font-medium text-white/80 lg:text-lg">En proceso</p>
-                                    <p class="relative z-10 text-4xl font-extrabold text-white drop-shadow-[0_0_10px_rgba(199,125,255,0.3)] sm:text-5xl lg:text-6xl">3</p>
-                                </div>
-
-                                {{-- Retardos activos --}}
-                                <div class="relative overflow-hidden rounded-2xl border border-white/5 bg-black/30 p-4 backdrop-blur-md transition-transform duration-300 hover:-translate-y-2 sm:p-5 lg:rounded-3xl lg:p-8">
-                                    <p class="relative z-10 mb-2 text-sm font-medium text-white/80 lg:text-lg">Retardos activos</p>
-                                    <p class="relative z-10 text-4xl font-extrabold text-[#FF4D6D] drop-shadow-[0_0_10px_rgba(255,77,109,0.3)] sm:text-5xl lg:text-6xl">0</p>
-                                </div>
-
-                                {{-- Entregadas --}}
-                                <div class="relative overflow-hidden rounded-2xl border border-white/5 bg-black/30 p-4 backdrop-blur-md transition-transform duration-300 hover:-translate-y-2 sm:p-5 lg:rounded-3xl lg:p-8">
-                                    <p class="relative z-10 mb-2 text-sm font-medium text-white/80 lg:text-lg">Entregadas</p>
-                                    <p class="relative z-10 text-4xl font-extrabold text-[#34D399] drop-shadow-[0_0_10px_rgba(52,211,153,0.3)] sm:text-5xl lg:text-6xl">7</p>
-                                </div>
-                            </div>
+                        <div class="absolute w-[78%] z-20 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.7)] rounded-2xl border-2 border-[#7B2CBF]/40 overflow-hidden transform transition-transform duration-300 hover:scale-[1.01]">
+                            <img src="{{ asset('assets/centro-de-mando.jpg') }}" alt="Centro de Mando Principal" class="w-full h-auto object-cover">
                         </div>
                     </div>
                 </div>
 
             </div>
         </section>
-
-        {{-- CONTENEDOR DE SECCIONES INFERIORES --}}
-        <main class="relative z-10 mx-auto mb-20 mt-16 w-full max-w-[85rem] space-y-20 px-4 sm:px-6 md:mt-24 md:space-y-28 lg:mb-32 lg:mt-32 lg:space-y-40">
-
-            <div class="text-center">
-                <h2 class="mb-5 text-3xl font-extrabold tracking-tight text-white md:mb-6 md:text-5xl">
-                    ¿Por qué elegir <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#E0AAFF] to-[#C77DFF]">FixFlow</span>?
-                </h2>
-                <p class="mx-auto max-w-3xl text-left text-base leading-relaxed text-white/95 sm:text-center md:text-xl lg:text-2xl">
-                    Diseñado específicamente para talleres de reparación de electrónica, celulares y cómputo.
-                    FixFlow va más allá de un simple registro: es el ecosistema que profesionaliza tu negocio.
-                    Olvídate de las notas perdidas y los reclamos por demoras; automatiza el seguimiento, garantiza el cumplimiento de tus tiempos de entrega mediante niveles de servicio (SLA), y bríndale a tus clientes total transparencia en cada reparación.
-                </p>
-            </div>
-
-            {{-- SECCION OPTIMIZA --}}
-            <section id="optimiza" class="flex scroll-mt-28 flex-col items-center justify-between gap-8 lg:flex-row lg:gap-10">
-                <div class="w-full space-y-4 text-center lg:w-[30%] lg:text-left">
-                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-[#9D4EDD]/30 bg-[#7B2CBF]/30 shadow-[0_0_15px_rgba(123,44,191,0.5)] md:mx-0 md:h-16 md:w-16">
-                        <svg class="w-8 h-8 text-[#E0AAFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-3xl font-bold tracking-tight text-white md:text-4xl">Optimiza tu Taller</h3>
-                    <p class="text-left text-base leading-relaxed text-white/95 sm:text-center md:text-lg lg:text-left lg:text-2xl">
-                        Olvídate del papel y Excel. Genera tickets únicos de servicio, asigna técnicos a cada orden y actualiza el progreso de cada equipo en segundos. Todo centralizado para mantener un orden impecable en tu negocio.
-                    </p>
-                </div>
-                {{-- Imagen Optimiza --}}
-                <img
-                    src="{{ asset('assets/optimiza.webp') }}"
-                    alt="Dashboard y listado de órdenes de FixFlow"
-                    class="aspect-[16/10] w-full rounded-[1.5rem] object-cover shadow-[0_0_30px_rgba(199,125,255,0.3)] ring-1 ring-[#C77DFF]/40 transition-all duration-500 hover:scale-[1.02] hover:ring-[#E0AAFF]/80 lg:w-[65%] lg:rounded-[2.5rem] lg:shadow-[0_0_40px_rgba(199,125,255,0.4)] lg:hover:shadow-[0_0_60px_rgba(224,170,255,0.6)]"
-                >
-            </section>
-
-            {{-- SECCION GESTIONA --}}
-            <section id="gestiona" class="flex scroll-mt-28 flex-col items-center justify-between gap-8 lg:flex-row-reverse lg:gap-10">
-                <div class="w-full space-y-4 text-center lg:w-[30%] lg:text-left">
-                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-[#9D4EDD]/30 bg-[#7B2CBF]/30 shadow-[0_0_15px_rgba(123,44,191,0.5)] md:mx-0 md:h-16 md:w-16">
-                        <svg class="w-8 h-8 text-[#E0AAFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-3xl font-bold tracking-tight text-white md:text-4xl">Gestión y Tiempos SLA</h3>
-                    <p class="text-left text-base leading-relaxed text-white/95 sm:text-center md:text-lg lg:text-left lg:text-2xl">
-                        Clasifica las reparaciones según nuestra matriz de niveles de servicio (SLA). El sistema calcula automáticamente los tiempos límite de entrega y notifica los retardos, previniendo clientes molestos.
-                    </p>
-                </div>
-                {{-- Imagen Gestiona --}}
-                <img
-                    src="{{ asset('assets/gestiona.webp') }}"
-                    alt="Gestión de tiempos SLA y retardos"
-                    class="aspect-[16/10] w-full rounded-[1.5rem] object-cover shadow-[0_0_30px_rgba(199,125,255,0.3)] ring-1 ring-[#C77DFF]/40 transition-all duration-500 hover:scale-[1.02] hover:ring-[#E0AAFF]/80 lg:w-[65%] lg:rounded-[2.5rem] lg:shadow-[0_0_40px_rgba(199,125,255,0.4)] lg:hover:shadow-[0_0_60px_rgba(224,170,255,0.6)]"
-                >
-            </section>
-
-            {{-- SECCION AGILIDAD --}}
-            <section id="agilidad" class="flex scroll-mt-28 flex-col items-center justify-between gap-8 lg:flex-row lg:gap-10">
-                <div class="w-full space-y-4 text-center lg:w-[30%] lg:text-left">
-                    <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-[#9D4EDD]/30 bg-[#7B2CBF]/30 shadow-[0_0_15px_rgba(123,44,191,0.5)] md:mx-0 md:h-16 md:w-16">
-                        <svg class="w-8 h-8 text-[#E0AAFF]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="text-3xl font-bold tracking-tight text-white md:text-4xl">Agilidad y Portal Cliente</h3>
-                    <p class="text-left text-base leading-relaxed text-white/95 sm:text-center md:text-lg lg:text-left lg:text-2xl">
-                        Tus clientes pueden consultar el progreso de su equipo en tiempo real mediante un token único y chatear directamente con los técnicos sin saturar el número de WhatsApp del taller.
-                    </p>
-                </div>
-                {{-- Imagen Agilidad --}}
-                <img
-                    src="{{ asset('assets/agilidad.webp') }}"
-                    alt="Portal de clientes y chat en tiempo real"
-                    class="aspect-[16/10] w-full rounded-[1.5rem] object-cover shadow-[0_0_30px_rgba(199,125,255,0.3)] ring-1 ring-[#C77DFF]/40 transition-all duration-500 hover:scale-[1.02] hover:ring-[#E0AAFF]/80 lg:w-[65%] lg:rounded-[2.5rem] lg:shadow-[0_0_40px_rgba(199,125,255,0.4)] lg:hover:shadow-[0_0_60px_rgba(224,170,255,0.6)]"
-                >
-            </section>
-
-            {{-- CALL TO ACTION FINAL --}}
-            <div class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-[#4B0082]/40 to-[#7B2CBF]/40 p-6 text-center shadow-[0_0_40px_rgba(123,44,191,0.2)] backdrop-blur-xl md:p-12">
-                <div class="absolute inset-0 bg-circuit opacity-30 pointer-events-none"></div>
-                <h3 class="relative z-10 mb-5 text-3xl font-extrabold text-white md:mb-6 md:text-4xl">Lleva tu negocio al siguiente nivel</h3>
-                <p class="relative z-10 mx-auto mb-8 max-w-3xl text-base leading-relaxed text-white/95 md:mb-10 md:text-2xl">
-                    Gestiona técnicos, asigna roles, y garantiza que cada equipo sea reparado a tiempo.
-                    El historial completo a tu alcance.
-                </p>
-                <div class="relative z-10 flex justify-center gap-4">
-                    <a href="/register" class="w-full rounded-xl bg-gradient-to-r from-[#9D4EDD] to-[#7B2CBF] px-8 py-4 text-center text-base font-bold text-white shadow-[0_0_20px_rgba(157,78,221,0.6)] transition-all hover:-translate-y-1 hover:from-[#C77DFF] hover:to-[#9D4EDD] hover:shadow-[0_0_30px_rgba(199,125,255,0.8)] sm:w-auto sm:text-lg">
-                        Crea tu Taller Gratis
-                    </a>
-                </div>
-            </div>
-        </main>
-
-        {{-- FOOTER --}}
-        <footer class="relative z-10 mt-auto w-full border-t border-white/10 bg-black/10 px-6 py-8 text-center backdrop-blur-sm">
-            <p class="text-sm text-white/60">
-                &copy; {{ date('Y') }}. Todos los derechos reservados.
-            </p>
-        </footer>
-
     </div>
-</body>
 
+
+    {{-- 2. SECCIÓN MAIN CON FONDO BLANCO LIMPIO --}}
+    <main id="porque-elegir" class="w-full bg-white text-[#1A1A1A] pt-[150px] md:pt-[200px] pb-32 px-6 lg:px-12 relative z-10 -mt-[90px] sm:-mt-[120px]">
+        <div class="max-w-[85rem] mx-auto w-full">
+
+            <div class="text-center max-w-3xl mx-auto mb-20">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-[#0D0D11] tracking-tight uppercase">
+                    ¿Por qué elegir <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#4B0082] to-[#7B2CBF]">FixFlow</span>?
+                </h2>
+                <div class="w-16 h-1 bg-gradient-to-r from-[#7B2CBF] to-[#C77DFF] mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 xl:gap-12">
+
+                {{-- Card 1 --}}
+                <div class="flex flex-col items-center lg:items-start text-center lg:text-left group transition-transform duration-300 hover:-translate-y-2">
+                    <div class="w-16 h-16 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-6 shadow-sm group-hover:shadow-md transition-all">
+                        <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-6 18.75h9"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#0D0D11] mb-3 tracking-tight group-hover:text-[#4B0082] transition-colors">
+                        Taller en tu Bolsillo
+                    </h3>
+                    <p class="text-gray-500 text-sm leading-relaxed font-light text-justify lg:text-left">
+                        Accede a tu plataforma desde cualquier smartphone o tablet. Modifica el estatus de las reparaciones, añade notas de servicio y actualiza órdenes de forma ágil desde el mismo vehículo.
+                    </p>
+                </div>
+
+                {{-- Card 2 (SVG DE MINING SERVICE CORREGIDO) --}}
+                <div class="flex flex-col items-center lg:items-start text-center lg:text-left group transition-transform duration-300 hover:-translate-y-2">
+                    <div class="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-6 shadow-sm group-hover:shadow-md transition-all">
+                        <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#0D0D11] mb-3 tracking-tight group-hover:text-[#4B0082] transition-colors">
+                        Flujo de Órdenes Nítido
+                    </h3>
+                    <p class="text-gray-500 text-sm leading-relaxed font-light text-justify lg:text-left">
+                        Mantén un registro transparente del ciclo de vida de cada equipo. Desde la recepción inicial y el diagnóstico básico, hasta la entrega final reparada, sin perder ningún detalle técnico en el camino.
+                    </p>
+                </div>
+
+                {{-- Card 3 --}}
+                <div class="flex flex-col items-center lg:items-start text-center lg:text-left group transition-transform duration-300 hover:-translate-y-2">
+                    <div class="w-16 h-16 rounded-2xl bg-rose-50 border border-rose-100 flex items-center justify-center mb-6 shadow-sm group-hover:shadow-md transition-all">
+                        <svg class="w-8 h-8 text-rose-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.286zm0 0v1.5"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#0D0D11] mb-3 tracking-tight group-hover:text-[#4B0082] transition-colors">
+                        Historiales Protegidos
+                    </h3>
+                    <p class="text-gray-500 text-sm leading-relaxed font-light text-justify lg:text-left">
+                        La información de tus clientes y las especificaciones de sus dispositivos se guardan de forma centralizada y encriptada. Olvídate de los papeles perdidos o de las confusiones en los diagnósticos.
+                    </p>
+                </div>
+
+                {{-- Card 4 --}}
+                <div class="flex flex-col items-center lg:items-start text-center lg:text-left group transition-transform duration-300 hover:-translate-y-2">
+                    <div class="w-16 h-16 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mb-6 shadow-sm group-hover:shadow-md transition-all">
+                        <svg class="w-8 h-8 text-amber-500" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#0D0D11] mb-3 tracking-tight group-hover:text-[#4B0082] transition-colors">
+                        Productividad al Máximo
+                    </h3>
+                    <p class="text-gray-500 text-sm leading-relaxed font-light text-justify lg:text-left">
+                        Optimiza el rendimiento de tu personal asignando mecánicos o técnicos específicos a tareas concretas. Monitorea los tiempos de resolución para acelerar de forma drástica las entregas.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        {{-- Curva de corte cóncava sólida --}}
+        <div class="absolute bottom-0 left-0 right-0 w-full overflow-hidden leading-[0] z-20 pointer-events-none">
+            <svg class="relative block w-[calc(100%+1.5px)] h-[40px] sm:h-[60px] md:h-[90px] -mb-[1.5px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M0,0 Q600,120 1200,0 L1200,120 L0,120 Z" fill="#1A0033"></path>
+            </svg>
+        </div>
+    </main>
+
+
+    {{-- 3. SECCIÓN LLAMADA A LA ACCIÓN (CTA CONTINUO) --}}
+    <section class="relative w-full bg-gradient-to-b from-[#1A0033] via-[#2A0054] to-[#110022] pt-24 pb-16 px-4 lg:px-12 overflow-hidden z-10">
+
+        <div class="absolute inset-0 bg-circuit opacity-35 pointer-events-none"></div>
+
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-[#7B2CBF]/15 rounded-full blur-[100px] pointer-events-none"></div>
+
+        <div class="relative max-w-4xl mx-auto text-center z-10 flex flex-col items-center">
+
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[#E0AAFF] text-xs font-semibold uppercase tracking-widest mb-6 shadow-sm backdrop-blur-sm">
+                ¿Listo para empezar?
+            </div>
+
+            <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-6 tracking-tight uppercase leading-tight">
+                Lleva la administración de tu taller <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#E0AAFF] via-[#C77DFF] to-[#9D4EDD]">al siguiente nivel</span>
+            </h2>
+
+            <p class="text-lg md:text-xl text-white/70 max-w-2xl mb-10 font-light leading-relaxed">
+                Ponte en contacto con nuestro equipo de soporte técnico para solicitar tus credenciales de acceso, agendar una demostración personalizada o resolver cualquier duda sobre la plataforma.
+            </p>
+
+            <div class="relative group">
+                <div class="absolute inset-0 bg-gradient-to-r from-[#7B2CBF] to-[#C77DFF] rounded-xl blur-md opacity-75 group-hover:opacity-100 transition duration-300 group-hover:blur-lg"></div>
+                <a href="https://wa.me/tu-numero-aqui" target="_blank" class="relative inline-flex items-center gap-3 px-8 py-4 bg-[#0D0D11] hover:bg-transparent border border-white/10 text-white font-bold text-base rounded-xl transition-all duration-300 transform group-hover:scale-[1.02] tracking-wide uppercase">
+                    <svg class="w-5 h-5 text-[#E0AAFF]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.222 3.419.169l2.242 1.616a.75.75 0 001.208-.588V16.5h.062a48.756 48.756 0 006.988-.564c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"></path>
+                    </svg>
+                    Contactar al Equipo
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+
+    {{-- 4. SECCIÓN DE PRECIOS CONTINUA --}}
+    <section id="precios" class="relative w-full bg-gradient-to-b from-[#110022] to-[#0A0018] pb-24 px-4 lg:px-12 overflow-hidden z-10">
+        
+        <div class="absolute inset-0 bg-circuit opacity-35 pointer-events-none"></div>
+        
+        <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-[#4B0082]/15 rounded-full blur-[120px] pointer-events-none"></div>
+
+        <div class="relative max-w-6xl mx-auto w-full z-10">
+            
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight uppercase">
+                    Planes hechos a tu <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#E0AAFF] to-[#C77DFF]">medida</span>
+                </h2>
+                <div class="w-16 h-1 bg-gradient-to-r from-[#7B2CBF] to-[#C77DFF] mx-auto mt-4 rounded-full"></div>
+                <p class="text-white/60 mt-4 font-light text-base max-w-xl mx-auto">
+                    Muy pronto podrás elegir el plan que mejor se adapte al volumen de reparaciones y al tamaño de tu equipo técnico.
+                </p>
+            </div>
+
+            <div class="relative">
+                
+                <div class="absolute inset-0 bg-white/[0.02] backdrop-blur-[5px] z-30 flex flex-col items-center justify-center rounded-3xl p-6">
+                    <div class="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#7B2CBF] to-[#9D4EDD] text-white font-bold text-lg md:text-xl uppercase tracking-widest shadow-[0_0_30px_rgba(123,44,191,0.5)] animate-bounce">
+                        🚀 Próximamente
+                    </div>
+                    <p class="text-white/90 text-center mt-4 max-w-sm text-sm md:text-base font-medium drop-shadow-md">
+                        Estamos ultimando los detalles de nuestras pasarelas de pago automatizadas.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 opacity-25 select-none pointer-events-none">
+                    
+                    <div class="bg-white/5 border border-white/10 rounded-2xl p-8 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Esencial</h3>
+                            <p class="text-white/50 text-sm mb-6">Para talleres independientes que inician.</p>
+                            <div class="text-3xl font-extrabold text-white mb-6">$?? <span class="text-sm font-normal text-white/50">/ mes</span></div>
+                            <ul class="space-y-3 text-sm text-white/70">
+                                <li class="flex items-center gap-2">✔ Hasta 100 órdenes al mes</li>
+                                <li class="flex items-center gap-2">✔ Soporte estándar</li>
+                                <li class="flex items-center gap-2">✔ Registro básico de equipos</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/5 border-2 border-[#7B2CBF]/40 rounded-2xl p-8 flex flex-col justify-between relative">
+                        <div class="absolute top-0 right-6 transform -translate-y-1/2 bg-[#7B2CBF] text-white text-xs font-bold uppercase px-3 py-1 rounded-full">Popular</div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2 uppercase tracking-wide text-[#E0AAFF]">Pro Taller</h3>
+                            <p class="text-white/50 text-sm mb-6">El balance perfecto para equipos en crecimiento.</p>
+                            <div class="text-3xl font-extrabold text-white mb-6">$?? <span class="text-sm font-normal text-white/50">/ mes</span></div>
+                            <ul class="space-y-3 text-sm text-white/70">
+                                <li class="flex items-center gap-2">✔ Órdenes ilimitadas</li>
+                                <li class="flex items-center gap-2">✔ 3 Técnicos simultáneos</li>
+                                <li class="flex items-center gap-2">✔ Historial clínico del equipo</li>
+                                <li class="flex items-center gap-2">✔ Soporte prioritario</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="bg-white/5 border border-white/10 rounded-2xl p-8 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold text-white mb-2 uppercase tracking-wide">Multi Sucursal</h3>
+                            <p class="text-white/50 text-sm mb-6">Para redes de talleres y grandes laboratorios.</p>
+                            <div class="text-3xl font-extrabold text-white mb-6">$?? <span class="text-sm font-normal text-white/50">/ mes</span></div>
+                            <ul class="space-y-3 text-sm text-white/70">
+                                <li class="flex items-center gap-2">✔ Todo lo del plan Pro</li>
+                                <li class="flex items-center gap-2">✔ Técnicos ilimitados</li>
+                                <li class="flex items-center gap-2">✔ Panel de analíticas avanzado</li>
+                                <li class="flex items-center gap-2">✔ API de integración libre</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    {{-- FOOTER --}}
+    <footer class="relative z-30 w-full px-6 py-8 text-center border-t border-white/10 bg-[#0D0D11]">
+        <p class="text-sm text-white/60">
+            &copy; {{ date('Y') }}. Todos los derechos reservados.
+        </p>
+    </footer>
+
+</body>
 </html>
