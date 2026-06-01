@@ -14,6 +14,10 @@
 
     {{-- Estilo personalizado para el patrón tecnológico (Circuito) --}}
     <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
         .bg-circuit {
             background-image: url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cg stroke='rgba(255, 255, 255, 0.05)' stroke-width='1.5' fill='none'%3E%3Cpath d='M0 60h30l20 20h40l20-20h10M30 60v30l20 20M70 80v30M90 60v-30l-20-20'/%3E%3Ccircle cx='30' cy='60' r='3' fill='rgba(255, 255, 255, 0.08)' stroke='none'/%3E%3Ccircle cx='50' cy='80' r='3' fill='rgba(255, 255, 255, 0.08)' stroke='none'/%3E%3Ccircle cx='70' cy='80' r='3' fill='rgba(255, 255, 255, 0.08)' stroke='none'/%3E%3Ccircle cx='90' cy='60' r='3' fill='rgba(255, 255, 255, 0.08)' stroke='none'/%3E%3Ccircle cx='50' cy='110' r='3' fill='rgba(255, 255, 255, 0.08)' stroke='none'/%3E%3Ccircle cx='70' cy='10' r='3' fill='rgba(255, 255, 255, 0.08)' stroke='none'/%3E%3C/g%3E%3C/svg%3E");
             background-size: 120px 120px;
@@ -28,12 +32,12 @@
         @if (Route::has('login'))
         <nav class="bg-white/95 backdrop-blur-sm px-6 py-4 flex justify-between items-center w-full shadow-sm border-b border-gray-100">
             <div class="flex items-center">
-                <a href="/" class="text-4xl font-extrabold text-[#4B0082] tracking-tight">FixFlow</a>
+                <a href="/" class="text-3xl font-extrabold tracking-tight text-[#4B0082] md:text-4xl">FixFlow</a>
             </div>
 
 
 
-            <div class="hidden md:flex space-x-4">
+            <div class="hidden items-center space-x-4 md:flex">
                 @auth
                 <a href="{{ route('panel.inicio') }}" class="px-5 py-2.5 rounded-lg text-white bg-[#4B0082] font-semibold hover:bg-[#5A00C6] transition-colors shadow-md hover:shadow-lg">
                     Centro de Mando
@@ -43,6 +47,29 @@
                     Iniciar Sesión
                 </a>
                 @endauth
+            </div>
+
+            <button type="button" @click="open = !open" class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-[#4B0082] text-white shadow-sm transition hover:bg-[#5A00C6] md:hidden" aria-label="Abrir menú">
+                <svg x-show="!open" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+                <svg x-cloak x-show="open" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            </div>
+
+            <div x-cloak x-show="open" x-transition @click.outside="open = false" class="absolute left-4 right-4 top-full mt-2 rounded-2xl border border-gray-100 bg-white p-3 shadow-xl md:hidden">
+                <div class="flex flex-col gap-1">
+                    <a href="#optimiza" @click="open = false" class="rounded-xl px-4 py-3 font-medium text-neutral-700 hover:bg-purple-50 hover:text-[#4B0082]">Optimiza tu taller</a>
+                    <a href="#gestiona" @click="open = false" class="rounded-xl px-4 py-3 font-medium text-neutral-700 hover:bg-purple-50 hover:text-[#4B0082]">Gestiona</a>
+                    <a href="#agilidad" @click="open = false" class="rounded-xl px-4 py-3 font-medium text-neutral-700 hover:bg-purple-50 hover:text-[#4B0082]">Agilidad</a>
+                    @auth
+                    <a href="{{ route('panel.inicio') }}" class="mt-2 rounded-xl bg-[#4B0082] px-4 py-3 text-center font-semibold text-white shadow-md transition hover:bg-[#5A00C6]">Centro de Mando</a>
+                    @else
+                    <a href="{{ route('login') }}" class="mt-2 rounded-xl bg-[#4B0082] px-4 py-3 text-center font-semibold text-white shadow-md transition hover:bg-[#5A00C6]">Iniciar Sesión</a>
+                    @endauth
+                </div>
             </div>
         </nav>
         @endif
@@ -61,17 +88,17 @@
             <div class="relative max-w-[90rem] mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-12 xl:gap-20">
 
                 <div class="w-full lg:w-[45%] flex flex-col items-center lg:items-start text-center lg:text-left z-10">
-                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[#E0AAFF] text-xs font-semibold uppercase tracking-widest mb-8 shadow-sm backdrop-blur-sm">
+                    <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#E0AAFF] shadow-sm backdrop-blur-sm md:mb-8">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></span>
                         Plataforma para Talleres
                     </div>
 
-                    <h1 class="text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white mb-6 leading-[1.1] uppercase tracking-tight">
+                    <h1 class="mb-5 text-4xl font-extrabold uppercase leading-[1.08] tracking-tight text-white sm:text-5xl lg:mb-6 lg:text-5xl xl:text-6xl">
                         Control Inteligente <br>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#E0AAFF] to-[#C77DFF]">Para tu Taller</span>
                     </h1>
 
-                    <p class="text-xl lg:text-2xl text-white/95 leading-relaxed text-justify lg:text-left max-w-2xl font-light">
+                    <p class="max-w-2xl text-left text-base leading-relaxed text-white/95 sm:text-lg lg:text-left lg:text-2xl">
                         FixFlow es el sistema integral diseñado para agilizar tus procesos técnicos. Registra equipos, da seguimiento en tiempo real a los estados de cada reparación y mantén el control total de tu flujo de trabajo con profesionalismo.
                     </p>
                 </div>

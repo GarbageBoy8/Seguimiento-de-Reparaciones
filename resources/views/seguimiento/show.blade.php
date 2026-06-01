@@ -45,59 +45,93 @@
     </noscript>
 </head>
 
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen">
+<body class="min-h-screen overflow-x-hidden bg-gradient-to-br from-gray-50 to-gray-100">
 
     <!-- Header -->
-    <header class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <div>
+    <header class="sticky top-0 z-10 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur-sm">
+        <div class="mx-auto max-w-5xl px-4 py-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div class="min-w-0">
                     <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#7C3AED] to-[#EC4899] bg-clip-text text-transparent">
                         FixFlow
                     </h1>
                     <p class="text-gray-500 text-sm mt-1">Seguimiento de tu orden de reparación</p>
                 </div>
-                <div class="bg-[#7C3AED]/10 px-4 py-2 rounded-xl border border-[#7C3AED]/20">
+                <div class="rounded-xl border border-[#7C3AED]/20 bg-[#7C3AED]/10 px-4 py-2">
                     <p class="text-xs text-gray-500 uppercase tracking-wide">Folio de seguimiento</p>
-                    <p class="text-xl font-bold text-[#2D1B69] font-mono">{{ $reparacion->folio }}</p>
+                    <p class="font-mono text-lg font-bold text-[#2D1B69] sm:text-xl">{{ $reparacion->folio }}</p>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <main class="mx-auto max-w-5xl space-y-6 px-4 py-6 sm:px-6 md:space-y-8 md:py-8 lg:px-8">
 
         {{-- Barra de progreso visual --}}
-        <section class="bg-white rounded-2xl shadow-[0_10px_25px_-12px_rgba(124,58,237,0.25)] overflow-hidden" aria-label="Progreso de la reparación">
-            <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
-                <h2 class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
+        <section class="overflow-hidden rounded-2xl bg-white shadow-[0_10px_25px_-12px_rgba(124,58,237,0.25)]" aria-label="Progreso de la reparación">
+            <div class="border-b border-gray-100 bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-4 py-4 sm:px-6">
+                <h2 class="flex items-center gap-2 text-base font-semibold text-[#2D1B69] sm:text-lg">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                     </svg>
-                    Estado actual: <span class="text-[#7C3AED]">{{ $reparacion->estado }}</span>
+                    <span class="min-w-0">Estado actual: <span class="text-[#7C3AED]">{{ $reparacion->estado }}</span></span>
                 </h2>
             </div>
-            <div class="p-6">
+            <div class="p-4 sm:p-6">
                 <!-- Barra de progreso visual pasos -->
-                <div class="relative mb-8">
-                    <div class="overflow-x-auto pb-2">
-                        <div class="flex items-center justify-between min-w-[500px] md:min-w-0">
-                            @php
-                            $etapas = ['Recibido', 'En Revisión', 'Reparado', 'Entregado'];
-                            $estadoActual = $reparacion->estado;
-                            $etapaActual = array_search($estadoActual, $etapas);
-                            $estadosEspeciales = ['Esperando Pieza', 'Retardo', 'Cancelado'];
-                            @endphp
-                            @foreach($etapas as $i => $etapa)
-                            <div class="flex flex-col items-center flex-1 relative">
-                                <div class="relative">
-                                    @if($i < $etapaActual)
-                                        <div class="w-10 h-10 rounded-full bg-[#7C3AED] flex items-center justify-center">
+                @php
+                    $etapas = ['Recibido', 'En Revisión', 'Reparado', 'Entregado'];
+                    $estadoActual = $reparacion->estado;
+                    $etapaActual = array_search($estadoActual, $etapas, true);
+                    $estadoEnLinea = $etapaActual !== false;
+                    $estadosEspeciales = ['Esperando Pieza', 'Retardo', 'Cancelado'];
+                @endphp
+
+                <div class="mb-6 md:hidden">
+                    <div class="rounded-2xl bg-[#7C3AED]/10 p-4">
+                        <p class="text-xs font-semibold uppercase tracking-wide text-[#7C3AED]">Estado de la orden</p>
+                        <p class="mt-1 text-xl font-bold text-[#2D1B69]">{{ $estadoActual }}</p>
+                        @if($estadoEnLinea)
+                        <p class="mt-1 text-sm text-gray-600">Paso {{ $etapaActual + 1 }} de {{ count($etapas) }}</p>
+                        @else
+                        <p class="mt-1 text-sm text-gray-600">El taller actualizará la siguiente etapa cuando avance la reparación.</p>
+                        @endif
+                    </div>
+
+                    <ol class="mt-4 space-y-3">
+                        @foreach($etapas as $i => $etapa)
+                        @php
+                            $etapaCompletada = $estadoEnLinea && $i < $etapaActual;
+                            $etapaActualMovil = $estadoEnLinea && $i === $etapaActual;
+                        @endphp
+                        <li class="flex items-center gap-3">
+                            <span class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full {{ $etapaCompletada || $etapaActualMovil ? 'bg-[#7C3AED] text-white' : 'bg-gray-200 text-gray-500' }}">
+                                @if($etapaCompletada)
+                                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                @else
+                                <span class="text-sm font-bold">{{ $i + 1 }}</span>
+                                @endif
+                            </span>
+                            <span class="font-medium {{ $etapaCompletada || $etapaActualMovil ? 'text-[#2D1B69]' : 'text-gray-400' }}">{{ $etapa }}</span>
+                        </li>
+                        @endforeach
+                    </ol>
+                </div>
+
+                <div class="relative mb-8 hidden md:block">
+                    <div class="flex items-center justify-between">
+                        @foreach($etapas as $i => $etapa)
+                        <div class="flex flex-col items-center flex-1 relative">
+                            <div class="relative">
+                                @if($estadoEnLinea && $i < $etapaActual)
+                                    <div class="w-10 h-10 rounded-full bg-[#7C3AED] flex items-center justify-center">
                                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                         </svg>
-                                </div>
-                                @elseif($i == $etapaActual)
+                                    </div>
+                                @elseif($estadoEnLinea && $i === $etapaActual)
                                 <div class="w-10 h-10 rounded-full bg-[#7C3AED] flex items-center justify-center shadow-lg ring-4 ring-[#7C3AED]/20">
                                     <span class="text-white font-bold">{{ $i + 1 }}</span>
                                 </div>
@@ -107,11 +141,11 @@
                                 </div>
                                 @endif
                             </div>
-                            <span class="text-xs font-medium mt-2 {{ $i <= $etapaActual ? 'text-[#2D1B69]' : 'text-gray-400' }}">
+                            <span class="text-xs font-medium mt-2 {{ $estadoEnLinea && $i <= $etapaActual ? 'text-[#2D1B69]' : 'text-gray-400' }}">
                                 {{ $etapa }}
                             </span>
                             @if($i < count($etapas) - 1)
-                                <div class="absolute top-5 left-[60%] w-[70%] h-0.5 {{ $i < $etapaActual ? 'bg-[#7C3AED]' : 'bg-gray-200' }} hidden md:block">
+                                <div class="absolute top-5 left-[60%] w-[70%] h-0.5 {{ $estadoEnLinea && $i < $etapaActual ? 'bg-[#7C3AED]' : 'bg-gray-200' }}">
                         </div>
                         @endif
                     </div>
@@ -121,25 +155,25 @@
             </div>
 
             @if($estadoActual === 'Esperando Pieza')
-            <div class="bg-amber-50 border-l-4 border-amber-500 rounded-xl p-4 mt-4">
+            <div class="mt-4 rounded-xl border-l-4 border-amber-500 bg-amber-50 p-4">
                 <div class="flex gap-3">
                     <svg class="w-5 h-5 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <p class="text-amber-700 text-sm">ℹ Tu equipo está en espera de una pieza de repuesto.</p>
+                    <p class="text-sm text-amber-700">Tu equipo está en espera de una pieza de repuesto.</p>
                 </div>
             </div>
             @elseif($estadoActual === 'Retardo')
-            <div class="bg-orange-50 border-l-4 border-orange-500 rounded-xl p-4 mt-4">
+            <div class="mt-4 rounded-xl border-l-4 border-orange-500 bg-orange-50 p-4">
                 <div class="flex gap-3">
                     <svg class="w-5 h-5 text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
-                    <p class="text-orange-700 text-sm">⚠ La reparación está tomando más tiempo del estimado. El taller ya fue notificado.</p>
+                    <p class="text-sm text-orange-700">La reparación está tomando más tiempo del estimado. El taller ya fue notificado.</p>
                 </div>
             </div>
             @elseif($estadoActual === 'Cancelado')
-            <div class="bg-red-50 border-l-4 border-red-500 rounded-xl p-4 mt-4">
+            <div class="mt-4 rounded-xl border-l-4 border-red-500 bg-red-50 p-4">
                 <div class="flex gap-3">
                     <svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -152,24 +186,24 @@
         </section>
 
         {{-- Ficha técnica del equipo --}}
-        <section class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-            <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
-                <h2 class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
+        <section class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-md">
+            <div class="border-b border-gray-100 bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-4 py-4 sm:px-6">
+                <h2 class="flex items-center gap-2 text-base font-semibold text-[#2D1B69] sm:text-lg">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 3h14a2 2 0 01-2 2H7a2 2 0 01-2-2zm0 0v16a2 2 0 002 2h10a2 2 0 002-2V5"></path>
                     </svg>
                     Tu equipo
                 </h2>
             </div>
-            <div class="p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="p-4 sm:p-6">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
                     <div>
                         <dt class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Dispositivo</dt>
-                        <dd class="mt-1 font-medium text-gray-800">{{ $reparacion->tipo_equipo }} — {{ $reparacion->marca }} {{ $reparacion->modelo }}</dd>
+                        <dd class="mt-1 break-words font-medium text-gray-800">{{ $reparacion->tipo_equipo }} — {{ $reparacion->marca }} {{ $reparacion->modelo }}</dd>
                     </div>
                     <div>
                         <dt class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Nivel de reparación</dt>
-                        <dd class="mt-1 font-medium text-gray-800">
+                        <dd class="mt-1 break-words font-medium text-gray-800">
                             {{ $reparacion->nivel->nombre }}
                             <span class="text-xs text-gray-500 block">{{ $reparacion->nivel->descripcion }}</span>
                         </dd>
@@ -187,18 +221,18 @@
         </section>
 
         {{-- Chat con el taller --}}
-        <section class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden" aria-label="Chat con el taller" id="chat-portal">
-            <div class="bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-6 py-4 border-b border-gray-100">
-                <h2 class="text-lg font-semibold text-[#2D1B69] flex items-center gap-2">
+        <section class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-md" aria-label="Chat con el taller" id="chat-portal">
+            <div class="border-b border-gray-100 bg-gradient-to-r from-[#7C3AED]/5 to-[#EC4899]/5 px-4 py-4 sm:px-6">
+                <h2 class="flex items-center gap-2 text-base font-semibold text-[#2D1B69] sm:text-lg">
                     <svg class="w-5 h-5 text-[#7C3AED]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
                     </svg>
                     Mensajes con el taller
                 </h2>
             </div>
-            <div class="p-6">
+            <div class="p-4 sm:p-6">
                 <!-- Contenedor de mensajes -->
-                <div id="portal-mensajes" class="space-y-4 max-h-[400px] overflow-y-auto mb-6" aria-live="polite">
+                <div id="portal-mensajes" class="mb-6 max-h-[360px] space-y-4 overflow-y-auto rounded-xl bg-gray-50 p-3 sm:max-h-[400px] sm:bg-transparent sm:p-0" aria-live="polite">
                     <div class="text-center py-8">
                         <div class="animate-pulse flex justify-center">
                             <div class="h-8 w-8 bg-[#7C3AED]/20 rounded-full"></div>
@@ -217,14 +251,14 @@
 
                 @if(!$ordenCerrada)
                 {{-- Orden activa: el cliente puede enviar mensajes --}}
-                <form id="portal-form" method="POST" action="{{ route('seguimiento.mensaje', $reparacion->token_seguimiento) }}" class="border-t border-gray-100 pt-6">
+                <form id="portal-form" method="POST" action="{{ route('seguimiento.mensaje', $reparacion->token_seguimiento) }}" class="border-t border-gray-100 pt-5 sm:pt-6">
                     @csrf
                     <label for="contenido" class="block text-sm font-medium text-gray-700 mb-2">Escribe tu mensaje</label>
                     <textarea id="contenido" name="contenido" rows="3" required
                         placeholder="Ej: ¿Tienen alguna actualización de mi equipo?"
-                        class="w-full px-4 py-2.5 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] transition-all resize-none"></textarea>
+                        class="w-full resize-none rounded-xl border border-gray-300 px-4 py-3 transition-all focus:border-[#7C3AED] focus:ring-2 focus:ring-[#7C3AED]/20"></textarea>
                     <button type="submit" id="portal-btn"
-                        class="mt-3 bg-[#7C3AED] hover:bg-[#6D28D9] text-white px-6 py-2.5 rounded-xl font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+                        class="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#7C3AED] px-6 py-3 font-medium text-white shadow-md transition-all hover:bg-[#6D28D9] hover:shadow-lg sm:w-auto sm:py-2.5">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
                         </svg>
@@ -233,8 +267,8 @@
                 </form>
                 @else
                 {{-- Orden cerrada: solo lectura del historial --}}
-                <div class="bg-gray-50 rounded-xl p-4">
-                    <p class="text-gray-600 text-sm flex items-center gap-2">
+                <div class="rounded-xl bg-gray-50 p-4">
+                    <p class="flex items-start gap-2 text-sm text-gray-600">
                         @if($reparacion->estado === 'Entregado')
                         <span class="text-green-600">✅</span> Esta orden fue entregada. El chat ya no está disponible.
                         @else
@@ -259,7 +293,7 @@
         </noscript>
     </main>
 
-    <footer class="border-t border-gray-200 mt-12 py-6">
+    <footer class="mt-10 border-t border-gray-200 py-6 md:mt-12">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <p class="text-gray-400 text-sm">FixFlow — Sistema de gestión de reparaciones</p>
         </div>
@@ -288,8 +322,8 @@
 
             contenedor.innerHTML = mensajes.map(m => `
                 <div class="flex ${m.es_del_cliente ? 'justify-end' : 'justify-start'}">
-                    <div class="max-w-[80%] ${m.es_del_cliente ? 'bg-[#7C3AED]/10' : 'bg-gray-100'} rounded-2xl px-4 py-3 ${m.es_del_cliente ? 'rounded-tr-sm' : 'rounded-tl-sm'}">
-                        <div class="flex items-center gap-2 mb-1">
+                    <div class="max-w-[92%] break-words ${m.es_del_cliente ? 'bg-[#7C3AED]/10' : 'bg-white sm:bg-gray-100'} rounded-2xl px-4 py-3 shadow-sm sm:max-w-[80%] sm:shadow-none ${m.es_del_cliente ? 'rounded-tr-sm' : 'rounded-tl-sm'}">
+                        <div class="mb-1 flex flex-wrap items-center gap-2">
                             <strong class="text-xs font-semibold ${m.es_del_cliente ? 'text-[#7C3AED]' : 'text-gray-700'}">${m.autor}</strong>
                             <time class="text-[10px] text-gray-400">${m.fecha}</time>
                         </div>

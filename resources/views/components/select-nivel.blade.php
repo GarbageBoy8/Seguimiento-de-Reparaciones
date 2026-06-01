@@ -32,7 +32,7 @@ $id = $id ?? $name;
     <button
         type="button"
         @click="open = !open"
-        class="w-full px-4 py-2 text-left bg-white rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] transition-all flex justify-between items-center hover:border-gray-400"
+        class="flex w-full min-w-0 items-center justify-between rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-left transition-all hover:border-gray-400 focus:border-[#7C3AED] focus:ring-2 focus:ring-[#7C3AED]/20"
         :class="{ 'border-[#7C3AED] ring-2 ring-[#7C3AED]/20': open }">
         <span x-text="selected ? selected : '{{ $placeholder }}'" class="truncate" :class="{ 'text-gray-900': selected, 'text-gray-500': !selected }"></span>
         <svg class="w-5 h-5 text-gray-400 transition-transform duration-200 flex-shrink-0" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,7 +49,7 @@ $id = $id ?? $name;
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 transform scale-100"
         x-transition:leave-end="opacity-0 transform scale-95"
-        class="absolute left-0 mt-2 z-50 w-full bg-white rounded-xl shadow-2xl border border-gray-200 max-h-96 overflow-y-auto"
+        class="absolute left-0 z-50 mt-2 max-h-80 w-full min-w-0 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-2xl md:max-h-96"
     >
         <div class="py-1">
             @forelse($niveles as $nivel)
@@ -57,10 +57,10 @@ $id = $id ?? $name;
                 @click="selected = 'Nivel {{ $nivel->nivel }} — {{ $nivel->nombre }} (SLA: {{ $nivel->horas_sla }}h)'; selectedId = '{{ $nivel->id }}'; open = false"
                 class="px-4 py-3 hover:bg-purple-50 hover:text-[#7C3AED] cursor-pointer transition-colors border-b border-gray-100 last:border-b-0"
                 :class="{ 'bg-purple-50 text-[#7C3AED]': selectedId == '{{ $nivel->id }}' }">
-                <div class="font-medium">Nivel {{ $nivel->nivel }} — {{ $nivel->nombre }}</div>
+                <div class="truncate font-medium">Nivel {{ $nivel->nivel }} — {{ $nivel->nombre }}</div>
                 <div class="text-xs text-gray-500 mt-0.5">SLA: {{ $nivel->horas_sla }} horas</div>
                 @if($nivel->descripcion)
-                <div class="text-xs text-gray-400 mt-1 line-clamp-2">{{ $nivel->descripcion }}</div>
+                <div class="mt-1 line-clamp-2 text-xs text-gray-400">{{ $nivel->descripcion }}</div>
                 @endif
             </div>
             @empty

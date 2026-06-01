@@ -5,8 +5,8 @@
 @section('contenido-principal')
 
 {{-- Header con título y botón --}}
-<div class="mb-8">
-    <div class="flex flex-wrap justify-between items-center gap-4">
+<div class="mb-6 md:mb-8">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <h1 class="text-2xl md:text-3xl font-bold bg-[#1E1B2E] bg-clip-text text-transparent">
                 Técnicos del taller
@@ -14,7 +14,7 @@
             <p class="text-gray-500 text-sm mt-1">Gestiona los técnicos y su carga de trabajo</p>
         </div>
         <a href="{{ route('tecnicos.create') }}"
-            class="bg-[#EC4899] hover:bg-[#DB2777] text-white px-5 py-2.5 rounded-xl text-sm font-medium transition-all shadow-md hover:shadow-lg flex items-center gap-2">
+            class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#EC4899] px-5 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-[#DB2777] hover:shadow-lg sm:w-auto">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
             </svg>
@@ -33,8 +33,55 @@
 </div>
 @endif
 
+{{-- Cards móviles --}}
+<div class="space-y-4 md:hidden">
+    @forelse($tecnicos as $tecnico)
+    @php
+    $activas = $tecnico->ordenes_activas;
+    $badgeColor = $activas > 3 ? 'bg-red-100 text-red-700' : ($activas > 0 ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700');
+    @endphp
+    <article class="rounded-2xl border border-gray-100 bg-white p-4 shadow-md">
+        <div class="flex items-start gap-3">
+            <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full bg-[#EC4899]/10">
+                <span class="text-sm font-medium uppercase text-[#EC4899]">{{ substr($tecnico->name, 0, 1) }}</span>
+            </div>
+            <div class="min-w-0 flex-1">
+                <h2 class="truncate font-semibold text-[#2D1B69]">{{ $tecnico->name }}</h2>
+                <p class="truncate text-sm text-gray-500">{{ $tecnico->email }}</p>
+            </div>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-3 text-sm">
+            <div class="rounded-xl bg-gray-50 p-3">
+                <p class="text-xs font-medium uppercase text-gray-400">Activas</p>
+                <span class="mt-1 inline-flex rounded-full px-2.5 py-1 text-xs font-semibold {{ $badgeColor }}">{{ $activas }}</span>
+            </div>
+            <div class="rounded-xl bg-gray-50 p-3">
+                <p class="text-xs font-medium uppercase text-gray-400">Histórico</p>
+                <span class="mt-1 inline-flex rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-600">{{ $tecnico->ordenes_total }}</span>
+            </div>
+        </div>
+        <form method="POST" action="{{ route('tecnicos.destroy', $tecnico) }}"
+            onsubmit="return confirm('¿Eliminar a {{ $tecnico->name }} del taller?\n\nEsta acción también reasignará sus órdenes actuales.')"
+            class="mt-4">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="inline-flex w-full items-center justify-center rounded-xl bg-rose-50 px-4 py-2.5 text-sm font-medium text-rose-600 transition hover:bg-rose-100">
+                Eliminar técnico
+            </button>
+        </form>
+    </article>
+    @empty
+    <div class="rounded-2xl bg-white px-6 py-12 text-center shadow-md">
+        <p class="font-medium text-gray-400">No hay técnicos registrados</p>
+        <a href="{{ route('tecnicos.create') }}" class="mt-2 inline-flex text-sm text-[#7C3AED] hover:underline">
+            Agregar el primer técnico
+        </a>
+    </div>
+    @endforelse
+</div>
+
 {{-- Tabla de técnicos --}}
-<div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+<div class="hidden overflow-hidden rounded-2xl bg-white shadow-lg md:block">
     <div class="overflow-x-auto">
         <table class="w-full">
             <thead class="bg-gradient-to-r from-[#2D1B69] to-[#1E1B2E]">

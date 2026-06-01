@@ -8,16 +8,22 @@ use Illuminate\Http\Request;
 
 class ClienteController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $tallerId = auth()->user()->taller_id;
+        $soloMayoristas = $request->boolean('mayoristas');
+        $buscar = trim((string) $request->query('buscar', ''));
+        $buscar = mb_substr($buscar, 0, 100);
 
         $clientes = Cliente::where('taller_id', $tallerId)
+            ->when($buscar !== '', fn ($query) => $query->where('nombre', 'like', "%{$buscar}%"))
+            ->when($soloMayoristas, fn ($query) => $query->where('es_mayorista', true))
             ->withCount('reparaciones')
             ->orderBy('nombre')
-            ->paginate(20);
+            ->paginate(20)
+            ->withQueryString();
 
-        return view('clientes.index', compact('clientes'));
+        return view('clientes.index', compact('clientes', 'soloMayoristas', 'buscar'));
     }
 
     public function create()
@@ -32,8 +38,11 @@ class ClienteController extends Controller
             'email'     => ['nullable', 'email', 'max:255'],
             'telefono'  => ['nullable', 'string', 'max:20'],
             'direccion' => ['nullable', 'string', 'max:500'],
+            'es_mayorista' => ['nullable', 'boolean'],
         ]);
 
+        $data['es_mayorista'] = $request->has('es_mayorista');
+        
         $cliente = Cliente::create([
             'taller_id' => auth()->user()->taller_id,
             ...$data,

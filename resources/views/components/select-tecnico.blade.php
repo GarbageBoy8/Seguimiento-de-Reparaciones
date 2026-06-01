@@ -34,7 +34,7 @@ $id = $id ?? $name;
     <button
         type="button"
         @click="open = !open"
-        class="w-full px-4 py-2 text-left bg-white rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#7C3AED]/20 focus:border-[#7C3AED] transition-all flex justify-between items-center hover:border-gray-400"
+        class="flex w-full min-w-0 items-center justify-between rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-left transition-all hover:border-gray-400 focus:border-[#7C3AED] focus:ring-2 focus:ring-[#7C3AED]/20"
         :class="{ 'border-[#7C3AED] ring-2 ring-[#7C3AED]/20': open }">
         <span x-text="selected ? selected : '— {{ $placeholder }} —'" class="truncate" :class="{ 'text-gray-900': selected, 'text-gray-500': !selected }"></span>
         <svg class="w-5 h-5 text-gray-400 transition-transform duration-200 flex-shrink-0" :class="{ 'rotate-180': open }" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,7 +51,7 @@ $id = $id ?? $name;
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100 transform scale-100"
         x-transition:leave-end="opacity-0 transform scale-95"
-        class="absolute left-0 mt-2 z-50 w-full bg-white rounded-xl shadow-2xl border border-gray-200 max-h-96 overflow-y-auto"
+        class="absolute left-0 z-50 mt-2 max-h-80 w-full min-w-0 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-2xl md:max-h-96"
     >
         <div class="py-1">
             <div
@@ -68,10 +68,10 @@ $id = $id ?? $name;
                 class="px-4 py-3 hover:bg-purple-50 hover:text-[#7C3AED] cursor-pointer transition-colors border-b border-gray-100 last:border-b-0"
                 :class="{ 'bg-purple-50 text-[#7C3AED]': selectedId == '{{ $tecnico->id }}' }">
                 
-                <div class="flex items-center justify-between gap-3">
-                    <div class="font-medium flex-1">{{ $tecnico->name }}</div>
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+                    <div class="min-w-0 flex-1 truncate font-medium">{{ $tecnico->name }}</div>
                     @if($showStats && isset($tecnico->ordenes_activas))
-                    <div class="flex items-center gap-2 flex-shrink-0">
+                    <div class="flex flex-wrap items-center gap-2 sm:flex-shrink-0">
                         @if($tecnico->ordenes_activas > 0)
                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                             {{ $tecnico->ordenes_activas }} activa{{ $tecnico->ordenes_activas != 1 ? 's' : '' }}
@@ -84,7 +84,7 @@ $id = $id ?? $name;
                     @endif
                 </div>
                 
-                <div class="text-xs text-gray-500 mt-1">
+                <div class="mt-1 truncate text-xs text-gray-500">
                     {{ $tecnico->email }}
                 </div>
             </div>
