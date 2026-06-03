@@ -25,17 +25,15 @@
     </style>
 </head>
 
-<body class="bg-[#1A0033] text-neutral-800 flex flex-col min-h-screen">
+<body class="bg-[#1A0033] text-neutral-800 flex flex-col min-h-screen overflow-x-hidden">
 
     {{-- HEADER --}}
-    <header class="bg-white w-full lg:px-8 text-sm sticky top-0 z-50">
+    <header x-data="{ open: false }" @keydown.escape.window="open = false" class="bg-white w-full lg:px-8 text-sm sticky top-0 z-50">
         @if (Route::has('login'))
-        <nav class="bg-white/95 backdrop-blur-sm px-6 py-4 flex justify-between items-center w-full shadow-sm border-b border-gray-100">
+        <nav class="relative bg-white/95 backdrop-blur-sm px-6 py-4 flex justify-between items-center w-full shadow-sm border-b border-gray-100">
             <div class="flex items-center">
                 <a href="/" class="text-3xl font-extrabold tracking-tight text-[#4B0082] md:text-4xl">FixFlow</a>
             </div>
-
-
 
             <div class="hidden items-center space-x-4 md:flex">
                 @auth
@@ -57,13 +55,9 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
-            </div>
 
             <div x-cloak x-show="open" x-transition @click.outside="open = false" class="absolute left-4 right-4 top-full mt-2 rounded-2xl border border-gray-100 bg-white p-3 shadow-xl md:hidden">
                 <div class="flex flex-col gap-1">
-                    <a href="#optimiza" @click="open = false" class="rounded-xl px-4 py-3 font-medium text-neutral-700 hover:bg-purple-50 hover:text-[#4B0082]">Optimiza tu taller</a>
-                    <a href="#gestiona" @click="open = false" class="rounded-xl px-4 py-3 font-medium text-neutral-700 hover:bg-purple-50 hover:text-[#4B0082]">Gestiona</a>
-                    <a href="#agilidad" @click="open = false" class="rounded-xl px-4 py-3 font-medium text-neutral-700 hover:bg-purple-50 hover:text-[#4B0082]">Agilidad</a>
                     @auth
                     <a href="{{ route('panel.inicio') }}" class="mt-2 rounded-xl bg-[#4B0082] px-4 py-3 text-center font-semibold text-white shadow-md transition hover:bg-[#5A00C6]">Centro de Mando</a>
                     @else
@@ -84,8 +78,8 @@
         <div class="absolute top-[-5%] left-[-10%] w-[500px] h-[500px] bg-[#9D4EDD]/20 rounded-full blur-[120px] pointer-events-none"></div>
         <div class="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-[#7B2CBF]/20 rounded-full blur-[120px] pointer-events-none"></div>
 
-        <section class="relative w-full px-4 lg:px-12 pt-16 pb-6 flex items-center z-10">
-            <div class="relative max-w-[90rem] mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-12 xl:gap-20">
+        <section class="relative w-full px-4 lg:px-12 pt-12 sm:pt-16 pb-6 flex items-center z-10">
+            <div class="relative max-w-[90rem] mx-auto w-full flex flex-col lg:flex-row items-center justify-between gap-10 sm:gap-16 lg:gap-12 xl:gap-20">
 
                 <div class="w-full lg:w-[45%] flex flex-col items-center lg:items-start text-center lg:text-left z-10">
                     <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-[#E0AAFF] shadow-sm backdrop-blur-sm md:mb-8">
@@ -98,20 +92,20 @@
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#E0AAFF] to-[#C77DFF]">Para tu Taller</span>
                     </h1>
 
-                    <p class="max-w-2xl text-left text-base leading-relaxed text-white/95 sm:text-lg lg:text-left lg:text-2xl">
+                    <p class="max-w-2xl text-center text-base leading-relaxed text-white/95 sm:text-lg lg:text-left lg:text-2xl">
                         FixFlow es el sistema integral diseñado para agilizar tus procesos técnicos. Registra equipos, da seguimiento en tiempo real a los estados de cada reparación y mantén el control total de tu flujo de trabajo con profesionalismo.
                     </p>
                 </div>
 
-                <div class="relative w-full lg:w-[55%] h-[400px] sm:h-[480px] lg:h-[500px] flex items-center justify-center z-10 lg:pl-10 mt-12 lg:mt-0">
+                <div class="relative w-full lg:w-[55%] h-[300px] sm:h-[420px] md:h-[480px] lg:h-[500px] flex items-center justify-center z-10 lg:pl-10 mt-8 lg:mt-0">
                     <div class="absolute inset-0 bg-gradient-to-tr from-[#7B2CBF]/10 via-[#9D4EDD]/5 to-transparent blur-3xl -z-10 rounded-full scale-75"></div>
 
                     <div class="relative w-full h-full max-w-2xl mx-auto flex items-center justify-center">
-                        <div class="absolute left-0 top-6 w-[58%] z-10 opacity-75 shadow-2xl rounded-2xl border border-white/10 overflow-hidden transform -rotate-3 -translate-x-6 translate-y-4 transition-all duration-500 ease-out hover:opacity-100 hover:-translate-y-12 hover:scale-105 hover:z-30 group">
+                        <div class="absolute left-2 sm:left-0 top-6 w-[58%] z-10 opacity-75 shadow-2xl rounded-2xl border border-white/10 overflow-hidden transform -rotate-3 -translate-x-3 sm:-translate-x-6 translate-y-4 transition-all duration-500 ease-out hover:opacity-100 hover:-translate-y-12 hover:scale-105 hover:z-30 group">
                             <img src="{{ asset('assets/ordenes.jpg') }}" alt="Órdenes de Reparación" class="w-full h-auto object-cover">
                         </div>
 
-                        <div class="absolute right-0 top-2 w-[58%] z-10 opacity-75 shadow-2xl rounded-2xl border border-white/10 overflow-hidden transform rotate-3 translate-x-6 translate-y-4 transition-all duration-500 ease-out hover:opacity-100 hover:-translate-y-12 hover:scale-105 hover:z-30 group">
+                        <div class="absolute right-2 sm:right-0 top-2 w-[58%] z-10 opacity-75 shadow-2xl rounded-2xl border border-white/10 overflow-hidden transform rotate-3 translate-x-3 sm:translate-x-6 translate-y-4 transition-all duration-500 ease-out hover:opacity-100 hover:-translate-y-12 hover:scale-105 hover:z-30 group">
                             <img src="{{ asset('assets/clientes.jpg') }}" alt="Clientes del Taller" class="w-full h-auto object-cover">
                         </div>
 
@@ -212,7 +206,7 @@
 
 
     {{-- 3. SECCIÓN LLAMADA A LA ACCIÓN (CTA CONTINUO) --}}
-    <section class="relative w-full bg-gradient-to-b from-[#1A0033] via-[#2A0054] to-[#110022] pt-24 pb-16 px-4 lg:px-12 overflow-hidden z-10">
+    <section id="contacto" class="relative w-full bg-gradient-to-b from-[#1A0033] via-[#2A0054] to-[#110022] pt-24 pb-16 px-4 lg:px-12 overflow-hidden z-10">
 
         <div class="absolute inset-0 bg-circuit opacity-35 pointer-events-none"></div>
 
