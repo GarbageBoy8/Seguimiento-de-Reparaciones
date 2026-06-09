@@ -44,21 +44,22 @@ ENV APP_ENV=production \
 
 # ── Extensiones PHP del sistema ──
 RUN apk add --no-cache \
-        nginx \
-        supervisor \
-        curl \
-        bash \
-        libxml2-dev \
+    nginx \
+    supervisor \
+    curl \
+    bash \
+    libxml2-dev \
+    oniguruma-dev \
     && docker-php-ext-install \
-        pdo_mysql \
-        mbstring \
-        tokenizer \
-        xml \
-        ctype \
-        bcmath \
-        fileinfo \
-        pcntl \
-        opcache
+    pdo_mysql \
+    mbstring \
+    tokenizer \
+    xml \
+    ctype \
+    bcmath \
+    fileinfo \
+    pcntl \
+    opcache
 
 # ── Configuración de Nginx ──
 RUN mkdir -p /run/nginx
