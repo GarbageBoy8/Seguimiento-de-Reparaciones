@@ -36,7 +36,7 @@ RUN composer install \
 
 
 # ─── Stage 3: Imagen de producción ───────────────────────────
-FROM php:8.2-fpm-alpine AS final
+FROM php:8.4-fpm-alpine AS final
 
 # ── Variables de entorno no sensibles ──
 ENV APP_ENV=production \
