@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\NivelReparacion;
+use App\Models\SubscriptionPlan;
 use App\Models\Taller;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -12,7 +13,56 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Sembrar los 5 niveles de reparación
+        // 1. Sembrar planes de suscripción
+        $planes = [
+            [
+                'nombre' => 'Básico',
+                'slug' => 'basico',
+                'descripcion' => 'Plan inicial para talleres pequeños.',
+                'precio_mensual' => null,
+                'max_tecnicos' => 2,
+                'permite_clientes_mayoristas' => false,
+                'features' => [
+                    'clientes_mayoristas' => false,
+                ],
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Pro',
+                'slug' => 'pro',
+                'descripcion' => 'Plan para talleres con equipo técnico en crecimiento.',
+                'precio_mensual' => null,
+                'max_tecnicos' => 4,
+                'permite_clientes_mayoristas' => false,
+                'features' => [
+                    'clientes_mayoristas' => false,
+                ],
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Taller Plus',
+                'slug' => 'taller-plus',
+                'descripcion' => 'Plan para talleres con mayor volumen y clientes mayoristas.',
+                'precio_mensual' => null,
+                'max_tecnicos' => 15,
+                'permite_clientes_mayoristas' => true,
+                'features' => [
+                    'clientes_mayoristas' => true,
+                ],
+                'activo' => true,
+            ],
+        ];
+
+        foreach ($planes as $plan) {
+            SubscriptionPlan::updateOrCreate(
+                ['slug' => $plan['slug']],
+                $plan
+            );
+        }
+
+        $planBasico = SubscriptionPlan::where('slug', 'basico')->firstOrFail();
+
+        // 2. Sembrar los 5 niveles de reparación
         $niveles = [
             [
                 'nivel'       => 1,
@@ -47,33 +97,47 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($niveles as $nivel) {
-            NivelReparacion::create($nivel);
+            NivelReparacion::updateOrCreate(
+                ['nivel' => $nivel['nivel']],
+                $nivel
+            );
         }
 
-        // 2. Crear taller demo
-        $taller = Taller::create([
-            'nombre'             => 'Taller Demo FixFlow',
-            'telefono'           => '5500000000',
-            'direccion'          => 'Calle Ejemplo 123, Ciudad',
-            'suscripcion_activa' => true,
-        ]);
+        // 3. Crear taller demo
+        $taller = Taller::updateOrCreate(
+            ['nombre' => 'Taller Demo FixFlow'],
+            [
+                'telefono'           => '5500000000',
+                'direccion'          => 'Calle Ejemplo 123, Ciudad',
+                'suscripcion_activa' => true,
+                'plan_id' => $planBasico->id,
+                'codigo_publico' => 'DEMO',
+                'trial_ends_at' => now()->addDays(7),
+                'subscription_status' => 'trial',
+                'subscription_ends_at' => null,
+            ]
+        );
 
-        // 3. Crear usuario admin del taller
-        User::create([
-            'taller_id' => $taller->id,
-            'name'      => 'Admin Demo',
-            'email'     => 'admin@fixflow.test',
-            'password'  => Hash::make('password'),
-            'rol'       => 'admin',
-        ]);
+        // 4. Crear usuario admin del taller
+        User::updateOrCreate(
+            ['email' => 'admin@fixflow.test'],
+            [
+                'taller_id' => $taller->id,
+                'name'      => 'Admin Demo',
+                'password'  => Hash::make('password'),
+                'rol'       => 'admin',
+            ]
+        );
 
-        // 4. Crear usuario técnico del taller
-        User::create([
-            'taller_id' => $taller->id,
-            'name'      => 'Técnico Demo',
-            'email'     => 'tecnico@fixflow.test',
-            'password'  => Hash::make('password'),
-            'rol'       => 'tecnico',
-        ]);
+        // 5. Crear usuario técnico del taller
+        User::updateOrCreate(
+            ['email' => 'tecnico@fixflow.test'],
+            [
+                'taller_id' => $taller->id,
+                'name'      => 'Técnico Demo',
+                'password'  => Hash::make('password'),
+                'rol'       => 'tecnico',
+            ]
+        );
     }
 }

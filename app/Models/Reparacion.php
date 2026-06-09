@@ -124,12 +124,20 @@ class Reparacion extends Model
     // ─── Generadores estáticos ───────────────────────────────
 
     /**
-     * Genera un folio único: FF-YYYY-XXXX
+     * Genera un folio globalmente único: FF-{CODIGO_TALLER}-YYYY-XXXX
      */
     public static function generarFolio(int $tallerId): string
     {
+        $taller = Taller::findOrFail($tallerId);
+        $codigoTaller = $taller->codigo_publico;
+
+        if (! $codigoTaller) {
+            $codigoTaller = Taller::generarCodigoPublico($taller->nombre);
+            $taller->forceFill(['codigo_publico' => $codigoTaller])->save();
+        }
+
         $anio = now()->year;
-        $prefijo = "FF-{$anio}-";
+        $prefijo = "FF-{$codigoTaller}-{$anio}-";
 
         // Obtener el número más alto ya usado por este taller en el año actual
         // Usar max() sobre el sufijo numérico es más seguro que count()

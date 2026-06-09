@@ -4,6 +4,12 @@
 
 @section('contenido-principal')
 
+@php
+    $tecnicosActuales = $tecnicosActuales ?? 0;
+    $maxTecnicos = $maxTecnicos ?? 0;
+    $puedeCrearTecnicos = $puedeCrearTecnicos ?? false;
+@endphp
+
 <div class="mx-auto max-w-2xl">
     {{-- Header --}}
     <div class="mb-6 md:mb-8">
@@ -11,6 +17,9 @@
             Agregar técnico al taller
         </h1>
         <p class="text-gray-500 text-sm mt-1">Registra un nuevo técnico para que pueda gestionar órdenes de reparación</p>
+        <p class="mt-2 inline-flex rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-[#7C3AED]">
+            {{ $tecnicosActuales }} / {{ $maxTecnicos }} técnicos disponibles en tu plan
+        </p>
     </div>
 
     {{-- Errores de validación --}}
@@ -31,6 +40,12 @@
         </div>
     </div>
     @endif
+
+    @unless($puedeCrearTecnicos)
+    <div class="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+        Tu plan actual permite hasta {{ $maxTecnicos }} técnicos. Actualiza tu suscripción para agregar más.
+    </div>
+    @endunless
 
     {{-- Formulario --}}
     <form method="POST" action="{{ route('tecnicos.store') }}" class="overflow-hidden rounded-2xl bg-white shadow-lg">
@@ -121,7 +136,7 @@
 
         {{-- Botones de acción --}}
         <div class="flex flex-col gap-3 border-t border-gray-100 bg-gray-50 px-4 py-4 sm:flex-row sm:flex-wrap md:px-6">
-            <button type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#7C3AED] px-6 py-2.5 font-medium text-white shadow-md transition-all hover:bg-[#6D28D9] hover:shadow-lg sm:w-auto">
+            <button type="submit" @disabled(! $puedeCrearTecnicos) class="flex w-full items-center justify-center gap-2 rounded-xl px-6 py-2.5 font-medium shadow-md transition-all sm:w-auto {{ $puedeCrearTecnicos ? 'bg-[#7C3AED] text-white hover:bg-[#6D28D9] hover:shadow-lg' : 'cursor-not-allowed bg-gray-200 text-gray-400 shadow-none' }}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                 </svg>

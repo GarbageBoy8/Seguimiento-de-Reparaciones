@@ -4,6 +4,10 @@
 
 @section('contenido-principal')
 
+@php
+    $permiteClientesMayoristas = $permiteClientesMayoristas ?? false;
+@endphp
+
 <div class="mx-auto max-w-2xl">
     {{-- Header --}}
     <div class="mb-6 md:mb-8">
@@ -107,6 +111,7 @@
                 </div>
             </div>
             {{-- Es mayorista --}}
+            @if($permiteClientesMayoristas)
             <div class="relative flex items-start pt-2">
                 <div class="flex items-center h-5">
                     <input id="es_mayorista" name="es_mayorista" type="checkbox" value="1" {{ old('es_mayorista') ? 'checked' : '' }}
@@ -117,6 +122,7 @@
                     <p class="text-gray-400 text-xs">Marcar esta casilla destacará visualmente sus órdenes en el Centro de Mando.</p>
                 </div>
             </div>
+            @endif
         </div>
 
         {{-- Botones de acción --}}

@@ -5,9 +5,40 @@ namespace App\Http\Controllers;
 use App\Models\Mensaje;
 use App\Models\Reparacion;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class SeguimientoController extends Controller
 {
+    /**
+     * Formulario público para buscar una orden por folio global.
+     */
+    public function buscar()
+    {
+        return view('seguimiento.buscar');
+    }
+
+    /**
+     * Redirige al portal de seguimiento si el folio global existe.
+     */
+    public function redirigirPorFolio(Request $request)
+    {
+        $data = $request->validate([
+            'folio' => ['required', 'string', 'max:50'],
+        ]);
+
+        $folio = Str::upper(preg_replace('/\s+/', '', trim($data['folio'])) ?? '');
+
+        $reparacion = Reparacion::where('folio', $folio)->first();
+
+        if (! $reparacion) {
+            return back()
+                ->withErrors(['folio' => 'No encontramos una orden con ese folio. Revisa que esté escrito correctamente.'])
+                ->withInput(['folio' => $data['folio']]);
+        }
+
+        return redirect()->route('seguimiento.show', $reparacion->token_seguimiento);
+    }
+
     /**
      * Portal público del cliente — solo con el token.
      */

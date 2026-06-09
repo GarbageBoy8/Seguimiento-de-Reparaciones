@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cliente;
 use App\Models\Reparacion;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ClienteController extends Controller
 {
@@ -28,11 +29,17 @@ class ClienteController extends Controller
 
     public function create()
     {
-        return view('clientes.create');
+        $taller = auth()->user()->taller()->with('plan')->firstOrFail();
+        $permiteClientesMayoristas = $taller->permiteClientesMayoristas();
+
+        return view('clientes.create', compact('permiteClientesMayoristas'));
     }
 
     public function store(Request $request)
     {
+        $taller = auth()->user()->taller()->with('plan')->firstOrFail();
+        $permiteClientesMayoristas = $taller->permiteClientesMayoristas();
+
         $data = $request->validate([
             'nombre'    => ['required', 'string', 'max:255'],
             'email'     => ['nullable', 'email', 'max:255'],
@@ -41,10 +48,16 @@ class ClienteController extends Controller
             'es_mayorista' => ['nullable', 'boolean'],
         ]);
 
-        $data['es_mayorista'] = $request->has('es_mayorista');
+        if ($request->boolean('es_mayorista') && ! $permiteClientesMayoristas) {
+            throw ValidationException::withMessages([
+                'es_mayorista' => 'Tu plan actual no permite registrar clientes mayoristas.',
+            ]);
+        }
+
+        $data['es_mayorista'] = $request->boolean('es_mayorista') && $permiteClientesMayoristas;
         
         $cliente = Cliente::create([
-            'taller_id' => auth()->user()->taller_id,
+            'taller_id' => $taller->id,
             ...$data,
         ]);
 

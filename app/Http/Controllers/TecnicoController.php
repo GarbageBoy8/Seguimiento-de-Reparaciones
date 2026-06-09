@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationException;
 
 class TecnicoController extends Controller
 {
@@ -15,8 +16,9 @@ class TecnicoController extends Controller
     public function index()
     {
         $this->soloAdmin();
+        $taller = auth()->user()->taller()->with('plan')->firstOrFail();
 
-        $tecnicos = User::where('taller_id', auth()->user()->taller_id)
+        $tecnicos = User::where('taller_id', $taller->id)
             ->where('rol', 'tecnico')
             ->withCount([
                 'reparaciones as ordenes_activas' => fn($q) => $q->whereNotIn('estado', ['Entregado', 'Cancelado']),
@@ -25,7 +27,10 @@ class TecnicoController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('tecnicos.index', compact('tecnicos'));
+        $maxTecnicos = $taller->maxTecnicos();
+        $puedeCrearTecnicos = $tecnicos->count() < $maxTecnicos;
+
+        return view('tecnicos.index', compact('tecnicos', 'maxTecnicos', 'puedeCrearTecnicos'));
     }
 
     /**
@@ -34,7 +39,12 @@ class TecnicoController extends Controller
     public function create()
     {
         $this->soloAdmin();
-        return view('tecnicos.create');
+        $taller = auth()->user()->taller()->with('plan')->firstOrFail();
+        $tecnicosActuales = $taller->tecnicosCount();
+        $maxTecnicos = $taller->maxTecnicos();
+        $puedeCrearTecnicos = $tecnicosActuales < $maxTecnicos;
+
+        return view('tecnicos.create', compact('tecnicosActuales', 'maxTecnicos', 'puedeCrearTecnicos'));
     }
 
     /**
@@ -43,6 +53,7 @@ class TecnicoController extends Controller
     public function store(Request $request)
     {
         $this->soloAdmin();
+        $taller = auth()->user()->taller()->with('plan')->firstOrFail();
 
         $data = $request->validate([
             'name'     => ['required', 'string', 'max:255'],
@@ -50,8 +61,14 @@ class TecnicoController extends Controller
             'password' => ['required', Rules\Password::defaults(), 'confirmed'],
         ]);
 
+        if (! $taller->puedeCrearTecnicos()) {
+            throw ValidationException::withMessages([
+                'name' => "Tu plan actual permite hasta {$taller->maxTecnicos()} técnicos. Actualiza tu suscripción para agregar más.",
+            ]);
+        }
+
         User::create([
-            'taller_id' => auth()->user()->taller_id,
+            'taller_id' => $taller->id,
             'name'      => $data['name'],
             'email'     => $data['email'],
             'password'  => Hash::make($data['password']),

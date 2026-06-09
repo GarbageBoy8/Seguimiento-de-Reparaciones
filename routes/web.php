@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => view('welcome'));
 
+Route::get('/rastrear', [SeguimientoController::class, 'buscar'])->name('seguimiento.buscar');
+Route::post('/rastrear', [SeguimientoController::class, 'redirigirPorFolio'])->name('seguimiento.buscar.submit');
+
 // Portal del cliente (sin autenticación, solo con token)
 Route::get('/seguimiento/{token}', [SeguimientoController::class, 'show'])->name('seguimiento.show');
 Route::post('/seguimiento/{token}/mensaje', [SeguimientoController::class, 'mensaje'])->name('seguimiento.mensaje');
@@ -21,6 +24,11 @@ Route::get('/seguimiento/{token}/mensajes', [SeguimientoController::class, 'mens
 // ─── Autenticadas ─────────────────────────────────────────────────────────────
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/suscripcion/vencida', fn() => view('billing.expired'))->name('billing.expired');
+});
+
+Route::middleware(['auth', 'subscription.active'])->group(function () {
 
     // Panel principal
     Route::get('/centro-de-mando', [PanelTecnicoController::class, 'index'])->name('panel.inicio');

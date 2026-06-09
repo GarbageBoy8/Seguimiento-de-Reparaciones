@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\SubscriptionPlan;
 use App\Models\Taller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -32,27 +35,52 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $request->merge([
+            'codigo_publico' => Taller::normalizarCodigoPublico($request->input('codigo_publico')),
+        ]);
+
+        $data = $request->validate([
             'nombre_taller' => ['required', 'string', 'max:255'],
+            'codigo_publico' => [
+                'nullable',
+                'string',
+                'min:3',
+                'max:10',
+                'regex:/^[A-Z0-9]+$/',
+                Rule::unique('talleres', 'codigo_publico'),
+            ],
             'name'          => ['required', 'string', 'max:255'],
             'email'         => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password'      => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        // 1. Crear el taller
-        $taller = Taller::create([
-            'nombre'             => $request->nombre_taller,
-            'suscripcion_activa' => true,
-        ]);
+        $planBasico = SubscriptionPlan::where('slug', 'basico')->firstOrFail();
 
-        // 2. Crear el usuario admin asociado al taller
-        $user = User::create([
-            'taller_id' => $taller->id,
-            'name'      => $request->name,
-            'email'     => $request->email,
-            'password'  => Hash::make($request->password),
-            'rol'       => 'admin',
-        ]);
+        [$taller, $user] = DB::transaction(function () use ($data, $planBasico) {
+            $codigoPublico = $data['codigo_publico'] ?: Taller::generarCodigoPublico($data['nombre_taller']);
+
+            // 1. Crear el taller con prueba gratuita.
+            $taller = Taller::create([
+                'nombre'             => $data['nombre_taller'],
+                'plan_id'            => $planBasico->id,
+                'codigo_publico'     => $codigoPublico,
+                'trial_ends_at'      => now()->addDays(7),
+                'subscription_status' => 'trial',
+                'subscription_ends_at' => null,
+                'suscripcion_activa' => true,
+            ]);
+
+            // 2. Crear el usuario admin asociado al taller.
+            $user = User::create([
+                'taller_id' => $taller->id,
+                'name'      => $data['name'],
+                'email'     => $data['email'],
+                'password'  => Hash::make($data['password']),
+                'rol'       => 'admin',
+            ]);
+
+            return [$taller, $user];
+        });
 
         event(new Registered($user));
 
