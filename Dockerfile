@@ -43,16 +43,17 @@ ENV APP_ENV=production \
     LOG_CHANNEL=stderr
 
 # ── Extensiones PHP del sistema ──
-RUN apk add --no-cache --virtual .build-deps \
-    $PHPIZE_DEPS \
+# Descargamos el instalador inteligente oficial de extensiones PHP para Docker
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+# Damos permisos, instalamos paquetes base de Alpine y usamos el script para PHP
+RUN chmod +x /usr/local/bin/install-php-extensions \
     && apk add --no-cache \
     nginx \
     supervisor \
     curl \
     bash \
-    libxml2-dev \
-    oniguruma-dev \
-    && docker-php-ext-install \
+    && install-php-extensions \
     pdo_mysql \
     mbstring \
     tokenizer \
@@ -61,8 +62,7 @@ RUN apk add --no-cache --virtual .build-deps \
     bcmath \
     fileinfo \
     pcntl \
-    opcache \
-    && apk del .build-deps
+    opcache
 
 # ── Configuración de Nginx ──
 RUN mkdir -p /run/nginx
