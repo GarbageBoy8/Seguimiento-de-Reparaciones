@@ -43,7 +43,10 @@ ENV APP_ENV=production \
     LOG_CHANNEL=stderr
 
 # ── Extensiones PHP del sistema ──
-RUN apk add --no-cache \
+# Primero agregamos build-base (herramientas de compilación esenciales)
+RUN apk add --no-cache --virtual .build-deps \
+    $PHPIZE_DEPS \
+    && apk add --no-cache \
     nginx \
     supervisor \
     curl \
@@ -59,7 +62,8 @@ RUN apk add --no-cache \
     bcmath \
     fileinfo \
     pcntl \
-    opcache
+    opcache \
+    && apk del .build-deps # Limpiamos las herramientas de compilación para mantener el contenedor ligero
 
 # ── Configuración de Nginx ──
 RUN mkdir -p /run/nginx
