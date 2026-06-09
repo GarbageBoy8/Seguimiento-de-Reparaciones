@@ -29,6 +29,10 @@ RUN composer install \
     --optimize-autoloader \
     --no-interaction \
     --no-scripts
+
+# Compilar los estilos y scripts del frontend (Vite)
+RUN npm install \
+    && npm run build
 # NOTA: --no-scripts omite package:discover intencionalmente.
 # Ese comando, junto con config:cache, route:cache, view:cache y migrate --force,
 # se ejecutan como "Deploy Command" en Coolify, donde APP_KEY y DB ya están disponibles.
@@ -53,6 +57,8 @@ RUN chmod +x /usr/local/bin/install-php-extensions \
     supervisor \
     curl \
     bash \
+    nodejs \
+    npm \
     && install-php-extensions \
     pdo_mysql \
     mbstring \
