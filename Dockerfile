@@ -1,5 +1,5 @@
 # ============================================================
-# FixFlow — Dockerfile multi-stage
+# FixBound — Dockerfile multi-stage
 # Compatible con ARM64 (Oracle Cloud VM.Standard.A1.Flex)
 # ============================================================
 
@@ -29,6 +29,8 @@ RUN composer install \
     --optimize-autoloader \
     --no-interaction \
     --no-scripts
+
+
 # NOTA: --no-scripts omite package:discover intencionalmente.
 # Ese comando, junto con config:cache, route:cache, view:cache y migrate --force,
 # se ejecutan como "Deploy Command" en Coolify, donde APP_KEY y DB ya están disponibles.
@@ -36,20 +38,24 @@ RUN composer install \
 
 
 # ─── Stage 3: Imagen de producción ───────────────────────────
-FROM php:8.2-fpm-alpine AS final
+FROM php:8.4-fpm-alpine AS final
 
 # ── Variables de entorno no sensibles ──
 ENV APP_ENV=production \
     LOG_CHANNEL=stderr
 
 # ── Extensiones PHP del sistema ──
-RUN apk add --no-cache \
+# Descargamos el instalador inteligente oficial de extensiones PHP para Docker
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+
+# Damos permisos, instalamos paquetes base de Alpine y usamos el script para PHP
+RUN chmod +x /usr/local/bin/install-php-extensions \
+    && apk add --no-cache \
     nginx \
     supervisor \
     curl \
     bash \
-    libxml2-dev \
-    && docker-php-ext-install \
+    && install-php-extensions \
     pdo_mysql \
     mbstring \
     tokenizer \
@@ -129,8 +135,11 @@ COPY --from=node-builder /app/public/build ./public/build
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-RUN echo "opcache.enable=1\nopcache.memory_consumption=128\nopcache.validate_timestamps=0" \
-    > /usr/local/etc/php/conf.d/opcache.ini
+RUN { \
+    echo 'opcache.enable=1'; \
+    echo 'opcache.memory_consumption=128'; \
+    echo 'opcache.validate_timestamps=0'; \
+    } > /usr/local/etc/php/conf.d/opcache.ini
 
 EXPOSE 80
 

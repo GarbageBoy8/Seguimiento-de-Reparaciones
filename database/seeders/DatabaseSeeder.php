@@ -103,41 +103,30 @@ class DatabaseSeeder extends Seeder
             );
         }
 
-        // 3. Crear taller demo
-        $taller = Taller::updateOrCreate(
-            ['nombre' => 'Taller Demo FixFlow'],
-            [
-                'telefono'           => '5500000000',
-                'direccion'          => 'Calle Ejemplo 123, Ciudad',
-                'suscripcion_activa' => true,
-                'plan_id' => $planBasico->id,
-                'codigo_publico' => 'DEMO',
-                'trial_ends_at' => now()->addDays(7),
-                'subscription_status' => 'trial',
-                'subscription_ends_at' => null,
-            ]
-        );
+        // 2. Crear taller demo
+        $taller = Taller::create([
+            'nombre'             => 'Taller Demo FixBound',
+            'telefono'           => '5500000000',
+            'direccion'          => 'Calle Ejemplo 123, Ciudad',
+            'suscripcion_activa' => true,
+        ]);
 
-        // 4. Crear usuario admin del taller
-        User::updateOrCreate(
-            ['email' => 'admin@fixflow.test'],
-            [
-                'taller_id' => $taller->id,
-                'name'      => 'Admin Demo',
-                'password'  => Hash::make('password'),
-                'rol'       => 'admin',
-            ]
-        );
+        // 3. Crear usuario admin del taller
+        User::create([
+            'taller_id' => $taller->id,
+            'name'      => 'Admin Demo',
+            'email'     => 'admin@fixbound.test',
+            'password'  => Hash::make('password'),
+            'rol'       => 'admin',
+        ]);
 
-        // 5. Crear usuario técnico del taller
-        User::updateOrCreate(
-            ['email' => 'tecnico@fixflow.test'],
-            [
-                'taller_id' => $taller->id,
-                'name'      => 'Técnico Demo',
-                'password'  => Hash::make('password'),
-                'rol'       => 'tecnico',
-            ]
-        );
+        // 4. Crear usuario técnico del taller
+        User::create([
+            'taller_id' => $taller->id,
+            'name'      => 'Técnico Demo',
+            'email'     => 'tecnico@fixbound.test',
+            'password'  => Hash::make('password'),
+            'rol'       => 'tecnico',
+        ]);
     }
 }

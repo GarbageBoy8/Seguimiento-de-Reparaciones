@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{{ config('app.name', 'FixFlow') }}</title>
+    <title>{{ config('app.name', 'FixBound') }}</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
@@ -32,7 +32,7 @@
         @if (Route::has('login'))
         <nav class="relative bg-white/95 backdrop-blur-sm px-6 py-4 flex justify-between items-center w-full shadow-sm border-b border-gray-100">
             <div class="flex items-center">
-                <a href="/" class="text-3xl font-extrabold tracking-tight text-[#4B0082] md:text-4xl">FixFlow</a>
+                <a href="/" class="text-3xl font-extrabold tracking-tight text-[#4B0082] md:text-4xl">FixBound</a>
             </div>
 
             <div class="hidden items-center space-x-4 md:flex">
@@ -97,7 +97,7 @@
                     </h1>
 
                     <p class="max-w-2xl text-center text-base leading-relaxed text-white/95 sm:text-lg lg:text-left lg:text-2xl">
-                        FixFlow es el sistema integral diseñado para agilizar tus procesos técnicos. Registra equipos, da seguimiento en tiempo real a los estados de cada reparación y mantén el control total de tu flujo de trabajo con profesionalismo.
+                        FixBound es el sistema integral diseñado para agilizar tus procesos técnicos. Registra equipos, da seguimiento en tiempo real a los estados de cada reparación y mantén el control total de tu flujo de trabajo con profesionalismo.
                     </p>
                 </div>
 
@@ -130,7 +130,7 @@
 
             <div class="text-center max-w-3xl mx-auto mb-20">
                 <h2 class="text-3xl md:text-4xl font-extrabold text-[#0D0D11] tracking-tight uppercase">
-                    ¿Por qué elegir <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#4B0082] to-[#7B2CBF]">FixFlow</span>?
+                    ¿Por qué elegir <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#4B0082] to-[#7B2CBF]">FixBound</span>?
                 </h2>
                 <div class="w-16 h-1 bg-gradient-to-r from-[#7B2CBF] to-[#C77DFF] mx-auto mt-4 rounded-full"></div>
             </div>

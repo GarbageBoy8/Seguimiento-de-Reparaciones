@@ -1,4 +1,4 @@
-# FixFlow — Guía de Instalación Local
+# FixBound — Guía de Instalación Local
 
 ## Requisitos previos
 - PHP 8.2+
@@ -38,14 +38,14 @@ php artisan key:generate
 Edita el `.env` y actualiza estas líneas con tus credenciales locales de MySQL:
 
 ```env
-DB_DATABASE=fixflow
+DB_DATABASE=fixbound
 DB_USERNAME=root
 DB_PASSWORD=tu_contraseña
 ```
 
 Crea la base de datos en MySQL si no existe:
 ```sql
-CREATE DATABASE fixflow CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE fixbound CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 ### 6. Ejecutar migraciones y seeders
@@ -56,8 +56,8 @@ php artisan migrate:fresh --seed
 Esto crea todas las tablas y carga los datos iniciales:
 - 5 niveles de reparación (SLA predefinidos)
 - Taller de demostración
-- Usuario admin: `admin@fixflow.test` / `password`
-- Usuario técnico: `tecnico@fixflow.test` / `password`
+- Usuario admin: `admin@fixbound.test` / `password`
+- Usuario técnico: `tecnico@fixbound.test` / `password`
 
 ### 7. Configurar la zona horaria (México CDMX)
 
@@ -116,11 +116,11 @@ npm install
 
 | Variable | Valor recomendado (local) |
 |---|---|
-| `APP_NAME` | `FixFlow` |
+| `APP_NAME` | `FixBound` |
 | `APP_ENV` | `local` |
 | `APP_DEBUG` | `true` |
 | `APP_TIMEZONE` | `America/Mexico_City` |
-| `DB_DATABASE` | `fixflow` |
+| `DB_DATABASE` | `fixbound` |
 | `MAIL_MAILER` | `log` (guarda emails en `storage/logs/laravel.log`) |
 | `QUEUE_CONNECTION` | `database` |
 | `SESSION_DRIVER` | `database` |

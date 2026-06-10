@@ -24,6 +24,6 @@
         <a href="{{ $urlSeguimiento }}">{{ $urlSeguimiento }}</a>
     </p>
 
-    <p><small>Este mensaje fue generado automáticamente por FixFlow.</small></p>
+    <p><small>Este mensaje fue generado automáticamente por FixBound.</small></p>
 </body>
 </html>
