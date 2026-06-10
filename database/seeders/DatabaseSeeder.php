@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\NivelReparacion;
+use App\Models\SubscriptionPlan;
 use App\Models\Taller;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -12,7 +13,56 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // 1. Sembrar los 5 niveles de reparación
+        // 1. Sembrar planes de suscripción
+        $planes = [
+            [
+                'nombre' => 'Básico',
+                'slug' => 'basico',
+                'descripcion' => 'Plan inicial para talleres pequeños.',
+                'precio_mensual' => null,
+                'max_tecnicos' => 2,
+                'permite_clientes_mayoristas' => false,
+                'features' => [
+                    'clientes_mayoristas' => false,
+                ],
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Pro',
+                'slug' => 'pro',
+                'descripcion' => 'Plan para talleres con equipo técnico en crecimiento.',
+                'precio_mensual' => null,
+                'max_tecnicos' => 4,
+                'permite_clientes_mayoristas' => false,
+                'features' => [
+                    'clientes_mayoristas' => false,
+                ],
+                'activo' => true,
+            ],
+            [
+                'nombre' => 'Taller Plus',
+                'slug' => 'taller-plus',
+                'descripcion' => 'Plan para talleres con mayor volumen y clientes mayoristas.',
+                'precio_mensual' => null,
+                'max_tecnicos' => 15,
+                'permite_clientes_mayoristas' => true,
+                'features' => [
+                    'clientes_mayoristas' => true,
+                ],
+                'activo' => true,
+            ],
+        ];
+
+        foreach ($planes as $plan) {
+            SubscriptionPlan::updateOrCreate(
+                ['slug' => $plan['slug']],
+                $plan
+            );
+        }
+
+        $planBasico = SubscriptionPlan::where('slug', 'basico')->firstOrFail();
+
+        // 2. Sembrar los 5 niveles de reparación
         $niveles = [
             [
                 'nivel'       => 1,
@@ -47,7 +97,10 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($niveles as $nivel) {
-            NivelReparacion::create($nivel);
+            NivelReparacion::updateOrCreate(
+                ['nivel' => $nivel['nivel']],
+                $nivel
+            );
         }
 
         // 2. Crear taller demo

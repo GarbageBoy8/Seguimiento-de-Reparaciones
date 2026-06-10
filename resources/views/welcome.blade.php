@@ -36,6 +36,9 @@
             </div>
 
             <div class="hidden items-center space-x-4 md:flex">
+                <a href="{{ route('seguimiento.buscar') }}" class="px-4 py-2.5 font-semibold text-[#4B0082] transition-colors hover:text-[#5A00C6]">
+                    Rastrear orden
+                </a>
                 @auth
                 <a href="{{ route('panel.inicio') }}" class="px-5 py-2.5 rounded-lg text-white bg-[#4B0082] font-semibold hover:bg-[#5A00C6] transition-colors shadow-md hover:shadow-lg">
                     Centro de Mando
@@ -58,6 +61,7 @@
 
             <div x-cloak x-show="open" x-transition @click.outside="open = false" class="absolute left-4 right-4 top-full mt-2 rounded-2xl border border-gray-100 bg-white p-3 shadow-xl md:hidden">
                 <div class="flex flex-col gap-1">
+                    <a href="{{ route('seguimiento.buscar') }}" class="rounded-xl px-4 py-3 text-center font-semibold text-[#4B0082] transition hover:bg-[#4B0082]/5">Rastrear orden</a>
                     @auth
                     <a href="{{ route('panel.inicio') }}" class="mt-2 rounded-xl bg-[#4B0082] px-4 py-3 text-center font-semibold text-white shadow-md transition hover:bg-[#5A00C6]">Centro de Mando</a>
                     @else

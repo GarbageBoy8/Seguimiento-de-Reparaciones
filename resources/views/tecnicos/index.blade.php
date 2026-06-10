@@ -12,7 +12,11 @@
                 Técnicos del taller
             </h1>
             <p class="text-gray-500 text-sm mt-1">Gestiona los técnicos y su carga de trabajo</p>
+            <p class="mt-2 inline-flex rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-[#7C3AED]">
+                {{ $tecnicos->count() }} / {{ $maxTecnicos }} técnicos disponibles en tu plan
+            </p>
         </div>
+        @if($puedeCrearTecnicos)
         <a href="{{ route('tecnicos.create') }}"
             class="flex w-full items-center justify-center gap-2 rounded-xl bg-[#EC4899] px-5 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-[#DB2777] hover:shadow-lg sm:w-auto">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -20,6 +24,11 @@
             </svg>
             Nuevo técnico
         </a>
+        @else
+        <span class="flex w-full items-center justify-center gap-2 rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-medium text-gray-400 sm:w-auto">
+            Límite alcanzado
+        </span>
+        @endif
     </div>
 </div>
 

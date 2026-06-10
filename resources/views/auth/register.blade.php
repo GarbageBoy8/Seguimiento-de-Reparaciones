@@ -1,7 +1,7 @@
 <x-guest-layout>
     <div class="mb-6 text-center">
         <h2 class="text-xl font-bold text-[#1E1B2E]">Crea tu taller</h2>
-        <p class="mt-1 text-sm text-gray-500">Registra tu cuenta para empezar a gestionar reparaciones</p>
+        <p class="mt-1 text-sm text-gray-500">Empieza con 7 días gratis en el plan Básico</p>
     </div>
 
     <form method="POST" action="{{ route('register') }}" class="space-y-5">
@@ -12,6 +12,14 @@
             <x-input-label for="nombre_taller" :value="__('Nombre del Taller')" />
             <x-text-input id="nombre_taller" class="mt-1 block w-full rounded-xl px-4 py-3 text-base" type="text" name="nombre_taller" :value="old('nombre_taller')" required autofocus />
             <x-input-error :messages="$errors->get('nombre_taller')" class="mt-2" />
+        </div>
+
+        <!-- Código público del taller -->
+        <div>
+            <x-input-label for="codigo_publico" :value="__('Código público del taller')" />
+            <x-text-input id="codigo_publico" class="mt-1 block w-full rounded-xl px-4 py-3 text-base uppercase" type="text" name="codigo_publico" :value="old('codigo_publico')" maxlength="10" placeholder="Ej: OLLI" />
+            <p class="mt-1 text-xs text-gray-500">Se usará en tus folios globales. Si lo dejas vacío, FixFlow lo genera desde el nombre del taller.</p>
+            <x-input-error :messages="$errors->get('codigo_publico')" class="mt-2" />
         </div>
 
         <!-- Name -->
