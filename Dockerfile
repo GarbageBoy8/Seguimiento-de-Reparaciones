@@ -44,21 +44,21 @@ ENV APP_ENV=production \
 
 # ── Extensiones PHP del sistema ──
 RUN apk add --no-cache \
-        nginx \
-        supervisor \
-        curl \
-        bash \
-        libxml2-dev \
+    nginx \
+    supervisor \
+    curl \
+    bash \
+    libxml2-dev \
     && docker-php-ext-install \
-        pdo_mysql \
-        mbstring \
-        tokenizer \
-        xml \
-        ctype \
-        bcmath \
-        fileinfo \
-        pcntl \
-        opcache
+    pdo_mysql \
+    mbstring \
+    tokenizer \
+    xml \
+    ctype \
+    bcmath \
+    fileinfo \
+    pcntl \
+    opcache
 
 # ── Configuración de Nginx ──
 RUN mkdir -p /run/nginx
@@ -135,3 +135,10 @@ RUN echo "opcache.enable=1\nopcache.memory_consumption=128\nopcache.validate_tim
 EXPOSE 80
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+
+
+
+
+
+
+# ──Comentario para mandar PR
