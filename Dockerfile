@@ -1,5 +1,5 @@
 # ============================================================
-# FixFlow — Dockerfile multi-stage
+# FixBound — Dockerfile multi-stage
 # Compatible con ARM64 (Oracle Cloud VM.Standard.A1.Flex)
 # ============================================================
 

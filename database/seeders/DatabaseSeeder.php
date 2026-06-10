@@ -52,7 +52,7 @@ class DatabaseSeeder extends Seeder
 
         // 2. Crear taller demo
         $taller = Taller::create([
-            'nombre'             => 'Taller Demo FixFlow',
+            'nombre'             => 'Taller Demo FixBound',
             'telefono'           => '5500000000',
             'direccion'          => 'Calle Ejemplo 123, Ciudad',
             'suscripcion_activa' => true,
@@ -62,7 +62,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'taller_id' => $taller->id,
             'name'      => 'Admin Demo',
-            'email'     => 'admin@fixflow.test',
+            'email'     => 'admin@fixbound.test',
             'password'  => Hash::make('password'),
             'rol'       => 'admin',
         ]);
@@ -71,7 +71,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'taller_id' => $taller->id,
             'name'      => 'Técnico Demo',
-            'email'     => 'tecnico@fixflow.test',
+            'email'     => 'tecnico@fixbound.test',
             'password'  => Hash::make('password'),
             'rol'       => 'tecnico',
         ]);

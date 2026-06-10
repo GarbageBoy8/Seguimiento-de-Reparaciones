@@ -1,4 +1,4 @@
-# FixFlow — Resumen Técnico de Transferencia
+# FixBound — Resumen Técnico de Transferencia
 
 > **Documento para:** Colaborador experto entrante  
 > **Preparado por:** Senior Lead Developer  
@@ -33,7 +33,7 @@
 
 ### Estrategia: Shared Database, Shared Schema (columna discriminadora)
 
-FixFlow usa el modelo más común de SaaS de bajo costo: **una sola base de datos** con todas las tablas compartidas, aislando los datos de cada taller mediante una columna `taller_id` presente en **todas las tablas de dominio**.
+FixBound usa el modelo más común de SaaS de bajo costo: **una sola base de datos** con todas las tablas compartidas, aislando los datos de cada taller mediante una columna `taller_id` presente en **todas las tablas de dominio**.
 
 **No se usan** esquemas separados por tenant ni bases de datos independientes.
 

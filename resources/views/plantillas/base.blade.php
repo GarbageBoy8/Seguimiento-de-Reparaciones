@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FixFlow — @yield('titulo-pestana')</title>
+    <title>FixBound — @yield('titulo-pestana')</title>
     <style>
         [x-cloak] {
             display: none !important;
@@ -18,9 +18,9 @@
     <div id="contenedor-principal"
         x-data="{
             mobileMenuOpen: false,
-            sidebarCollapsed: localStorage.getItem('fixflow.sidebarCollapsed') === 'true',
+            sidebarCollapsed: localStorage.getItem('fixbound.sidebarCollapsed') === 'true',
             init() {
-                this.$watch('sidebarCollapsed', value => localStorage.setItem('fixflow.sidebarCollapsed', value));
+                this.$watch('sidebarCollapsed', value => localStorage.setItem('fixbound.sidebarCollapsed', value));
             }
         }"
         @keydown.escape.window="mobileMenuOpen = false"
@@ -34,9 +34,9 @@
             ]"
             class="fixed inset-y-0 left-0 z-40 flex h-screen w-72 flex-shrink-0 transform flex-col overflow-y-auto bg-[#1E055A] text-white shadow-2xl transition-all duration-300 ease-out md:static md:inset-auto md:z-auto md:h-auto md:min-h-screen md:self-stretch md:translate-x-0">
             <div class="border-b border-indigo-800/50 p-6 transition-all duration-300" :class="sidebarCollapsed ? 'md:px-4' : 'md:p-6'">
-                <a href="{{url('/')}}" class="flex items-center gap-3" :class="sidebarCollapsed ? 'md:justify-center' : ''" title="FixFlow">
+                <a href="{{url('/')}}" class="flex items-center gap-3" :class="sidebarCollapsed ? 'md:justify-center' : ''" title="FixBound">
                     <h1 class="text-2xl font-bold tracking-tight bg-gradient-to-r from-white to-indigo-200 bg-clip-text text-transparent">
-                        <span :class="sidebarCollapsed ? 'md:hidden' : ''">FixFlow</span>
+                        <span :class="sidebarCollapsed ? 'md:hidden' : ''">FixBound</span>
                         <span class="hidden" :class="sidebarCollapsed ? 'md:inline' : 'md:hidden'">F</span>
                     </h1>
                 </a>

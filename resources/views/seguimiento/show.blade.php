@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seguimiento de orden {{ $reparacion->folio }} — FixFlow</title>
+    <title>Seguimiento de orden {{ $reparacion->folio }} — FixBound</title>
     <meta name="description" content="Consulta el estado de tu reparación con folio {{ $reparacion->folio }}.">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -53,7 +53,7 @@
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div class="min-w-0">
                     <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-[#7C3AED] to-[#EC4899] bg-clip-text text-transparent">
-                        FixFlow
+                        FixBound
                     </h1>
                     <p class="text-gray-500 text-sm mt-1">Seguimiento de tu orden de reparación</p>
                 </div>
@@ -295,7 +295,7 @@
 
     <footer class="mt-10 border-t border-gray-200 py-6 md:mt-12">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p class="text-gray-400 text-sm">FixFlow — Sistema de gestión de reparaciones</p>
+            <p class="text-gray-400 text-sm">FixBound — Sistema de gestión de reparaciones</p>
         </div>
     </footer>
 
@@ -337,7 +337,7 @@
 
             // Badge en el título si la pestaña no está enfocada
             if (!document.hasFocus()) {
-                document.title = '🔔 Nuevo mensaje — FixFlow';
+                document.title = '🔔 Nuevo mensaje — FixBound';
             }
         }
 
