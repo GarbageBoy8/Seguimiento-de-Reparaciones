@@ -676,6 +676,15 @@ php artisan talleres:cambiar-plan DEMO taller-plus --meses=1 --confirmar
 php artisan talleres:suspender DEMO --confirmar
 ```
 
+Comandos nuevos:
+
+  php artisan talleres:planes
+  php artisan talleres:ver DEMO
+  php artisan talleres:cambiar-plan DEMO pro --meses=1
+  php artisan talleres:cambiar-plan DEMO taller-plus --sin-vencimiento
+  php artisan talleres:cambiar-plan DEMO basico --trial --dias-trial=7
+  php artisan talleres:suspender DEMO
+
 Notas:
 
 - Al bajar de plan no se eliminan tecnicos existentes ni clientes mayoristas existentes.
