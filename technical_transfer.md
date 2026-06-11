@@ -628,7 +628,64 @@ Nota de pruebas: `phpunit.xml` usa SQLite en memoria (`DB_CONNECTION=sqlite`, `D
 
 ---
 
-## 13. Infraestructura Docker
+## 13. Comandos Administrativos de Suscripcion
+
+Como aun no hay panel administrativo ni pagos automaticos, los cambios de plan se pueden operar por terminal con Artisan.
+
+Listar planes:
+
+```bash
+php artisan talleres:planes
+```
+
+Ver estado de un taller por `id` o `codigo_publico`:
+
+```bash
+php artisan talleres:ver DEMO
+php artisan talleres:ver 1
+```
+
+Cambiar plan y activar por 1 mes:
+
+```bash
+php artisan talleres:cambiar-plan DEMO pro --meses=1
+```
+
+Cambiar plan sin fecha de vencimiento:
+
+```bash
+php artisan talleres:cambiar-plan DEMO taller-plus --sin-vencimiento
+```
+
+Cambiar plan y dejar en trial:
+
+```bash
+php artisan talleres:cambiar-plan DEMO basico --trial --dias-trial=7
+```
+
+Suspender acceso:
+
+```bash
+php artisan talleres:suspender DEMO
+```
+
+Para ejecucion no interactiva en Coolify, agregar `--confirmar`:
+
+```bash
+php artisan talleres:cambiar-plan DEMO taller-plus --meses=1 --confirmar
+php artisan talleres:suspender DEMO --confirmar
+```
+
+Notas:
+
+- Al bajar de plan no se eliminan tecnicos existentes ni clientes mayoristas existentes.
+- Si un taller queda con mas tecnicos que el maximo del nuevo plan, no podra crear mas tecnicos.
+- Si el nuevo plan no permite mayoristas, no podra crear nuevos clientes mayoristas.
+- El acceso real depende de `subscription_status`, `trial_ends_at` y `subscription_ends_at`.
+
+---
+
+## 14. Infraestructura Docker
 
 El repo incluye:
 
@@ -646,7 +703,7 @@ El worker procesa queue y el scheduler ejecuta `schedule:run`.
 
 ---
 
-## 14. Gotchas y Decisiones Importantes
+## 15. Gotchas y Decisiones Importantes
 
 1. Los nombres en espanol no siempre pluralizan como Laravel espera. `Taller` y `Reparacion` declaran `protected $table`.
 2. Las rutas resource en espanol usan `->parameters([...])` para que route model binding use el parametro correcto.
