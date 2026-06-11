@@ -1,392 +1,660 @@
-# FixBound — Resumen Técnico de Transferencia
+# FixBound - Resumen Tecnico de Transferencia
 
 > **Documento para:** Colaborador experto entrante  
-> **Preparado por:** Senior Lead Developer  
-> **Fecha:** Abril 2026  
+> **Preparado por:** Antonio Pareja
+> **Actualizado:** Junio 2026  
 > **Confidencialidad:** Interna del equipo
 
 ---
 
-## 1. Stack Tecnológico
+## 1. Stack Tecnologico
 
-| Capa | Tecnología | Versión |
+| Capa | Tecnologia | Version / detalle |
 |---|---|---|
 | Runtime | **PHP** | `^8.2` |
 | Framework | **Laravel** | `^12.0` |
-| Autenticación | **Laravel Breeze** | `^2.4` (Blade stack) |
-| ORM | **Eloquent** (incluido en Laravel) | — |
-| Base de datos | **MySQL 8+** / MariaDB | motor InnoDB, charset `utf8mb4` |
+| Autenticacion | **Laravel Breeze** | `^2.4`, stack Blade |
+| ORM | **Eloquent** | Incluido en Laravel |
+| Base de datos | **MySQL 8+ / MariaDB** | InnoDB, `utf8mb4` |
 | Frontend bundler | **Vite** | `^7.0.7` |
-| CSS framework | **Tailwind CSS** | `^3.1.0` (instalado, pendiente de aplicar) |
+| CSS framework | **Tailwind CSS** | `^3.1.0`, aplicado en vistas principales |
 | JS reactivity | **Alpine.js** | `^3.4.2` |
 | HTTP client JS | **Axios** | `^1.11.0` |
-| Queue/Jobs | **Laravel Queues** | driver `database` |
-| Scheduler | **Laravel Task Scheduling** | via `routes/console.php` |
-| Notificaciones | **Laravel Notifications** | canal `database` |
-| Email | **Laravel Mail** | driver `log` (dev) / SMTP (prod) |
+| Queue / Jobs | **Laravel Queues** | Driver recomendado: `database` |
+| Scheduler | **Laravel Task Scheduling** | Definido en `routes/console.php` |
+| Notificaciones | **Laravel Notifications** | Canal `database` |
+| Email | **Laravel Mail** | `log` en dev / SMTP en prod |
 
-> **Dev:** El comando `composer run dev` levanta en paralelo: `php artisan serve`, `php artisan queue:listen`, `php artisan pail` y `npm run dev` mediante `concurrently`.
+Comando de desarrollo disponible:
+
+```bash
+composer run dev
+```
+
+Levanta en paralelo `php artisan serve`, `php artisan queue:listen --tries=1 --timeout=0`, `php artisan pail --timeout=0` y `npm run dev` mediante `concurrently`.
 
 ---
 
-## 2. Arquitectura SaaS — Multi-Tenancy
+## 2. Arquitectura SaaS y Multi-Tenancy
 
-### Estrategia: Shared Database, Shared Schema (columna discriminadora)
+### Estrategia
 
-FixBound usa el modelo más común de SaaS de bajo costo: **una sola base de datos** con todas las tablas compartidas, aislando los datos de cada taller mediante una columna `taller_id` presente en **todas las tablas de dominio**.
+FixBound usa **shared database, shared schema**: una sola base de datos y tablas compartidas. El aislamiento de datos se hace con `taller_id` en las tablas de dominio.
 
-**No se usan** esquemas separados por tenant ni bases de datos independientes.
+No se usan bases separadas por tenant ni esquemas independientes.
 
-### Cómo funciona el aislamiento
+### Flujo de registro
 
 ```
-Registro → Se crea un Taller nuevo → Usuario admin queda ligado a ese Taller
-                                         ↓
-                              taller_id propagado a todas las entidades
+/register
+    -> RegisteredUserController::store()
+        -> valida taller, codigo_publico, usuario y password
+        -> obtiene plan basico
+        -> crea taller con trial de 7 dias
+        -> crea usuario admin ligado al taller
+        -> inicia sesion
+        -> redirige a /centro-de-mando
 ```
 
-1. Cuando un usuario se registra en `/register`, el `RegisteredUserController` **crea automáticamente un registro en la tabla `talleres`** y asocia al usuario como `rol = admin` de ese taller.
-2. Cada query de dominio lleva un scope de taller:
-   ```php
-   // Scope local en el modelo Reparacion
-   public function scopeDelTaller($query, int $tallerId)
-   {
-       return $query->where('taller_id', $tallerId);
-   }
-   ```
-3. Los controladores extraen el taller del usuario autenticado:
-   ```php
-   $tallerId = auth()->user()->taller_id;
-   Reparacion::delTaller($tallerId)->activas()->get();
-   ```
-4. Toda acción de escritura/lectura sobre modelos ajenos al taller retorna **`abort(403)`** mediante guards en cada controller.
+El registro crea:
 
-> ⚠️ **Gotcha conocido:** PHP/MySQL puede devolver `taller_id` como `string` desde PDO. Todos los guards de autorización usan cast explícito `(int)` para evitar falsos 403 por comparación estricta `!==`.
+- Un `taller` con `subscription_status = trial`.
+- Un `trial_ends_at = now()->addDays(7)`.
+- Un `plan_id` apuntando al plan `basico`.
+- Un usuario `rol = admin`.
+
+### Aislamiento de datos
+
+El modelo `Reparacion` tiene el scope:
+
+```php
+public function scopeDelTaller($query, int $tallerId)
+{
+    return $query->where('taller_id', $tallerId);
+}
+```
+
+Los controladores toman el taller desde el usuario autenticado:
+
+```php
+$tallerId = auth()->user()->taller_id;
+```
+
+Las acciones sobre modelos concretos validan pertenencia al taller con guards tipo:
+
+```php
+abort_if((int) $reparacion->taller_id !== (int) auth()->user()->taller_id, 403);
+```
+
+**Gotcha importante:** PDO/MySQL puede devolver IDs como string. Por eso los guards usan cast explicito a `(int)` antes de comparar.
 
 ---
 
-## 3. Esquema de Base de Datos
+## 3. Suscripcion, Planes y Acceso
 
-### Diagrama de relaciones
+### Planes
+
+La tabla `subscription_plans` define capacidades comerciales del taller:
+
+| Plan | Slug | Max tecnicos | Clientes mayoristas |
+|---|---|---:|---|
+| Basico | `basico` | 2 | No |
+| Pro | `pro` | 4 | No |
+| Taller Plus | `taller-plus` | 15 | Si |
+
+Los planes se siembran desde `DatabaseSeeder`.
+
+### Campos relevantes en `talleres`
+
+| Campo | Notas |
+|---|---|
+| `plan_id` | FK nullable a `subscription_plans` |
+| `codigo_publico` | Codigo unico del taller usado en folios globales |
+| `trial_ends_at` | Fin de prueba gratuita |
+| `subscription_status` | `trial`, `active` u otro estado no activo |
+| `subscription_ends_at` | Fin de suscripcion pagada |
+| `suscripcion_activa` | Campo heredado; el acceso real usa `suscripcionEstaActiva()` |
+
+### Middleware de acceso
+
+Las rutas autenticadas de negocio usan:
+
+```php
+Route::middleware(['auth', 'subscription.active'])->group(...)
+```
+
+`EnsureTallerSubscriptionIsActive` obtiene `$request->user()->taller` y llama:
+
+```php
+$taller->suscripcionEstaActiva()
+```
+
+Reglas actuales:
+
+- `trial`: activo si `trial_ends_at` existe y no ha vencido.
+- `active`: activo si `subscription_ends_at` es null o no ha vencido.
+- Cualquier otro estado: no activo.
+
+Si no hay acceso, redirige a `billing.expired`.
+
+### Limites por plan
+
+`TecnicoController` valida que solo admins puedan gestionar tecnicos y bloquea creacion cuando:
+
+```php
+$taller->tecnicosCount() >= $taller->maxTecnicos()
+```
+
+`ClienteController` bloquea `es_mayorista = true` si el plan no permite clientes mayoristas.
+
+---
+
+## 4. Esquema de Base de Datos
+
+### Relaciones principales
 
 ```
-talleres ──┬──< users
-           ├──< clientes ──< reparaciones >── niveles_reparacion
-           └──< reparaciones >── escalamientos
-                              └──< mensajes
+subscription_plans ──< talleres ──┬──< users
+                                  ├──< clientes ──< reparaciones >── niveles_reparacion
+                                  └──< reparaciones >── escalamientos
+                                                     └──< mensajes
 ```
 
-### Tablas principales
+### `talleres`
 
-#### `talleres`
 | Campo | Tipo | Notas |
 |---|---|---|
 | `id` | BIGINT PK | Auto-increment |
 | `nombre` | VARCHAR | Nombre del taller |
 | `telefono` | VARCHAR | nullable |
-| `direccion` | VARCHAR | nullable |
-| `suscripcion_activa` | BOOLEAN | Control SaaS de acceso |
-| `created_at / updated_at` | TIMESTAMP | — |
+| `direccion` | TEXT | nullable |
+| `suscripcion_activa` | BOOLEAN | Campo heredado |
+| `plan_id` | BIGINT FK | nullable, `nullOnDelete` |
+| `codigo_publico` | VARCHAR UNIQUE | Max 20 en BD; normalizado a max 10 en modelo/controlador |
+| `trial_ends_at` | TIMESTAMP | nullable |
+| `subscription_status` | VARCHAR(30) | default `trial`, indexado |
+| `subscription_ends_at` | TIMESTAMP | nullable |
 
-#### `users`
+### `subscription_plans`
+
 | Campo | Tipo | Notas |
 |---|---|---|
-| `id` | BIGINT PK | — |
-| `taller_id` | BIGINT FK | → `talleres.id`, nullable, cascadeOnDelete |
-| `name` | VARCHAR | — |
-| `email` | VARCHAR UNIQUE | — |
-| `password` | VARCHAR | bcrypt hash |
+| `nombre` | VARCHAR | Nombre comercial |
+| `slug` | VARCHAR UNIQUE | Identificador estable |
+| `descripcion` | TEXT | nullable |
+| `precio_mensual` | DECIMAL | nullable |
+| `max_tecnicos` | SMALLINT | Limite por taller |
+| `permite_clientes_mayoristas` | BOOLEAN | Habilita flag en clientes |
+| `features` | JSON | Cast a array |
+| `activo` | BOOLEAN | Habilita plan |
+
+### `users`
+
+| Campo | Tipo | Notas |
+|---|---|---|
+| `taller_id` | BIGINT FK | nullable, cascadeOnDelete |
+| `name` | VARCHAR | Nombre usuario |
+| `email` | VARCHAR UNIQUE | Login |
+| `password` | VARCHAR | Hash bcrypt / cast `hashed` |
 | `rol` | VARCHAR | `admin` o `tecnico` |
 | `email_verified_at` | TIMESTAMP | nullable |
 
-#### `clientes`
+### `clientes`
+
 | Campo | Tipo | Notas |
 |---|---|---|
-| `id` | BIGINT PK | — |
-| `taller_id` | BIGINT FK | → `talleres.id` |
-| `nombre` | VARCHAR | — |
+| `taller_id` | BIGINT FK | cascadeOnDelete |
+| `nombre` | VARCHAR | requerido |
+| `email` | VARCHAR | nullable; usado para correos |
 | `telefono` | VARCHAR | nullable |
-| `email` | VARCHAR | nullable — usado para notificación de equipo listo |
 | `direccion` | TEXT | nullable |
+| `es_mayorista` | BOOLEAN | default false, limitado por plan |
 
-#### `niveles_reparacion`
+### `niveles_reparacion`
+
 | Campo | Tipo | Notas |
 |---|---|---|
-| `id` | BIGINT PK | — |
-| `nivel` | TINYINT | 1 al 5 |
-| `nombre` | VARCHAR | Básico / Menor / Intermedio / Avanzado / Crítico |
-| `descripcion` | TEXT | Descripción del tipo de trabajo |
-| `horas_sla` | INTEGER | Tiempo máximo de entrega en horas |
+| `nivel` | TINYINT UNIQUE | 1 al 5 |
+| `nombre` | VARCHAR | Basico, Menor, Intermedio, Avanzado, Critico |
+| `descripcion` | TEXT | Texto para UI |
+| `horas_sla` | INTEGER | Horas maximas de SLA |
 
-#### `reparaciones` ← tabla central del sistema
+### `reparaciones`
+
+Tabla central del sistema.
+
 | Campo | Tipo | Notas |
 |---|---|---|
-| `id` | BIGINT PK | — |
-| `taller_id` | BIGINT FK | → `talleres.id`, cascadeOnDelete |
-| `cliente_id` | BIGINT FK | → `clientes.id`, cascadeOnDelete |
-| `user_id` | BIGINT FK | → `users.id`, nullOnDelete (técnico asignado) |
-| `nivel_id` | BIGINT FK | → `niveles_reparacion.id`, restrictOnDelete |
-| `folio` | VARCHAR UNIQUE | Formato `FF-YYYY-NNNN` |
-| `token_seguimiento` | VARCHAR UNIQUE | 32 chars random, portal público |
-| `tipo_equipo` | VARCHAR | Celular / Laptop / Tablet / etc. |
-| `marca` | VARCHAR | — |
-| `modelo` | VARCHAR | — |
+| `taller_id` | BIGINT FK | cascadeOnDelete |
+| `cliente_id` | BIGINT FK | cascadeOnDelete |
+| `user_id` | BIGINT FK | nullable, `nullOnDelete`; tecnico asignado |
+| `nivel_id` | BIGINT FK | `restrictOnDelete` |
+| `folio` | VARCHAR UNIQUE | Formato actual: `FF-{CODIGO_TALLER}-{YYYY}-{NNNN}` |
+| `token_seguimiento` | VARCHAR UNIQUE | Token publico de 32 caracteres |
+| `tipo_equipo` | VARCHAR | Laptop, celular, tablet, etc. |
+| `marca` | VARCHAR | requerido |
+| `modelo` | VARCHAR | requerido |
 | `numero_serie` | VARCHAR | nullable |
-| `problema_reportado` | TEXT | Ingresado en admisión |
-| `diagnostico_tecnico` | TEXT | nullable, llenado por el técnico |
-| `comentario_retardo` | TEXT | nullable, justificación del retardo |
-| `estado` | ENUM | Ver ciclo de vida §5 |
+| `problema_reportado` | TEXT | Ingreso/admisiones |
+| `diagnostico_tecnico` | TEXT | nullable |
+| `comentario_retardo` | TEXT | nullable |
+| `estado` | ENUM | Ver flujo de estados |
 | `costo_estimado` | DECIMAL(10,2) | nullable |
 | `costo_final` | DECIMAL(10,2) | nullable |
-| `hora_ingreso` | TIMESTAMP | nullable, se establece al crear |
-| `hora_limite` | TIMESTAMP | nullable, `hora_ingreso + horas_sla` |
-| `hora_fin` | TIMESTAMP | nullable, se registra al marcar Reparado |
+| `hora_ingreso` | TIMESTAMP | seteada al crear |
+| `hora_limite` | TIMESTAMP | `hora_ingreso + horas_sla` |
+| `hora_fin` | TIMESTAMP | seteada al marcar `Reparado` |
 
-#### `mensajes`
-Comunicación bidireccional técnico ↔ cliente por orden.
+### `mensajes`
 
-| Campo | Tipo | Notas |
-|---|---|---|
-| `id` | BIGINT PK | — |
-| `reparacion_id` | BIGINT FK | → `reparaciones.id` |
-| `user_id` | BIGINT FK | nullable → `users.id` (null = mensaje del cliente) |
-| `contenido` | TEXT | — |
-| `es_del_cliente` | BOOLEAN | `true` = enviado desde el portal público |
+Chat por orden.
 
-#### `escalamientos`
-Auditoría de cambios de nivel en una reparación.
+| Campo | Notas |
+|---|---|
+| `reparacion_id` | FK a reparacion |
+| `user_id` | nullable; null significa mensaje del cliente |
+| `contenido` | Texto, maximo validado 1000 caracteres |
+| `es_del_cliente` | true si viene del portal publico |
 
-| Campo | Tipo | Notas |
-|---|---|---|
-| `id` | BIGINT PK | — |
-| `reparacion_id` | BIGINT FK | → `reparaciones.id` |
-| `user_id` | BIGINT FK | → `users.id` (quién escaló) |
-| `nivel_anterior_id` | BIGINT FK | → `niveles_reparacion.id` |
-| `nivel_nuevo_id` | BIGINT FK | → `niveles_reparacion.id` |
-| `motivo` | TEXT | Obligatorio, mínimo 10 chars |
+### `escalamientos`
 
-#### `notifications` (Laravel nativa)
-Alertas de retardo almacenadas en BD para el admin.
+Auditoria de cambios de nivel.
 
-#### `jobs` / `cache` / `sessions`
-Tablas de infraestructura Laravel, driver `database`.
+| Campo | Notas |
+|---|---|
+| `reparacion_id` | Orden afectada |
+| `user_id` | Usuario que escala |
+| `nivel_anterior_id` | Nivel previo |
+| `nivel_nuevo_id` | Nuevo nivel |
+| `motivo` | requerido, minimo 10 caracteres |
+
+### Infraestructura
+
+- `notifications`: notificaciones database de Laravel.
+- `jobs`, `failed_jobs`, `job_batches`: queues.
+- `cache`, `cache_locks`: cache database.
+- `sessions`: sesiones database.
+- `password_reset_tokens`: recuperacion de password.
 
 ---
 
-## 4. Lógica de Negocio — SLA y Retardos
+## 5. Folios y Seguimiento Publico
 
-### Matriz de niveles de complejidad
+### Formato actual de folio
 
-| Nivel | Nombre | Tipo de trabajo | SLA (horas) | SLA (días aprox.) |
-|---|---|---|---|---|
-| **1** | Básico | Mantenimiento preventivo, limpieza, configuración software | **2h** | ~2 horas |
-| **2** | Menor | Cambio de periféricos (baterías, pantallas, teclados) sin soldadura | **5h** | ~medio día |
-| **3** | Intermedio | Puertos de carga, humedad leve, soldadura básica | **24h** | 1 día |
-| **4** | Avanzado | Microsoldadura, reballing, fallas de encendido complejas | **72h** | 3 días |
-| **5** | Crítico | Recuperación de datos, corto circuito severo, piezas de importación | **120h** | 5 días |
+Los folios son globalmente unicos:
 
-### Cálculo del SLA al crear una orden
+```text
+FF-{CODIGO_TALLER}-{YYYY}-{NNNN}
+```
+
+Ejemplo:
+
+```text
+FF-DEMO-2026-0001
+```
+
+`Reparacion::generarFolio($tallerId)`:
+
+1. Obtiene el `codigo_publico` del taller.
+2. Si no existe, lo genera desde el nombre del taller.
+3. Calcula el maximo consecutivo del taller para el anio actual.
+4. Devuelve el siguiente folio global.
+
+La migracion mas reciente (`2026_06_03_000003_make_reparacion_folio_globally_unique.php`) migro desde folios unicos por taller a folios globales para permitir rastreo publico solo con folio.
+
+### Codigo publico del taller
+
+`Taller::normalizarCodigoPublico()`:
+
+- Convierte a ASCII.
+- Elimina caracteres no alfanumericos.
+- Convierte a mayusculas.
+- Limita a 10 caracteres.
+
+`Taller::generarCodigoPublico()` evita colisiones agregando sufijos numericos.
+
+### Portal publico
+
+Rutas:
+
+- `GET /rastrear`: formulario publico para capturar folio.
+- `POST /rastrear`: normaliza el folio y redirige al seguimiento si existe.
+- `GET /seguimiento/{token}`: portal del cliente.
+- `POST /seguimiento/{token}/mensaje`: cliente envia mensaje.
+- `GET /seguimiento/{token}/mensajes`: polling JSON.
+
+El token sigue siendo la autorizacion real para ver la orden. El folio solo sirve para encontrar y redirigir al token.
+
+---
+
+## 6. Logica de Reparaciones, SLA y Retardos
+
+### Matriz de niveles
+
+| Nivel | Nombre | Tipo de trabajo | SLA |
+|---|---|---|---:|
+| 1 | Basico | Mantenimiento preventivo, limpieza, configuracion simple | 2h |
+| 2 | Menor | Cambio de baterias, pantallas, teclados sin soldadura | 5h |
+| 3 | Intermedio | Puertos de carga, humedad leve, soldadura basica | 24h |
+| 4 | Avanzado | Microsoldadura, reballing, fallas complejas | 72h |
+| 5 | Critico | Recuperacion de datos, corto severo, piezas de importacion | 120h |
+
+### Creacion de orden
+
+`ReparacionController::store()`:
+
+1. Valida cliente existente del mismo taller o datos para crear cliente.
+2. Valida nivel, tecnico del mismo taller, equipo, problema y costo.
+3. Crea cliente si no se envio `cliente_id`.
+4. Calcula `hora_ingreso = now()` y `hora_limite = now()->addHours($nivel->horas_sla)`.
+5. Genera folio global y token de seguimiento.
+6. Crea orden con estado `Recibido`.
+7. Si el cliente tiene email, envia `OrdenCreadaMail`.
+
+### Actualizacion de orden
+
+`ReparacionController::update()` permite:
+
+- Cambiar `estado`.
+- Editar diagnostico tecnico.
+- Agregar comentario de retardo.
+- Actualizar costo final.
+- Reasignar tecnico del mismo taller.
+
+Si el estado pasa a `Reparado` y antes no era `Reparado`:
+
+- Setea `hora_fin = now()`.
+- Envia `ReparacionListaMail` si el cliente tiene email.
+
+### Escalamiento
+
+`ReparacionController::escalar()`:
+
+1. Valida que el nuevo nivel exista y sea distinto del actual.
+2. Exige `motivo` minimo de 10 caracteres.
+3. Crea registro en `escalamientos`.
+4. Actualiza `nivel_id`.
+5. Recalcula `hora_limite` desde `hora_ingreso` original:
 
 ```php
-// ReparacionController::store()
-$nivel       = NivelReparacion::findOrFail($data['nivel_id']);
-$horaIngreso = now();
-$horaLimite  = now()->addHours($nivel->horas_sla);
-
-Reparacion::create([
-    'hora_ingreso' => $horaIngreso,
-    'hora_limite'  => $horaLimite,
-    // ...
-]);
+'hora_limite' => $reparacion->hora_ingreso->copy()->addHours($nivelNuevo->horas_sla)
 ```
 
-### Recalculo al escalar de nivel
+El `copy()` evita mutar el atributo `hora_ingreso` en memoria.
 
-Cuando el técnico detecta un problema mayor y escala el nivel:
+### Retardos automaticos
+
+`App\Jobs\VerificarRetardosJob` corre cada 15 minutos desde `routes/console.php`.
+
+Busca:
 
 ```php
-// ReparacionController::escalar()
-$reparacion->update([
-    'nivel_id'    => $nivelNuevo->id,
-    'hora_limite' => $reparacion->hora_ingreso->addHours($nivelNuevo->horas_sla),
-]);
-// El SLA se recalcula desde hora_ingreso ORIGINAL, no desde el momento del escalamiento
+Reparacion::pendientesDeRetardo()
 ```
 
-### Detección automática de Retardos
+El scope excluye `Retardo`, `Reparado`, `Entregado` y `Cancelado`, y filtra `hora_limite < now()`.
 
-**Job:** `App\Jobs\VerificarRetardosJob` — implementa `ShouldQueue`  
-**Frecuencia:** cada 15 minutos (scheduler en `routes/console.php`)
+Por cada orden:
 
-```
-Scheduler (cada 15 min)
-    └─→ VerificarRetardosJob::handle()
-            └─→ SELECT reparaciones WHERE activas AND estado != 'Retardo' AND hora_limite < NOW()
-                    └─→ Por cada resultado:
-                          1. UPDATE estado = 'Retardo'
-                          2. FIND admin del mismo taller_id
-                          3. $admin->notify(new RetardoAdminNotification($reparacion))
-                                └─→ INSERT en tabla notifications (canal database)
-```
+1. Cambia `estado` a `Retardo`.
+2. Busca el admin del mismo taller.
+3. Crea `RetardoAdminNotification` en database.
 
-**Activación del scheduler en producción:**
+Produccion requiere scheduler y worker:
+
 ```bash
-# Agregar al cron del servidor:
 * * * * * cd /ruta/al/proyecto && php artisan schedule:run >> /dev/null 2>&1
+php artisan queue:listen --tries=1 --timeout=0
 ```
-
-> **Nota:** El queue worker también debe estar corriendo: `php artisan queue:listen`.
 
 ---
 
-## 5. Flujo de Estados de una Reparación
+## 7. Flujo de Estados
 
-```
-[ADMISIÓN]
-    Recibido ──────────────────────────────────────────────────────→ Cancelado
+```text
+[ADMISION]
+    Recibido ───────────────────────────────────────────────→ Cancelado
         │
-        ↓ (técnico inicia diagnóstico)
-    En Revisión
+        ↓
+    En Revision
         │                    │
-        │                    ↓ (falta de pieza)
+        │                    ↓
         │               Esperando Pieza
         │                    │
         │◄───────────────────┘
         │
-        ↓ (scheduler detecta hora_limite < now())
-    Retardo  ←──────────────────────── (automático, desde cualquier estado activo)
-        │    (técnico puede seguir trabajando)
+        ↓ automatico si hora_limite < now()
+    Retardo
         │
-        ↓ (técnico marca como terminado)
-    Reparado ──→ [se registra hora_fin] ──→ [se envía email al cliente si tiene email]
+        ↓
+    Reparado ──→ set hora_fin + email al cliente
         │
-        ↓ (cliente recoge)
+        ↓
     Entregado
 ```
 
-### Reglas de transición notables
+Reglas relevantes:
 
-| Desde | Hacia | Acción del sistema |
-|---|---|---|
-| Cualquier estado activo | `Retardo` | Automático por `VerificarRetardosJob`. Notifica al admin. |
-| Cualquier estado | `Reparado` | Registra `hora_fin = now()`. Envía `ReparacionListaMail` al cliente. |
-| Cualquier estado | `Cancelado` | Transición manual. No tiene efectos secundarios automáticos. |
-| Cualquier nivel | Nivel superior/inferior | Registra en `escalamientos`. Recalcula `hora_limite`. |
+| Evento | Efecto |
+|---|---|
+| Scheduler detecta SLA vencido | `estado = Retardo`, notifica admin |
+| Estado cambia a `Reparado` | Setea `hora_fin`, envia `ReparacionListaMail` |
+| Estado cambia a `Cancelado` | Sin efectos secundarios |
+| Escalamiento de nivel | Audita en `escalamientos`, recalcula SLA |
 
 ---
 
-## 6. Estado del Frontend
+## 8. Controladores Principales
 
-### Lo que existe
+| Controlador | Responsabilidad |
+|---|---|
+| `PanelTecnicoController` | Dashboard, estadisticas, ordenes activas, notificaciones admin |
+| `ReparacionController` | Listado, creacion, detalle, update, escalamiento |
+| `SeguimientoController` | Busqueda publica por folio, portal cliente, chat cliente |
+| `MensajeController` | Chat JSON autenticado tecnico/admin |
+| `ClienteController` | Listado, busqueda, alta, detalle/historial, clientes mayoristas |
+| `TecnicoController` | CRUD parcial de tecnicos, solo admin, limites por plan |
+| `NotificacionController` | Marcar notificaciones leidas |
+| `RegisteredUserController` | Registro SaaS: taller + admin + trial + plan basico |
 
-- **Vite** configurado y operativo como bundler (`vite.config.js`)
-- **Tailwind CSS v3** y **Alpine.js** instalados via npm
-- El plugin `@tailwindcss/vite` y `@tailwindcss/forms` están disponibles
-- **Laravel Breeze** provee el scaffolding de autenticación con sus componentes Blade (`x-input-label`, `x-text-input`, `x-primary-button`, etc.) en `resources/views/components/`
+---
 
-### Estado de las vistas
+## 9. Frontend
 
-Todas las vistas están escritas en **HTML semántico puro, sin clases CSS**. Esta decisión fue intencional — el diseñador del equipo aplicará Tailwind sobre esta base.
+### Estado actual
+
+- Las vistas principales ya usan Tailwind de forma extensa.
+- `resources/css/app.css` contiene las directivas base de Tailwind.
+- `resources/js/app.js` importa `bootstrap.js`, registra Alpine y ejecuta `Alpine.start()`.
+- `plantillas/base.blade.php` es el layout principal autenticado con sidebar, header, colapso persistido en `localStorage` y badge de notificaciones.
+- `layouts/guest.blade.php` y vistas Breeze siguen cubriendo autenticacion.
+
+### Componentes Blade relevantes
+
+| Componente | Uso |
+|---|---|
+| `x-custom-select` | Select buscable/generico |
+| `x-tipo-equipo-select` | Selector de tipo de equipo |
+| `x-select-tecnico` | Selector de tecnico |
+| `x-select-nivel` | Selector de nivel de reparacion |
+| `x-order-mobile-card` | Card responsive para ordenes |
+| Componentes Breeze | Inputs, botones, dropdowns, modal |
+
+### Vistas clave
 
 | Ruta | Vista | Estado |
 |---|---|---|
-| `/centro-de-mando` | `panel-tecnico.blade.php` | ✅ Estructura completa |
-| `/reparaciones` | `reparaciones/index.blade.php` | ✅ Tabla paginada |
-| `/reparaciones/create` | `reparaciones/create.blade.php` | ✅ Formulario completo |
-| `/reparaciones/{id}` | `reparaciones/show.blade.php` | ✅ Ficha + escalamiento + chat |
-| `/seguimiento/{token}` | `seguimiento/show.blade.php` | ✅ Portal público cliente |
-| `/clientes` | `clientes/index.blade.php` | ✅ Tabla paginada |
-| `/clientes/create` | `clientes/create.blade.php` | ✅ Formulario |
-| `/clientes/{id}` | `clientes/show.blade.php` | ✅ Historial |
-| `/tecnicos` | `tecnicos/index.blade.php` | ✅ Solo visible para admin |
-| `/tecnicos/create` | `tecnicos/create.blade.php` | ✅ Formulario |
-| Layout base | `plantillas/base.blade.php` | ✅ Sidebar + header + badge notificaciones |
-| Email cliente | `emails/reparacion-lista.blade.php` | ✅ Template HTML |
+| `/` | `welcome.blade.php` | Landing publica |
+| `/rastrear` | `seguimiento/buscar.blade.php` | Busqueda publica por folio |
+| `/seguimiento/{token}` | `seguimiento/show.blade.php` | Portal cliente con chat |
+| `/centro-de-mando` | `panel-tecnico.blade.php` | Dashboard autenticado |
+| `/reparaciones` | `reparaciones/index.blade.php` | Listado con filtros |
+| `/reparaciones/create` | `reparaciones/create.blade.php` | Alta de orden |
+| `/reparaciones/{id}` | `reparaciones/show.blade.php` | Ficha, update, escalamiento, chat |
+| `/clientes` | `clientes/index.blade.php` | Listado, busqueda, filtro mayoristas |
+| `/clientes/create` | `clientes/create.blade.php` | Alta cliente |
+| `/clientes/{id}` | `clientes/show.blade.php` | Historial del cliente |
+| `/tecnicos` | `tecnicos/index.blade.php` | Solo admin |
+| `/tecnicos/create` | `tecnicos/create.blade.php` | Alta tecnico con limite por plan |
+| `/suscripcion/vencida` | `billing/expired.blade.php` | Bloqueo por suscripcion |
 
-### Para el diseñador
-
-El layout base en `plantillas/base.blade.php` usa `@vite(['resources/css/app.css', 'resources/js/app.js'])`. Puedes definir todo el sistema de diseño en `resources/css/app.css` con las directivas de Tailwind.
-
-El chat usa **polling JS puro** (`setInterval` cada 5 segundos) — no requiere WebSockets ni librerías adicionales.
+El chat usa polling JS puro cada 5 segundos. No hay WebSockets.
 
 ---
 
-## 7. Infraestructura de Notificaciones y Background Jobs
+## 10. Emails y Notificaciones
 
-### Cola de trabajos
+### Emails
 
+| Clase | Evento | Vista |
+|---|---|---|
+| `OrdenCreadaMail` | Se crea orden y cliente tiene email | `emails.orden-creada` |
+| `ReparacionListaMail` | Orden pasa a `Reparado` y cliente tiene email | `emails.reparacion-lista` |
+
+Ambos incluyen la URL de seguimiento:
+
+```php
+url("/seguimiento/{$this->reparacion->token_seguimiento}")
 ```
-QUEUE_CONNECTION=database
+
+### Notificaciones
+
+`RetardoAdminNotification` usa canal `database` e incluye:
+
+- `reparacion_id`
+- `folio`
+- `cliente`
+- `equipo`
+- `tecnico`
+- `nivel`
+- `hora_limite`
+- `mensaje`
+
+El dashboard muestra notificaciones no leidas solo para admins.
+
+---
+
+## 11. Rutas Registradas Relevantes
+
+Publicas:
+
+```text
+GET     /                                   Landing
+GET     /rastrear                           Formulario busqueda por folio
+POST    /rastrear                           Redireccion a seguimiento por token
+GET     /seguimiento/{token}                Portal cliente
+POST    /seguimiento/{token}/mensaje        Mensaje cliente
+GET     /seguimiento/{token}/mensajes       Polling JSON cliente
 ```
 
-Las jobs se almacenan en la tabla `jobs`. El worker procesa:
+Autenticadas:
+
+```text
+GET     /dashboard                          Alias Breeze -> panel.inicio
+GET     /suscripcion/vencida                Pantalla bloqueo suscripcion
+GET     /centro-de-mando                    Dashboard
+
+GET     /reparaciones                       Listado
+GET     /reparaciones/create                Nueva orden
+POST    /reparaciones                       Crear orden
+GET     /reparaciones/{reparacion}          Detalle
+PATCH   /reparaciones/{reparacion}          Actualizar orden
+POST    /reparaciones/{reparacion}/escalar  Escalar nivel
+GET     /reparaciones/{reparacion}/mensajes Chat tecnico JSON
+POST    /reparaciones/{reparacion}/mensajes Enviar mensaje tecnico
+
+GET     /clientes                           Listado
+GET     /clientes/create                    Nuevo cliente
+POST    /clientes                           Crear cliente
+GET     /clientes/{cliente}                 Historial
+
+GET     /tecnicos                           Listado tecnicos, solo admin
+GET     /tecnicos/create                    Nuevo tecnico, solo admin
+POST    /tecnicos                           Crear tecnico, solo admin
+DELETE  /tecnicos/{tecnico}                 Eliminar tecnico, solo admin
+
+POST    /notificaciones/{id}/leida          Marcar una notificacion leida
+POST    /notificaciones/leer-todas          Marcar todas como leidas
+```
+
+Autenticacion Breeze:
+
+```text
+GET/POST /register
+GET/POST /login
+POST     /logout
+GET/POST /forgot-password
+GET/POST /reset-password
+GET/POST /confirm-password
+PUT      /password
+```
+
+---
+
+## 12. Setup Local
+
+Flujo recomendado:
+
 ```bash
-php artisan queue:listen --tries=1 --timeout=0
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate:fresh --seed
+npm run dev
+php artisan serve
 ```
 
-### Flujo de notificaciones al admin
+Variables relevantes:
 
-```
-VerificarRetardosJob
-    → RetardoAdminNotification (canal: database)
-        → INSERT en tabla notifications
-            → Visible en /centro-de-mando (badge + lista)
-                → Admin puede marcar como leída via NotificacionController
-```
-
-### Email al cliente
-
-```
-ReparacionController::update() → estado = 'Reparado'
-    → Mail::to($cliente->email)->send(new ReparacionListaMail($reparacion))
-        → Vista: emails/reparacion-lista.blade.php
-        → Incluye: folio, equipo, nombre del taller, URL de seguimiento
+```env
+APP_NAME=FixBound
+APP_TIMEZONE=America/Mexico_City
+DB_DATABASE=fixbound
+QUEUE_CONNECTION=database
+SESSION_DRIVER=database
+MAIL_MAILER=log
 ```
 
-> **En desarrollo:** `MAIL_MAILER=log` → los emails se escriben en `storage/logs/laravel.log`.  
-> **En producción:** Configurar SMTP real (Mailgun, SES, Resend, etc.) en `.env`.
+Credenciales demo sembradas:
+
+```text
+admin@fixbound.test / password
+tecnico@fixbound.test / password
+```
+
+Nota de pruebas: `phpunit.xml` usa SQLite en memoria (`DB_CONNECTION=sqlite`, `DB_DATABASE=:memory:`). El entorno local necesita la extension PDO SQLite habilitada para correr la suite Feature.
 
 ---
 
-## Apéndice — Rutas registradas
+## 13. Infraestructura Docker
 
-```
-GET     /                                   Welcome page
-GET     /seguimiento/{token}                Portal público del cliente (sin auth)
-POST    /seguimiento/{token}/mensaje        Cliente envía mensaje
-GET     /seguimiento/{token}/mensajes       Polling JSON de mensajes
+El repo incluye:
 
-GET     /centro-de-mando                    Dashboard (auth)
-GET     /reparaciones                       Listado (auth)
-GET     /reparaciones/create                Formulario nueva orden (auth)
-POST    /reparaciones                       Guardar nueva orden (auth)
-GET     /reparaciones/{reparacion}          Detalle de orden (auth)
-PATCH   /reparaciones/{reparacion}          Actualizar estado/datos (auth)
-POST    /reparaciones/{reparacion}/escalar  Escalar nivel (auth)
-GET     /reparaciones/{reparacion}/mensajes Chat JSON (auth)
-POST    /reparaciones/{reparacion}/mensajes Enviar mensaje técnico (auth)
+- `Dockerfile` multi-stage.
+- `docker-compose.prod.yml`.
 
-GET     /clientes                           Listado (auth)
-GET     /clientes/create                    Crear cliente (auth)
-POST    /clientes                           Guardar cliente (auth)
-GET     /clientes/{cliente}                 Historial del cliente (auth)
+Servicios definidos para produccion:
 
-GET     /tecnicos                           Listado técnicos — solo admin (auth)
-GET     /tecnicos/create                    Crear técnico — solo admin (auth)
-POST    /tecnicos                           Guardar técnico — solo admin (auth)
-DELETE  /tecnicos/{tecnico}                 Eliminar técnico — solo admin (auth)
+- `fixbound-app`
+- `fixbound-worker`
+- `fixbound-scheduler`
+- `fixbound-mysql`
 
-POST    /notificaciones/{id}/leida          Marcar notificación leída (auth)
-POST    /notificaciones/leer-todas          Marcar todas leídas (auth)
-
-GET     /register                           Registro (crea Taller nuevo)
-GET     /login                              Login
-POST    /logout                             Logout
-```
+El worker procesa queue y el scheduler ejecuta `schedule:run`.
 
 ---
 
-> **Gotchas a tener en cuenta al desarrollar:**
-> 1. Los modelos con nombre español NO siguen la pluralización inglesa de Laravel. Se debe declarar `protected $table` explícitamente en `Taller` (`talleres`) y `Reparacion` (`reparaciones`).
-> 2. Los resource routes de nombres en español requieren `->parameters([...])` para que el route model binding funcione correctamente.
-> 3. La zona horaria del sistema es `America/Mexico_City` — configurada en `.env` como `APP_TIMEZONE`.
+## 14. Gotchas y Decisiones Importantes
+
+1. Los nombres en espanol no siempre pluralizan como Laravel espera. `Taller` y `Reparacion` declaran `protected $table`.
+2. Las rutas resource en espanol usan `->parameters([...])` para que route model binding use el parametro correcto.
+3. `folio` volvio a ser globalmente unico desde junio 2026. No asumir folios repetidos por taller.
+4. El formato vigente de folio incluye `codigo_publico` del taller.
+5. `codigo_publico` es unico en `talleres` y se normaliza en modelo/controlador.
+6. El portal publico por token no requiere auth; validar cuidadosamente cualquier dato expuesto alli.
+7. `Retardo` puede ser estado manual o automatico, pero el job evita duplicar notificaciones excluyendo ordenes ya en `Retardo`.
+8. El acceso por suscripcion depende de `subscription_status`, `trial_ends_at` y `subscription_ends_at`, no solamente de `suscripcion_activa`.
+9. Los clientes mayoristas existen, pero solo deben crearse si el plan lo permite.
+10. La suite de tests scaffold de Breeze no cubre todavia los flujos propios de reparaciones, suscripcion, folios ni seguimiento publico.
